@@ -1,7 +1,7 @@
 from rest_framework import generics, status, permissions
 from rest_framework.response import Response
 from .models import ChatRoom, Message, MessageReadStatus
-from .serializers import ChatRoomSerializer, MessageSerializer, MessageCreateSerializer
+from .serializers import ChatRoomSerializer, MessageSerializer, MessageCreateSerializer, ChatRoomCreateSerializer
 
 
 class ChatRoomListView(generics.ListAPIView):
@@ -14,8 +14,18 @@ class ChatRoomListView(generics.ListAPIView):
 
 
 class ChatRoomCreateView(generics.CreateAPIView):
-    serializer_class = ChatRoomSerializer
+    serializer_class = ChatRoomCreateSerializer
     permission_classes = [permissions.IsAuthenticated]
+    
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        chat_room = serializer.save()
+        
+        # Return full chat room details including ID
+        output_serializer = ChatRoomSerializer(chat_room, context={'request': request})
+        headers = self.get_success_headers(output_serializer.data)
+        return Response(output_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class ChatRoomDetailView(generics.RetrieveAPIView):

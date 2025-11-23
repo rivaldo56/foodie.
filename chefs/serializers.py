@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import ChefProfile, ChefCertification, ChefReview
+from .models import ChefProfile, ChefCertification, ChefReview, FavoriteChef, ChefEvent
 from users.serializers import UserSerializer
 
 
@@ -7,6 +7,8 @@ class ChefProfileSerializer(serializers.ModelSerializer):
     """Serializer for chef profile"""
     user = UserSerializer(read_only=True)
     rating_display = serializers.ReadOnlyField()
+    is_favorited = serializers.SerializerMethodField()
+    badge = serializers.ReadOnlyField(source='get_badge')
     
     class Meta:
         model = ChefProfile
@@ -17,13 +19,19 @@ class ChefProfileSerializer(serializers.ModelSerializer):
             'is_verified', 'background_check_completed', 'average_rating',
             'total_reviews', 'total_bookings', 'is_available',
             'availability_schedule', 'portfolio_images', 'certifications',
-            'rating_display', 'created_at', 'updated_at'
+            'rating_display', 'is_favorited', 'badge', 'created_at', 'updated_at'
         ]
         read_only_fields = [
             'id', 'is_verified', 'background_check_completed', 
             'average_rating', 'total_reviews', 'total_bookings',
             'created_at', 'updated_at'
         ]
+
+    def get_is_favorited(self, obj):
+        user = self.context.get('request').user if self.context.get('request') else None
+        if user and user.is_authenticated:
+            return FavoriteChef.objects.filter(user=user, chef=obj).exists()
+        return False
 
 
 class ChefAvailabilitySerializer(serializers.ModelSerializer):
@@ -132,3 +140,31 @@ class ChefListSerializer(serializers.ModelSerializer):
             'hourly_rate', 'city', 'state', 'average_rating',
             'total_reviews', 'is_available', 'is_verified', 'distance'
         ]
+
+
+class FavoriteChefSerializer(serializers.ModelSerializer):
+    """Serializer for favorite chefs"""
+    chef_detail = ChefListSerializer(source='chef', read_only=True)
+    
+    class Meta:
+        model = FavoriteChef
+        fields = ['id', 'user', 'chef', 'chef_detail', 'created_at']
+        read_only_fields = ['id', 'created_at']
+
+
+class ChefEventSerializer(serializers.ModelSerializer):
+    """Serializer for chef events"""
+    
+    class Meta:
+        model = ChefEvent
+        fields = [
+            'id', 'chef', 'title', 'start_time', 'end_time', 
+            'description', 'is_all_day', 'created_at', 'updated_at'
+        ]
+        read_only_fields = ['id', 'chef', 'created_at', 'updated_at']
+    
+    def validate(self, data):
+        """Check that end_time is after start_time"""
+        if data['end_time'] < data['start_time']:
+            raise serializers.ValidationError("End time must be after start time")
+        return data

@@ -14,7 +14,10 @@ urlpatterns = [
     
     # Menu items
     path('menu-items/', views.MenuItemListView.as_view(), name='menu-items'),
+    path('menu-items/create/', views.MenuItemCreateView.as_view(), name='create-menu-item'),
     path('menu-items/<int:pk>/', views.MenuItemDetailView.as_view(), name='menu-item-detail'),
+    path('menu-items/<int:pk>/update/', views.MenuItemUpdateView.as_view(), name='update-menu-item'),
+    path('menu-items/<int:pk>/delete/', views.MenuItemDeleteView.as_view(), name='delete-menu-item'),
     path('chef/<int:chef_id>/menu-items/', views.ChefMenuItemsView.as_view(), name='chef-menu-items'),
     
     # Booking menu items

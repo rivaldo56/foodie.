@@ -147,7 +147,8 @@ class UserPreferenceLearning(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='preference_learning')
     
     # Learned preferences
-    preferred_cuisines = models.JSONField(default=dict, blank=True)  # {'italian': 0.8, 'asian': 0.6}
+    preferred_cuisines = models.JSONField(default=list, blank=True)  # ['italian', 'asian', 'mexican']
+    preferred_price_range = models.JSONField(default=dict, blank=True)  # {'min': 500, 'max': 5000}
     dietary_patterns = models.JSONField(default=dict, blank=True)
     price_sensitivity = models.FloatField(default=0.5)  # 0-1 scale
     booking_patterns = models.JSONField(default=dict, blank=True)
@@ -163,6 +164,47 @@ class UserPreferenceLearning(models.Model):
     
     def __str__(self):
         return f"Preferences for {self.user.full_name} (confidence: {self.confidence_level:.2f})"
+
+
+class UserInteraction(models.Model):
+    """Track user interactions for recommendation learning"""
+    
+    INTERACTION_TYPE_CHOICES = [
+        ('view', 'View'),
+        ('like', 'Like/Favorite'),
+        ('book', 'Booking'),
+        ('share', 'Share'),
+        ('skip', 'Skip'),
+    ]
+    
+    CONTENT_TYPE_CHOICES = [
+        ('chef', 'Chef'),
+        ('meal', 'Meal'),
+    ]
+    
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='interactions')
+    content_type = models.CharField(max_length=10, choices=CONTENT_TYPE_CHOICES)
+    content_id = models.PositiveIntegerField()
+    interaction_type = models.CharField(max_length=10, choices=INTERACTION_TYPE_CHOICES)
+    weight = models.PositiveIntegerField(default=1)  # Importance of interaction
+    
+    # Context
+    session_id = models.CharField(max_length=100, blank=True)
+    device_type = models.CharField(max_length=50, blank=True)
+    duration_seconds = models.PositiveIntegerField(default=0)  # Time spent viewing
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['user', 'content_type', '-created_at']),
+            models.Index(fields=['content_type', 'content_id']),
+        ]
+    
+    def __str__(self):
+        return f"{self.user.username} {self.interaction_type} {self.content_type} #{self.content_id}"
+
 
 
 class AIAnalytics(models.Model):

@@ -108,7 +108,14 @@ class MenuItem(models.Model):
     seasonal_availability = models.JSONField(default=list, blank=True)  # ['spring', 'summer', etc.]
     
     # Media
-    image = models.ImageField(upload_to='menu_items/', blank=True, null=True)
+    image = models.URLField(max_length=500, blank=True, null=True)  # Cloudinary URL
+    
+    # Ingredients
+    ingredients = models.JSONField(default=list, blank=True)  # ['ingredient1', 'ingredient2', etc.]
+    
+    # Fulfillment options
+    delivery_available = models.BooleanField(default=True)
+    pickup_available = models.BooleanField(default=True)
     
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

@@ -1,5 +1,7 @@
 from django.urls import path
 from . import views
+from . import chatbot_views
+from . import recommendation_views
 
 app_name = 'ai'
 
@@ -24,6 +26,19 @@ urlpatterns = [
     # User preferences
     path('preferences/', views.UserPreferenceLearningView.as_view(), name='user-preferences'),
     path('preferences/update/', views.UpdatePreferencesView.as_view(), name='update-preferences'),
+    
+    # Chatbot
+    path('chatbot/message/', chatbot_views.ChatbotMessageView.as_view(), name='chatbot-message'),
+    path('chatbot/recommend-meals/', chatbot_views.MealRecommendationView.as_view(), name='chatbot-recommend-meals'),
+    path('chatbot/recommend-chefs/', chatbot_views.ChefRecommendationAIView.as_view(), name='chatbot-recommend-chefs'),
+    path('chatbot/analyze-dietary/', chatbot_views.DietaryAnalysisView.as_view(), name='chatbot-dietary-analysis'),
+    
+    # Recommendations (TikTok-style)
+    path('recommendations/feed/', recommendation_views.PersonalizedFeedView.as_view(), name='personalized-feed'),
+    path('recommendations/trending/', recommendation_views.TrendingFeedView.as_view(), name='trending-feed'),
+    path('recommendations/track/', recommendation_views.TrackInteractionView.as_view(), name='track-interaction'),
+    path('recommendations/preferences/', recommendation_views.UserPreferencesView.as_view(), name='user-preferences'),
+    path('recommendations/similar/<int:chef_id>/', recommendation_views.SimilarChefsView.as_view(), name='similar-chefs'),
     
     # Analytics (admin only)
     path('analytics/', views.AIAnalyticsView.as_view(), name='ai-analytics'),

@@ -120,3 +120,74 @@ class MenuItemDetailView(generics.RetrieveUpdateDestroyAPIView):
     def get_serializer_class(self):
         from bookings.serializers import MenuItemSerializer
         return MenuItemSerializer
+
+
+class FavoriteChefToggleView(generics.GenericAPIView):
+    """Toggle favorite status for a chef"""
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def post(self, request, chef_id):
+        chef = get_object_or_404(ChefProfile, id=chef_id)
+        from .models import FavoriteChef
+        
+        favorite, created = FavoriteChef.objects.get_or_create(user=request.user, chef=chef)
+        
+        if not created:
+            favorite.delete()
+            return Response({'status': 'removed', 'is_favorited': False})
+            
+        return Response({'status': 'added', 'is_favorited': True})
+
+
+class FavoriteChefListView(generics.ListAPIView):
+    """List user's favorite chefs"""
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def get_serializer_class(self):
+        from .serializers import FavoriteChefSerializer
+        return FavoriteChefSerializer
+        
+    def get_queryset(self):
+        from .models import FavoriteChef
+        return FavoriteChef.objects.filter(user=self.request.user)
+
+
+class ChefAnalyticsView(generics.GenericAPIView):
+    """Get chef dashboard analytics"""
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def get(self, request):
+        # Get chef profile for authenticated user
+        try:
+            chef_profile = ChefProfile.objects.get(user=request.user)
+        except ChefProfile.DoesNotExist:
+            return Response(
+                {'error': 'Chef profile not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        # Import analytics module
+        from .analytics import ChefAnalytics
+        
+        # Get analytics data
+        analytics = ChefAnalytics(chef_profile)
+        data = analytics.get_dashboard_data()
+        
+        return Response(data, status=status.HTTP_200_OK)
+
+
+from rest_framework import viewsets
+from .models import ChefEvent
+from .serializers import ChefEventSerializer
+
+class ChefEventViewSet(viewsets.ModelViewSet):
+    """Manage chef personal events"""
+    serializer_class = ChefEventSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def get_queryset(self):
+        return ChefEvent.objects.filter(chef__user=self.request.user)
+    
+    def perform_create(self, serializer):
+        chef_profile = ChefProfile.objects.get(user=self.request.user)
+        serializer.save(chef=chef_profile)

@@ -72,6 +72,27 @@ class ChefProfile(models.Model):
     def experience_years(self):
         """Alias for years_of_experience to support test compatibility"""
         return self.years_of_experience
+    
+    @property
+    def get_badge(self):
+        """Calculate chef badge based on performance"""
+        from bookings.models import MenuItem
+        from datetime import timedelta
+        from django.utils import timezone
+        
+        # Count dishes posted by this chef
+        dish_count = MenuItem.objects.filter(chef=self).count()
+        
+        # Check account age
+        account_age_months = (timezone.now() - self.created_at).days / 30
+        
+        # Badge Logic
+        if dish_count >= 20 and self.average_rating >= 4.8:
+            return 'michelin'  # Michelin Star
+        elif dish_count >= 5 and self.average_rating >= 4.0:
+            return 'rising'  # Rising Chef
+        else:
+            return 'new'  # New Chef
 
 
 class ChefCertification(models.Model):
@@ -123,3 +144,38 @@ class ChefReview(models.Model):
     
     def __str__(self):
         return f"Review for {self.chef.user.full_name} by {self.client.full_name} - {self.rating}/5"
+
+
+class FavoriteChef(models.Model):
+    """User's favorite chefs"""
+    
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='favorite_chefs')
+    chef = models.ForeignKey(ChefProfile, on_delete=models.CASCADE, related_name='favorited_by')
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ['user', 'chef']
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"{self.user.full_name} favorites {self.chef.user.full_name}"
+
+
+class ChefEvent(models.Model):
+    """Personal events for chefs (e.g., vacation, prep time)"""
+    
+    chef = models.ForeignKey(ChefProfile, on_delete=models.CASCADE, related_name='events')
+    title = models.CharField(max_length=200)
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
+    description = models.TextField(blank=True)
+    is_all_day = models.BooleanField(default=False)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['start_time']
+        
+    def __str__(self):
+        return f"{self.chef.user.full_name} - {self.title}"

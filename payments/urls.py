@@ -9,10 +9,10 @@ urlpatterns = [
     path('create/', views.PaymentCreateView.as_view(), name='create-payment'),
     path('<int:pk>/', views.PaymentDetailView.as_view(), name='payment-detail'),
     
-    # Stripe endpoints
-    path('create-intent/', views.CreatePaymentIntentView.as_view(), name='create-payment-intent'),
-    path('confirm/', views.ConfirmPaymentView.as_view(), name='confirm-payment'),
-    path('webhooks/stripe/', views.StripeWebhookView.as_view(), name='stripe-webhook'),
+    # Stripe endpoints disabled - using M-Pesa only
+    # path('create-intent/', views.CreatePaymentIntentView.as_view(), name='create-payment-intent'),
+    # path('confirm/', views.ConfirmPaymentView.as_view(), name='confirm-payment'),
+    # path('webhooks/stripe/', views.StripeWebhookView.as_view(), name='stripe-webhook'),
     
     # M-Pesa endpoints
     path('mpesa/pay/', views.MpesaPaymentView.as_view(), name='mpesa-payment'),

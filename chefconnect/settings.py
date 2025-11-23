@@ -33,6 +33,13 @@ DEBUG = config('DEBUG', default=True, cast=bool)
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1').split(',')
 
+# CSRF Settings for frontend
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+]
+
+
 
 # Application definition
 
@@ -95,18 +102,23 @@ ASGI_APPLICATION = 'chefconnect.asgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+# Use PostgreSQL in production, SQLite in development
+DATABASE_URL = config('DATABASE_URL', default='')
 
-# For PostgreSQL (uncomment when ready to use)
-# import dj_database_url
-# DATABASES = {
-#     'default': dj_database_url.parse(config('DATABASE_URL', default='sqlite:///db.sqlite3'))
-# }
+if DATABASE_URL:
+    # Production: Use PostgreSQL
+    import dj_database_url
+    DATABASES = {
+        'default': dj_database_url.parse(DATABASE_URL)
+    }
+else:
+    # Development: Use SQLite
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 
 # Password validation

@@ -15,7 +15,8 @@ class MenuItemSerializer(serializers.ModelSerializer):
             'id', 'chef', 'chef_name', 'name', 'description', 'category',
             'price_per_serving', 'preparation_time', 'is_vegetarian', 'is_vegan',
             'is_gluten_free', 'is_dairy_free', 'allergens', 'is_available',
-            'seasonal_availability', 'image', 'created_at', 'updated_at'
+            'seasonal_availability', 'image', 'ingredients', 'delivery_available',
+            'pickup_available', 'created_at', 'updated_at'
         ]
         read_only_fields = ['id', 'created_at', 'updated_at']
     

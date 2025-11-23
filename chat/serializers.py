@@ -62,22 +62,26 @@ class ChatRoomSerializer(serializers.ModelSerializer):
     booking = BookingSerializer(read_only=True)
     last_message = MessageSerializer(read_only=True)
     unread_count = serializers.SerializerMethodField()
+    has_replied = serializers.SerializerMethodField()
     
     class Meta:
         model = ChatRoom
         fields = [
             'id', 'booking', 'client', 'chef', 'is_active',
-            'last_message', 'unread_count', 'created_at', 'updated_at'
+            'last_message', 'unread_count', 'has_replied', 'created_at', 'updated_at'
         ]
         read_only_fields = ['id', 'created_at', 'updated_at']
     
     def get_unread_count(self, obj):
         user = self.context['request'].user
-        return obj.messages.filter(
-            sender__ne=user,
+        return obj.messages.exclude(sender=user).filter(
             is_read=False,
             is_deleted=False
         ).count()
+
+    def get_has_replied(self, obj):
+        user = self.context['request'].user
+        return obj.messages.filter(sender=user).exists()
 
 
 class MessageReadStatusSerializer(serializers.ModelSerializer):
@@ -119,7 +123,20 @@ class MessageUpdateSerializer(serializers.ModelSerializer):
 
 class ChatRoomCreateSerializer(serializers.Serializer):
     """Serializer for creating chat rooms"""
-    booking_id = serializers.IntegerField()
+    booking_id = serializers.IntegerField(required=False)
+    chef_id = serializers.IntegerField(required=False)  # User ID of the chef
+    
+    def validate(self, attrs):
+        booking_id = attrs.get('booking_id')
+        chef_id = attrs.get('chef_id')
+        
+        if not booking_id and not chef_id:
+            raise serializers.ValidationError("Either booking_id or chef_id must be provided")
+            
+        if booking_id and chef_id:
+            raise serializers.ValidationError("Provide either booking_id or chef_id, not both")
+            
+        return attrs
     
     def validate_booking_id(self, value):
         from bookings.models import Booking
@@ -137,15 +154,41 @@ class ChatRoomCreateSerializer(serializers.Serializer):
             return value
         except Booking.DoesNotExist:
             raise serializers.ValidationError("Booking not found")
+            
+    def validate_chef_id(self, value):
+        from users.models import User
+        try:
+            user = User.objects.get(id=value)
+            if user.role != 'chef':
+                raise serializers.ValidationError("User is not a chef")
+            return value
+        except User.DoesNotExist:
+            raise serializers.ValidationError("Chef not found")
     
     def create(self, validated_data):
-        from bookings.models import Booking
-        booking = Booking.objects.get(id=validated_data['booking_id'])
+        user = self.context['request'].user
         
-        chat_room = ChatRoom.objects.create(
-            booking=booking,
-            client=booking.client,
-            chef=booking.chef.user
-        )
-        
-        return chat_room
+        if validated_data.get('booking_id'):
+            from bookings.models import Booking
+            booking = Booking.objects.get(id=validated_data['booking_id'])
+            
+            chat_room = ChatRoom.objects.create(
+                booking=booking,
+                client=booking.client,
+                chef=booking.chef.user
+            )
+            return chat_room
+            
+        elif validated_data.get('chef_id'):
+            from users.models import User
+            chef_user = User.objects.get(id=validated_data['chef_id'])
+            
+            # Check if chat room already exists for this pair (without booking)
+            chat_room, created = ChatRoom.objects.get_or_create(
+                client=user,
+                chef=chef_user,
+                booking=None
+            )
+            return chat_room
+            
+        raise serializers.ValidationError("Invalid data")

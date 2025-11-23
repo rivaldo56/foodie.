@@ -32,28 +32,29 @@ class PaymentDetailView(generics.RetrieveAPIView):
         return Payment.objects.filter(client=self.request.user)
 
 
-class CreatePaymentIntentView(generics.CreateAPIView):
-    permission_classes = [permissions.IsAuthenticated]
-    
-    def post(self, request, *args, **kwargs):
-        booking_id = request.data.get('booking_id')
-        payment_method_id = request.data.get('payment_method_id')
-        
-        if not booking_id:
-            return Response(
-                {'error': 'booking_id is required'}, 
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        
-        result = PaymentProcessingService.process_booking_payment(
-            booking_id=booking_id,
-            payment_method_id=payment_method_id
-        )
-        
-        if result['success']:
-            return Response(result, status=status.HTTP_201_CREATED)
-        else:
-            return Response(result, status=status.HTTP_400_BAD_REQUEST)
+# Stripe payment intent disabled - using M-Pesa only
+# class CreatePaymentIntentView(generics.CreateAPIView):
+#     permission_classes = [permissions.IsAuthenticated]
+#     
+#     def post(self, request, *args, **kwargs):
+#         booking_id = request.data.get('booking_id')
+#         payment_method_id = request.data.get('payment_method_id')
+#         
+#         if not booking_id:
+#             return Response(
+#                 {'error': 'booking_id is required'}, 
+#                 status=status.HTTP_400_BAD_REQUEST
+#             )
+#         
+#         result = PaymentProcessingService.process_booking_payment(
+#             booking_id=booking_id,
+#             payment_method_id=payment_method_id
+#         )
+#         
+#         if result['success']:
+#             return Response(result, status=status.HTTP_201_CREATED)
+#         else:
+#             return Response(result, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ConfirmPaymentView(generics.CreateAPIView):
@@ -181,17 +182,18 @@ class MpesaCallbackView(generics.CreateAPIView):
             return HttpResponse("Error", status=400)
 
 
-@method_decorator(csrf_exempt, name='dispatch')
-class StripeWebhookView(generics.CreateAPIView):
-    permission_classes = [permissions.AllowAny]
-    
-    def post(self, request, *args, **kwargs):
-        payload = request.body
-        sig_header = request.META.get('HTTP_STRIPE_SIGNATURE')
-        
-        result = WebhookService.handle_stripe_webhook(payload, sig_header)
-        
-        if result['success']:
-            return HttpResponse("OK", status=200)
-        else:
-            return HttpResponse("Error", status=400)
+# Stripe webhook disabled - using M-Pesa only
+# @method_decorator(csrf_exempt, name='dispatch')
+# class StripeWebhookView(generics.CreateAPIView):
+#     permission_classes = [permissions.AllowAny]
+#     
+#     def post(self, request, *args, **kwargs):
+#         payload = request.body
+#         sig_header = request.META.get('HTTP_STRIPE_SIGNATURE')
+#         
+#         result = WebhookService.handle_stripe_webhook(payload, sig_header)
+#         
+#         if result['success']:
+#             return HttpResponse("OK", status=200)
+#         else:
+#             return HttpResponse("Error", status=400)
