@@ -1,0 +1,27 @@
+@import 'tailwindcss';
+
+:root {
+  --background: #0f0c0a;
+  --foreground: #f8fafc;
+  --accent: #f97316;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-accent: var(--accent);
+  --font-sans: var(--font-inter);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+main {
+  min-height: 100vh;
+}
+
+.shadow-glow {
+  box-shadow: 0 20px 45px rgba(249, 115, 22, 0.2);
+}

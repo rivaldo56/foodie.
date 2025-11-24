@@ -14,7 +14,7 @@ class FoodieChatbot:
     
     def __init__(self):
         genai.configure(api_key=settings.GEMINI_API_KEY)
-        self.model = genai.GenerativeModel('gemini-pro')
+        self.model = genai.GenerativeModel('gemini-2.0-flash-exp')
         self.conversation_history = []
     
     def get_system_prompt(self):

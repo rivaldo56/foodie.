@@ -38,6 +38,34 @@ class ChefProfileView(generics.RetrieveUpdateAPIView):
     def get_object(self):
         profile, created = ChefProfile.objects.get_or_create(user=self.request.user)
         return profile
+    
+    def update(self, request, *args, **kwargs):
+        import logging
+        logger = logging.getLogger(__name__)
+        
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        
+        logger.info(f"Received update request with data: {request.data}")
+        
+        # Handle profile_picture update on User model
+        if 'profile_picture' in request.data:
+            user = request.user
+            profile_picture_url = request.data.get('profile_picture')
+            logger.info(f"Updating user profile_picture to: {profile_picture_url}")
+            user.profile_picture = profile_picture_url
+            user.save()
+            logger.info(f"User profile_picture saved successfully")
+        
+        # Handle bio update on ChefProfile
+        if 'bio' in request.data:
+            instance.bio = request.data.get('bio')
+            instance.save()
+            logger.info(f"ChefProfile bio updated: {instance.bio}")
+        
+        # Return updated serializer data
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
 
 
 class ChefReviewListView(generics.ListAPIView):
