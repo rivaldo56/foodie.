@@ -5,13 +5,14 @@ import { useParams, useRouter } from 'next/navigation';
 import { createReview } from '@/lib/api';
 import { useAuth } from '@/contexts/AuthContext';
 import ProtectedRoute from '@/components/ProtectedRoute';
+import { Star } from 'lucide-react';
 
 function ReviewPageContent() {
   const params = useParams();
   const router = useRouter();
   const { isAuthenticated } = useAuth();
   const mealId = parseInt(params.id as string);
-  
+
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -19,7 +20,7 @@ function ReviewPageContent() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!isAuthenticated) {
       router.push('/login');
       return;
@@ -29,13 +30,13 @@ function ReviewPageContent() {
     setError(null);
 
     const response = await createReview(mealId, rating, comment);
-    
+
     if (response.data) {
       router.push(`/meals/${mealId}`);
     } else {
       setError(response.error || 'Failed to submit review');
     }
-    
+
     setSubmitting(false);
   };
 
@@ -44,7 +45,7 @@ function ReviewPageContent() {
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-lg shadow-md p-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-6">Write a Review</h1>
-          
+
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Rating */}
             <div>
@@ -60,7 +61,7 @@ function ReviewPageContent() {
                     className="text-4xl focus:outline-none"
                   >
                     <span className={star <= rating ? 'text-yellow-500' : 'text-gray-300'}>
-                      ⭐
+                      <Star className={`h-8 w-8 ${star <= rating ? 'fill-current text-yellow-500' : 'text-gray-300'}`} />
                     </span>
                   </button>
                 ))}

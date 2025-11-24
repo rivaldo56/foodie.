@@ -8,7 +8,7 @@ import ChefBadge from '@/components/ChefBadge';
 import MenuItemCard from '@/components/MenuItemCard';
 import ProfileEditModal from '@/components/modals/ProfileEditModal';
 import Image from 'next/image';
-import { CheckCircle, Edit, Plus, Star, TrendingUp, Users, Utensils } from 'lucide-react';
+import { CheckCircle, Edit, Plus, Star, TrendingUp, Users, Utensils, User, Mail, Phone, MapPin, Camera, Save, Loader2, ChefHat } from 'lucide-react';
 import Link from 'next/link';
 
 export default function ChefProfilePage() {
@@ -148,7 +148,7 @@ export default function ChefProfilePage() {
                   className="object-cover"
                 />
               ) : (
-                '👨‍🍳'
+                <ChefHat className="h-12 w-12 text-muted" />
               )}
             </div>
             {/* Badge positioned on profile image */}

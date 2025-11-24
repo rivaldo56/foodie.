@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { MessageCircle, X, Send, Sparkles, UtensilsCrossed, Calendar } from 'lucide-react';
+import { MessageCircle, X, Send, Sparkles, UtensilsCrossed, Calendar, Loader2, Minimize2, Maximize2, Utensils } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface Message {
@@ -27,7 +27,7 @@ export default function AIChatbot() {
         {
             id: '1',
             role: 'assistant',
-            content: "Hi! I'm Foodie AI 🍽️ I can help you find the perfect chef, recommend meals, or assist with booking. What would you like to do today?",
+            content: "Hi! I'm Foodie AI. I can help you find the perfect chef, recommend meals, or assist with booking. What would you like to do today?",
             timestamp: new Date(),
         },
     ]);
@@ -209,8 +209,8 @@ export default function AIChatbot() {
                             >
                                 <div
                                     className={`max-w-[80%] rounded-2xl px-4 py-3 ${message.role === 'user'
-                                            ? 'bg-accent text-white'
-                                            : 'bg-white/10 text-white'
+                                        ? 'bg-accent text-white'
+                                        : 'bg-white/10 text-white'
                                         }`}
                                 >
                                     <p className="text-sm whitespace-pre-wrap">{message.content}</p>

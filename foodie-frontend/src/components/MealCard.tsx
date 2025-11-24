@@ -2,7 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Meal } from '@/lib/api';
 import { stableScore } from '@/lib/utils';
-import { Flame, MapPin, Star } from 'lucide-react';
+import { Flame, MapPin, Star, Clock, Utensils } from 'lucide-react';
 
 interface MealCardProps {
   meal: Meal;
@@ -13,13 +13,13 @@ interface MealCardProps {
 }
 
 export default function MealCard({ meal, matchScore, chefName, location, highlight }: MealCardProps) {
-  const match = matchScore ?? stableScore(`meal-${meal.id}`, 92, 97);
-  const chefDisplay = chefName || `Chef ${meal.chef}`;
+  const match = matchScore ?? stableScore(`meal - ${meal.id} `, 92, 97);
+  const chefDisplay = chefName || `Chef ${meal.chef} `;
   const locationDisplay = location || 'Nairobi';
   const highlightText = highlight || "Curated flavour pairing you'll love";
 
   return (
-    <Link href={`/meals/${meal.id}`} className="group block">
+    <Link href={`/ meals / ${meal.id} `} className="group block">
       <article className="rounded-3xl gradient-border hover-glow transition-all duration-300">
         <div className="bg-surface-elevated rounded-[23px] overflow-hidden soft-border">
           <div className="relative h-52">
@@ -32,8 +32,8 @@ export default function MealCard({ meal, matchScore, chefName, location, highlig
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               />
             ) : (
-              <div className="h-full w-full bg-surface flex items-center justify-center text-5xl">
-                🍽️
+              <div className="h-full w-full bg-gray-200 flex items-center justify-center text-gray-400">
+                <Utensils className="h-12 w-12" />
               </div>
             )}
 

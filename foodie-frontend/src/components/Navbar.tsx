@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import StatusLight from './StatusLight';
-import { Bell, LogOut, MessageCircle, User, Home, Compass, Calendar, UtensilsCrossed, type LucideIcon } from 'lucide-react';
+import { Bell, LogOut, MessageCircle, User, Home, Compass, Calendar, UtensilsCrossed, Menu, X, Utensils, type LucideIcon } from 'lucide-react';
 
 type NavItem = {
   href: string;
@@ -40,14 +40,9 @@ export default function Navbar() {
     <header className="sticky top-0 z-40 backdrop-blur-xl bg-surface/80 border-b border-surface">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col gap-4">
         <div className="flex items-center justify-between">
-          <Link href={isChef ? '/chef/dashboard' : '/client/home'} className="flex items-center gap-3">
-            <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-accent/10 text-2xl">
-              🍽️
-            </span>
-            <div>
-              <p className="text-xs uppercase tracking-[0.3em] text-muted">Foodie</p>
-              <p className="text-lg font-semibold text-white">Curated Culinary Journeys</p>
-            </div>
+          <Link href="/" className="flex items-center space-x-2">
+            <Utensils className="h-8 w-8 text-orange-600" />
+            <span className="text-2xl font-bold text-gray-900">Foodie</span>
           </Link>
 
           <div className="flex items-center gap-4">

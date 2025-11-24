@@ -1,5 +1,6 @@
 'use client';
 
+import { MapPin, Star, Calendar, Clock, Award, ChefHat } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { getChefById, getMeals, Chef, Meal, mockChefs, mockMeals } from '@/lib/api';
@@ -74,8 +75,8 @@ export default function ChefDetailPage() {
                     className="object-cover"
                   />
                 ) : (
-                  <div className="h-full w-full bg-gray-200 flex items-center justify-center text-4xl">
-                    👨‍🍳
+                  <div className="h-full w-full bg-surface-highlight flex items-center justify-center text-muted">
+                    <ChefHat className="h-20 w-20" />
                   </div>
                 )}
               </div>
@@ -94,7 +95,7 @@ export default function ChefDetailPage() {
 
               <div className="flex items-center space-x-6 mb-6 justify-center md:justify-start">
                 <div className="flex items-center space-x-2">
-                  <span className="text-yellow-500 text-2xl">⭐</span>
+                  <Star className="h-6 w-6 fill-current text-yellow-500" />
                   <span className="text-2xl font-bold text-gray-800">{(Number(chef.average_rating) || 0).toFixed(1)}</span>
                 </div>
 

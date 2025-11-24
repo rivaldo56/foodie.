@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { MapPin, Star, Heart } from 'lucide-react';
+import { MapPin, Star, Heart, ChefHat, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 import { toggleFavoriteChef } from '@/lib/api';
 
@@ -67,13 +67,13 @@ export default function ChefRecommendationCard({ chef, matchScore }: ChefRecomme
                         />
                     ) : (
                         <div className="h-full w-full bg-gradient-to-br from-orange-900/40 to-orange-700/40 flex items-center justify-center text-6xl">
-                            <span role="img" aria-label="chef">👨‍🍳</span>
+                            <ChefHat className="h-12 w-12 text-muted" />
                         </div>
                     )}
 
                     {/* Match Badge */}
                     <div className="absolute top-3 left-3 bg-orange-500 text-white px-3 py-1 text-xs font-semibold rounded-full shadow-lg">
-                        ✨ {Math.round(matchScore * 100)}% Match
+                        <Sparkles className="h-3 w-3 mr-1" /> {Math.round(matchScore * 100)}% Match
                     </div>
 
                     {/* Favorite Button */}

@@ -1,4 +1,5 @@
 import { Review } from '@/lib/api';
+import { Star, ThumbsUp } from 'lucide-react';
 
 interface ReviewCardProps {
   review: Review;
@@ -8,7 +9,7 @@ export default function ReviewCard({ review }: ReviewCardProps) {
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
       <span key={i} className={i < rating ? 'text-yellow-500' : 'text-gray-300'}>
-        ⭐
+        <Star className="h-4 w-4 fill-current text-yellow-500" />
       </span>
     ));
   };
@@ -26,7 +27,7 @@ export default function ReviewCard({ review }: ReviewCardProps) {
           {new Date(review.created_at).toLocaleDateString()}
         </span>
       </div>
-      
+
       <p className="text-gray-700 text-sm mt-3">{review.comment}</p>
     </div>
   );

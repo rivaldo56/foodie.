@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import type { Chef } from '@/lib/api';
 import { stableScore } from '@/lib/utils';
-import { MapPin, Star, Heart } from 'lucide-react';
+import { MapPin, Star, Heart, ChefHat } from 'lucide-react';
 import { useState } from 'react';
 import { toggleFavoriteChef } from '@/lib/api';
 import { useRouter } from 'next/navigation';
@@ -105,10 +105,8 @@ export default function ChefCard({ chef, matchScore }: ChefCardProps) {
                   priority
                 />
               ) : (
-                <div className="h-full w-full bg-surface flex items-center justify-center text-6xl">
-                  <span role="img" aria-label="chef">
-                    👨‍🍳
-                  </span>
+                <div className="h-full w-full bg-surface flex items-center justify-center text-muted">
+                  <ChefHat className="h-16 w-16" />
                 </div>
               )}
 

@@ -10,7 +10,7 @@ export default function Stats() {
       number: "100+",
       label: "Verified Chefs",
       description: "Background-checked culinary professionals",
-      icon: "🎖️",
+      icon: "Award",
     },
     {
       number: "$10K+",
@@ -22,7 +22,7 @@ export default function Stats() {
       number: "4.8★",
       label: "Average Rating",
       description: "Consistently exceptional experiences",
-      icon: "🛡️",
+      icon: "Shield",
     },
   ]
 

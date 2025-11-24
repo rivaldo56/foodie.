@@ -6,7 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { getBookings } from '@/lib/api/bookings';
 import type { Booking } from '@/lib/api';
 import CalendarWidget, { type CalendarEvent } from '@/components/CalendarWidget';
-import { Calendar as CalendarIcon, MapPin, Users, Clock, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
+import { Calendar, MapPin, Users, Clock, CheckCircle, XCircle, AlertCircle, ChefHat } from 'lucide-react';
 
 export default function ClientBookingsPage() {
   const router = useRouter();
@@ -143,13 +143,13 @@ export default function ClientBookingsPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="bg-surface-elevated border border-white/5 rounded-3xl p-8 relative overflow-hidden group">
           <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
-            <CalendarIcon className="h-32 w-32 text-white" />
+            <Calendar className="h-32 w-32 text-white" />
           </div>
           <div className="relative z-10">
             <div className="flex items-center justify-between mb-8">
               <h3 className="text-lg font-medium text-white/70">Upcoming</h3>
               <div className="p-2 rounded-full bg-white/5">
-                <CalendarIcon className="h-5 w-5 text-white/70" />
+                <Calendar className="h-5 w-5 text-white/70" />
               </div>
             </div>
             <p className="text-5xl font-bold text-white mb-2">{upcomingBookings.length}</p>
@@ -211,7 +211,7 @@ export default function ClientBookingsPage() {
           {displayBookings.length === 0 ? (
             <div className="bg-surface-elevated border border-white/5 rounded-3xl p-12 text-center">
               <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
-                <CalendarIcon className="h-8 w-8 text-white/30" />
+                <Calendar className="h-8 w-8 text-white/30" />
               </div>
               <p className="text-white/70 mb-2 text-lg">No {activeTab} bookings</p>
               <p className="text-sm text-white/50 mb-6">
@@ -239,8 +239,8 @@ export default function ClientBookingsPage() {
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex items-center gap-4">
-                        <div className="h-12 w-12 rounded-full bg-white/5 flex items-center justify-center text-2xl">
-                          👨‍🍳
+                        <div className="h-full w-full bg-surface-highlight flex items-center justify-center text-muted">
+                          <ChefHat className="h-8 w-8" />
                         </div>
                         <div>
                           <h3 className="text-lg font-semibold text-white">
@@ -276,7 +276,7 @@ export default function ClientBookingsPage() {
                     <div className="grid grid-cols-2 gap-4 p-4 bg-black/20 rounded-2xl border border-white/5">
                       <div className="flex items-center gap-3">
                         <div className="p-2 rounded-lg bg-white/5">
-                          <CalendarIcon className="h-5 w-5 text-accent" />
+                          <Calendar className="h-4 w-4 mr-2 text-accent" />
                         </div>
                         <div>
                           <p className="text-xs text-white/40 uppercase tracking-wider font-medium">Date & Time</p>

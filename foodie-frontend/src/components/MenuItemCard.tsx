@@ -2,7 +2,7 @@
 
 import { MenuItem } from '@/lib/api';
 import Image from 'next/image';
-import { Heart, Star, Truck, Store } from 'lucide-react';
+import { Heart, Star, Truck, Store, Utensils, ChefHat } from 'lucide-react';
 import { useState } from 'react';
 
 interface MenuItemCardProps {
@@ -32,8 +32,8 @@ export default function MenuItemCard({ item, onFavorite, isFavorited = false }: 
                         className="object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                 ) : (
-                    <div className="h-full w-full flex items-center justify-center text-6xl">
-                        🍽️
+                    <div className="h-full w-full bg-surface-highlight flex items-center justify-center text-muted">
+                        <Utensils className="h-12 w-12" />
                     </div>
                 )}
 
@@ -77,7 +77,7 @@ export default function MenuItemCard({ item, onFavorite, isFavorited = false }: 
                 {/* Chef Name */}
                 {item.chef_name && (
                     <div className="flex items-center gap-2 text-sm text-white/70">
-                        <span className="text-orange-500">👨‍🍳</span>
+                        <ChefHat className="h-4 w-4 text-orange-500" />
                         <span>{item.chef_name}</span>
                     </div>
                 )}

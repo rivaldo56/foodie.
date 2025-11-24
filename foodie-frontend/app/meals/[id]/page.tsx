@@ -11,14 +11,14 @@ import ReviewCard from '@/components/ReviewCard';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import BottomDock from '@/components/BottomDock';
 import ChatAssistantFab from '@/components/ChatAssistantFab';
-import { Flame, MapPin, Timer, Users, Star, Sparkles } from 'lucide-react';
+import { Clock, Users, Flame, Info, ChevronLeft, Minus, Plus, ShoppingBag, Star, Utensils, MapPin, Sparkles, Timer } from 'lucide-react';
 
 export default function MealDetailPage() {
   const params = useParams();
   const router = useRouter();
   const { isAuthenticated } = useAuth();
   const mealId = parseInt(params.id as string);
-  
+
   const [meal, setMeal] = useState<Meal | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
@@ -37,7 +37,7 @@ export default function MealDetailPage() {
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      
+
       const mealResponse = await getMealById(mealId);
       if (mealResponse.data) {
         setMeal(mealResponse.data);
@@ -65,9 +65,9 @@ export default function MealDetailPage() {
 
     setOrdering(true);
     setOrderError(null);
-    
+
     const response = await createOrder(mealId);
-    
+
     if (response.data) {
       setOrderSuccess(true);
       setTimeout(() => {
@@ -76,7 +76,7 @@ export default function MealDetailPage() {
     } else {
       setOrderError(response.error || 'Failed to create order');
     }
-    
+
     setOrdering(false);
   };
 
@@ -120,7 +120,9 @@ export default function MealDetailPage() {
                   sizes="(max-width: 1024px) 100vw, 60vw"
                 />
               ) : (
-                <div className="flex h-full items-center justify-center text-7xl">🍽️</div>
+                <div className="flex h-full items-center justify-center text-muted">
+                  <Utensils className="h-24 w-24" />
+                </div>
               )}
               <span className="absolute top-6 left-6 rounded-full bg-accent px-4 py-2 text-xs font-semibold text-white shadow-glow">
                 {meal.category}
@@ -224,7 +226,9 @@ export default function MealDetailPage() {
 function EmptyState({ title, description }: { title: string; description: string }) {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center gap-4 text-center px-6">
-      <div className="rounded-full bg-surface-highlight p-6 text-4xl">🍽️</div>
+      <div className="rounded-full bg-surface-highlight p-6 text-muted">
+        <Utensils className="h-10 w-10" />
+      </div>
       <h1 className="text-2xl font-semibold text-white">{title}</h1>
       <p className="text-sm text-muted max-w-sm">{description}</p>
       <Link

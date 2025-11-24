@@ -1,6 +1,7 @@
 'use client';
 
-import { X, Star, MapPin, Calendar, MessageCircle, Award, Utensils } from 'lucide-react';
+import Link from 'next/link';
+import { X, Star, MapPin, Calendar, MessageCircle, Award, Utensils, ChefHat, Trophy } from 'lucide-react';
 import Image from 'next/image';
 import type { Chef } from '@/lib/api';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -79,8 +80,8 @@ export default function ChefProfileModal({
                                                 className="object-cover"
                                             />
                                         ) : (
-                                            <div className="h-full w-full bg-surface-highlight flex items-center justify-center text-4xl sm:text-5xl">
-                                                👨‍🍳
+                                            <div className="h-full w-full bg-surface-highlight flex items-center justify-center text-accent/50">
+                                                <ChefHat className="h-12 w-12 sm:h-16 sm:w-16" />
                                             </div>
                                         )}
                                     </div>
@@ -88,7 +89,13 @@ export default function ChefProfileModal({
                                     {/* Chef Info */}
                                     <div className="flex-1 space-y-3 w-full">
                                         <div className="flex flex-wrap items-center gap-3">
-                                            <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">{displayName}</h2>
+                                            <Link
+                                                href={`/chefs/${chef.id}`}
+                                                onClick={onClose}
+                                                className="text-2xl sm:text-3xl font-bold text-white tracking-tight hover:text-accent transition-colors cursor-pointer"
+                                            >
+                                                {displayName}
+                                            </Link>
                                             {chef.is_verified && (
                                                 <span className="px-2.5 py-0.5 rounded-full bg-green-500/10 text-green-400 text-xs font-semibold border border-green-500/20 flex items-center gap-1">
                                                     <Award className="h-3 w-3" /> Verified
@@ -127,7 +134,7 @@ export default function ChefProfileModal({
                                 {/* About Section */}
                                 <div className="space-y-3 pt-6 border-t border-white/5">
                                     <div className="flex items-center gap-2">
-                                        <span className="text-accent text-xl">👨‍🍳</span>
+                                        <ChefHat className="h-5 w-5 text-accent" />
                                         <h3 className="text-lg font-semibold text-white">About</h3>
                                     </div>
                                     <p className="text-muted leading-relaxed">
@@ -138,7 +145,7 @@ export default function ChefProfileModal({
                                 {/* Achievements Section */}
                                 <div className="space-y-3 pt-6 border-t border-white/5">
                                     <div className="flex items-center gap-2">
-                                        <span className="text-accent text-xl">🏆</span>
+                                        <Trophy className="h-5 w-5 text-accent" />
                                         <h3 className="text-lg font-semibold text-white">Achievements</h3>
                                     </div>
                                     <div className="flex flex-wrap gap-2">
@@ -169,7 +176,7 @@ export default function ChefProfileModal({
                                 {chef.signature_dishes && chef.signature_dishes.length > 0 && (
                                     <div className="space-y-4 pt-6 border-t border-white/5">
                                         <div className="flex items-center gap-2">
-                                            <span className="text-accent text-xl">🍽️</span>
+                                            <Utensils className="h-5 w-5 text-accent" />
                                             <h3 className="text-lg font-semibold text-white">Signature Dishes</h3>
                                         </div>
                                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
