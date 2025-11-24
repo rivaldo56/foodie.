@@ -4,7 +4,10 @@ import { useState, useCallback } from 'react';
 import { X, Upload, User } from 'lucide-react';
 import Image from 'next/image';
 import Cropper from 'react-easy-crop';
-import { Point, Area } from 'react-easy-crop/types';
+
+// Define types inline since react-easy-crop doesn't export them separately
+type Point = { x: number; y: number };
+type Area = { width: number; height: number; x: number; y: number };
 
 interface ProfileEditModalProps {
     isOpen: boolean;

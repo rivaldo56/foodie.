@@ -71,9 +71,9 @@ export default function ChefProfileModal({
                                 <div className="flex flex-col sm:flex-row items-start gap-6">
                                     {/* Profile Image */}
                                     <div className="relative h-24 w-24 sm:h-32 sm:w-32 rounded-full overflow-hidden flex-shrink-0 border-4 border-accent/20 shadow-glow">
-                                        {chef.profile_image ? (
+                                        {chef.profile_picture ? (
                                             <Image
-                                                src={chef.profile_image}
+                                                src={chef.profile_picture}
                                                 alt={displayName}
                                                 fill
                                                 className="object-cover"
@@ -142,10 +142,10 @@ export default function ChefProfileModal({
                                         <h3 className="text-lg font-semibold text-white">Achievements</h3>
                                     </div>
                                     <div className="flex flex-wrap gap-2">
-                                        {chef.years_of_experience ? (
-                                            <span className="px-4 py-2 rounded-xl bg-surface text-muted-strong text-sm font-medium border border-white/5">
-                                                {chef.years_of_experience}+ Years Exp.
-                                            </span>
+                                        {chef.experience_years ? (
+                                            <div className="flex items-center gap-2 px-3 py-2 bg-accent/10 border border-accent/20 rounded-xl">
+                                                {chef.experience_years}+ Years Exp.
+                                            </div>
                                         ) : null}
                                         {chef.is_verified && (
                                             <span className="px-4 py-2 rounded-xl bg-surface text-muted-strong text-sm font-medium border border-white/5">

@@ -118,7 +118,11 @@ export interface Chef {
   is_verified: boolean;
   profile_picture: string | null;
   cover_photo: string | null;
-  badge?: string;
+  city?: string;
+  state?: string;
+  location?: string;
+  hourly_rate?: number;
+  badge?: 'new' | 'rising' | 'michelin';
 }
 
 export interface Meal {
@@ -783,12 +787,18 @@ export const mockChefs: Chef[] = [
       id: 1,
       email: 'kamau@example.com',
       full_name: 'Chef Kamau',
-      username: 'chefkamau'
+      phone: '+254712345678'
     },
-    specialties: ['Swahili Cuisine'],
-    average_rating: 4.8,
     bio: 'Passionate about coastal flavors with 15 years of experience.',
-    years_of_experience: 15,
+    specialties: ['Swahili Cuisine'],
+    experience_years: 15,
+    cuisine_types: ['Swahili'],
+    average_rating: 4.8,
+    total_bookings: 120,
+    total_reviews: 45,
+    is_verified: true,
+    profile_picture: null,
+    cover_photo: null,
   },
   {
     id: 2,
@@ -796,12 +806,18 @@ export const mockChefs: Chef[] = [
       id: 2,
       email: 'aisha@example.com',
       full_name: 'Chef Aisha',
-      username: 'chefaisha'
+      phone: '+254723456789'
     },
-    specialties: ['Contemporary African'],
-    average_rating: 4.9,
     bio: 'Blending traditional recipes with modern techniques.',
-    years_of_experience: 10,
+    specialties: ['Contemporary African'],
+    experience_years: 10,
+    cuisine_types: ['Contemporary African'],
+    average_rating: 4.9,
+    total_bookings: 85,
+    total_reviews: 32,
+    is_verified: true,
+    profile_picture: null,
+    cover_photo: null,
   },
   {
     id: 3,
@@ -809,12 +825,18 @@ export const mockChefs: Chef[] = [
       id: 3,
       email: 'omondi@example.com',
       full_name: 'Chef Omondi',
-      username: 'chefomondi'
+      phone: '+254734567890'
     },
-    specialties: ['BBQ & Grills'],
-    average_rating: 4.7,
     bio: 'Master of the grill, specializing in nyama choma.',
-    years_of_experience: 12,
+    specialties: ['BBQ & Grills'],
+    experience_years: 12,
+    cuisine_types: ['BBQ'],
+    average_rating: 4.7,
+    total_bookings: 95,
+    total_reviews: 38,
+    is_verified: true,
+    profile_picture: null,
+    cover_photo: null,
   },
 ];
 

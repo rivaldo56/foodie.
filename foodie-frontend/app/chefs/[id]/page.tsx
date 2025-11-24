@@ -66,9 +66,9 @@ export default function ChefDetailPage() {
           <div className="flex flex-col md:flex-row gap-8">
             <div className="flex-shrink-0">
               <div className="relative h-48 w-48 rounded-full overflow-hidden border-4 border-white shadow-lg">
-                {chef.profile_image ? (
+                {chef.profile_picture ? (
                   <Image
-                    src={chef.profile_image}
+                    src={chef.profile_picture}
                     alt={chef.user?.full_name || 'Chef'}
                     fill
                     className="object-cover"
@@ -98,10 +98,10 @@ export default function ChefDetailPage() {
                   <span className="text-2xl font-bold text-gray-800">{(chef.average_rating || 0).toFixed(1)}</span>
                 </div>
 
-                {chef.years_of_experience && (
-                  <div className="text-gray-600">
-                    <span className="font-semibold">{chef.years_of_experience}</span> years of experience
-                  </div>
+                {chef.experience_years && (
+                  <p>
+                    <span className="font-semibold">{chef.experience_years}</span> years of experience
+                  </p>
                 )}
               </div>
 

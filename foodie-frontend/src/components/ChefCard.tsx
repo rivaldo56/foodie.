@@ -20,7 +20,7 @@ export default function ChefCard({ chef, matchScore }: ChefCardProps) {
   const router = useRouter();
   const displayName = chef.user?.full_name || `Chef #${chef.id}`;
   const match = matchScore ?? stableScore(`chef-${chef.id}`, 90, 97);
-  const years = chef.years_of_experience ? `${chef.years_of_experience} yrs exp.` : 'Premium chef';
+  const years = chef.experience_years ? `${chef.experience_years} yrs exp.` : 'Premium chef';
   const location = chef.city && chef.state ? `${chef.city}, ${chef.state}` : 'Nairobi, Kenya';
 
   const [isFavorited, setIsFavorited] = useState(false);
@@ -95,9 +95,9 @@ export default function ChefCard({ chef, matchScore }: ChefCardProps) {
         <article className="gradient-border rounded-3xl overflow-hidden hover-glow transition-all duration-300">
           <div className="bg-surface-elevated rounded-[23px] overflow-hidden soft-border">
             <div className="relative h-56">
-              {chef.profile_image ? (
+              {chef.profile_picture ? (
                 <Image
-                  src={chef.profile_image}
+                  src={chef.profile_picture}
                   alt={displayName}
                   fill
                   className="object-cover"

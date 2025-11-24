@@ -13,7 +13,7 @@ interface ChefRecommendationCardProps {
             full_name: string;
         };
         name?: string;
-        profile_image?: string;
+        profile_picture?: string;
         specialties?: string[];
         average_rating?: number;
         city?: string;
@@ -57,9 +57,9 @@ export default function ChefRecommendationCard({ chef, matchScore }: ChefRecomme
         <Link href={`/chefs/${chef.id}`} className="group block flex-shrink-0 w-[280px]">
             <article className="rounded-2xl overflow-hidden bg-white/5 border border-white/10 hover:border-orange-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-orange-500/20">
                 <div className="relative h-48">
-                    {chef.profile_image ? (
+                    {chef.profile_picture ? (
                         <Image
-                            src={chef.profile_image}
+                            src={chef.profile_picture}
                             alt={displayName}
                             fill
                             className="object-cover"
