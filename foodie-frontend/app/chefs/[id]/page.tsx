@@ -95,7 +95,7 @@ export default function ChefDetailPage() {
               <div className="flex items-center space-x-6 mb-6 justify-center md:justify-start">
                 <div className="flex items-center space-x-2">
                   <span className="text-yellow-500 text-2xl">⭐</span>
-                  <span className="text-2xl font-bold text-gray-800">{(chef.average_rating || 0).toFixed(1)}</span>
+                  <span className="text-2xl font-bold text-gray-800">{(Number(chef.average_rating) || 0).toFixed(1)}</span>
                 </div>
 
                 {chef.experience_years && (
