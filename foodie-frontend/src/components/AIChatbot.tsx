@@ -151,15 +151,15 @@ export default function AIChatbot() {
             {!isOpen && (
                 <button
                     onClick={() => setIsOpen(true)}
-                    className="fixed bottom-6 right-6 z-50 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-accent to-accent-strong shadow-glow transition hover:scale-110"
+                    className="fixed bottom-20 right-4 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-accent to-accent-strong shadow-glow transition hover:scale-110 md:bottom-6 md:right-6 md:h-16 md:w-16"
                 >
-                    <Sparkles className="h-7 w-7 text-white" />
+                    <Sparkles className="h-6 w-6 text-white md:h-7 md:w-7" />
                 </button>
             )}
 
             {/* Chat Window */}
             {isOpen && (
-                <div className="fixed bottom-6 right-6 z-50 flex h-[600px] w-96 flex-col rounded-3xl border border-white/10 bg-gradient-to-br from-[#1a0f0f] to-[#0f0c0a] shadow-2xl">
+                <div className="fixed bottom-16 left-0 right-0 z-40 mx-auto flex h-[500px] w-full max-w-[95%] flex-col rounded-3xl border border-white/10 bg-gradient-to-br from-[#1a0f0f] to-[#0f0c0a] shadow-2xl md:bottom-6 md:left-auto md:right-6 md:h-[600px] md:w-96 md:max-w-none">
                     {/* Header */}
                     <div className="flex items-center justify-between rounded-t-3xl border-b border-white/10 bg-gradient-to-r from-accent/20 to-accent-strong/20 p-4">
                         <div className="flex items-center gap-3">

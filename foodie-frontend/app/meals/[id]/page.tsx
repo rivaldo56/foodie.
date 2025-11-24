@@ -11,6 +11,7 @@ import ReviewCard from '@/components/ReviewCard';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import BottomDock from '@/components/BottomDock';
 import ChatAssistantFab from '@/components/ChatAssistantFab';
+import BackButton from '@/components/BackButton';
 import { Clock, Users, Flame, Info, ChevronLeft, Minus, Plus, ShoppingBag, Star, Utensils, MapPin, Sparkles, Timer } from 'lucide-react';
 
 export default function MealDetailPage() {
@@ -96,7 +97,10 @@ export default function MealDetailPage() {
 
   return (
     <div className="min-h-screen pb-32">
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 py-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+        <BackButton label="Back" />
+      </div>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 py-6">
         <header className="space-y-4">
           <p className="inline-flex items-center gap-2 text-sm font-semibold text-accent uppercase tracking-[0.35em]">
             <Sparkles className="h-4 w-4" />

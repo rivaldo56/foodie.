@@ -41,7 +41,7 @@ class ChatbotMessageView(generics.CreateAPIView):
         # Save user message
         user_msg = ChatMessage.objects.create(
             session=session,
-            role='user',
+            sender='user',
             content=user_message
         )
         
@@ -60,9 +60,9 @@ class ChatbotMessageView(generics.CreateAPIView):
             # Save AI response
             ai_msg = ChatMessage.objects.create(
                 session=session,
-                role='assistant',
+                sender='ai',
                 content=result['response'],
-                metadata={
+                message_metadata={
                     'intent': result.get('intent'),
                     'booking_data': result.get('booking_data')
                 }

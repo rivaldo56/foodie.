@@ -106,11 +106,18 @@ class ChatMessage(models.Model):
     objects = ChatMessageQuerySet.as_manager()
     
     def __init__(self, *args, **kwargs):
-        # Support message/message_type as aliases for content/sender in object creation
+        # Support message/message_type/role as aliases for content/sender in object creation
         if 'message' in kwargs:
             kwargs['content'] = kwargs.pop('message')
         if 'message_type' in kwargs:
             kwargs['sender'] = kwargs.pop('message_type')
+        if 'role' in kwargs:
+            role_value = kwargs.pop('role')
+            # Map 'assistant' to 'ai' for sender choices
+            kwargs['sender'] = 'ai' if role_value == 'assistant' else role_value
+        # Support metadata as alias for message_metadata
+        if 'metadata' in kwargs:
+            kwargs['message_metadata'] = kwargs.pop('metadata')
         super().__init__(*args, **kwargs)
     
     # AI metadata
