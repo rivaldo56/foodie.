@@ -39,10 +39,23 @@ if not DEBUG:
     ALLOWED_HOSTS.append('.onrender.com')  # This allows any subdomain of onrender.com
 
 # CSRF Settings for frontend
-CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:3000',
-    'http://127.0.0.1:3000',
-]
+CSRF_TRUSTED_ORIGINS = config(
+    'CSRF_TRUSTED_ORIGINS',
+    default='http://localhost:3000,http://127.0.0.1:3000,https://foodie-v2.vercel.app'
+).split(',')
+
+# Strip whitespace
+CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in CSRF_TRUSTED_ORIGINS]
+
+# Add Vercel domain in production
+if not DEBUG:
+    vercel_urls = [
+        'https://foodie-v2.vercel.app',
+        'https://foodie-wtts.onrender.com',
+    ]
+    for url in vercel_urls:
+        if url not in CSRF_TRUSTED_ORIGINS:
+            CSRF_TRUSTED_ORIGINS.append(url)
 
 
 
@@ -190,8 +203,37 @@ REST_FRAMEWORK = {
 }
 
 # CORS Settings
-CORS_ALLOWED_ORIGINS = config('CORS_ALLOWED_ORIGINS', default='http://localhost:3000').split(',')
+CORS_ALLOWED_ORIGINS = config(
+    'CORS_ALLOWED_ORIGINS',
+    default='http://localhost:3000,http://127.0.0.1:3000,https://foodie-v2.vercel.app'
+).split(',')
+
+# Strip whitespace from each origin
+CORS_ALLOWED_ORIGINS = [origin.strip() for origin in CORS_ALLOWED_ORIGINS]
+
+# Add Vercel domain in production
+if not DEBUG:
+    # Add your actual Vercel deployments
+    vercel_urls = [
+        'https://foodie-v2.vercel.app',
+        'https://foodie-v2-*.vercel.app',  # Preview deployments
+    ]
+    for url in vercel_urls:
+        if url not in CORS_ALLOWED_ORIGINS:
+            CORS_ALLOWED_ORIGINS.append(url)
+
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
 
 # Media Files
 MEDIA_URL = '/media/'
