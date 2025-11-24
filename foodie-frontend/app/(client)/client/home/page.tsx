@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { getPersonalizedFeed, trackInteraction } from '@/lib/api/recommendations';
 import type { ChefRecommendation } from '@/lib/api/recommendations';
-import ChefRecommendationCard from '@/components/ChefRecommendationCard';
+import ChefCard from '@/components/ChefCard';
 import { getMenuItems, type MenuItem } from '@/lib/api';
 import MenuItemCard from '@/components/MenuItemCard';
 import { Search, Sparkles } from 'lucide-react';
@@ -150,11 +150,12 @@ export default function ClientHomePage() {
           <div className="relative">
             <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide snap-x snap-mandatory">
               {recommendations.map((rec) => (
-                <ChefRecommendationCard
-                  key={rec.chef.id}
-                  chef={rec.chef}
-                  matchScore={rec.recommendation_score}
-                />
+                <div key={rec.chef.id} className="w-[300px] flex-shrink-0">
+                  <ChefCard
+                    chef={rec.chef}
+                    matchScore={rec.recommendation_score}
+                  />
+                </div>
               ))}
             </div>
           </div>

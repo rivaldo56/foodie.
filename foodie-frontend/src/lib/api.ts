@@ -790,7 +790,7 @@ export const mockChefs: Chef[] = [
       phone: '+254712345678'
     },
     bio: 'Passionate about coastal flavors with 15 years of experience.',
-    specialties: ['Swahili Cuisine'],
+    specialties: ['Swahili Cuisine', 'Seafood', 'Spices'],
     experience_years: 15,
     cuisine_types: ['Swahili'],
     average_rating: 4.8,
@@ -809,7 +809,7 @@ export const mockChefs: Chef[] = [
       phone: '+254723456789'
     },
     bio: 'Blending traditional recipes with modern techniques.',
-    specialties: ['Contemporary African'],
+    specialties: ['Contemporary African', 'Fusion', 'Fine Dining'],
     experience_years: 10,
     cuisine_types: ['Contemporary African'],
     average_rating: 4.9,
@@ -828,7 +828,7 @@ export const mockChefs: Chef[] = [
       phone: '+254734567890'
     },
     bio: 'Master of the grill, specializing in nyama choma.',
-    specialties: ['BBQ & Grills'],
+    specialties: ['BBQ & Grills', 'Nyama Choma', 'Marinades'],
     experience_years: 12,
     cuisine_types: ['BBQ'],
     average_rating: 4.7,

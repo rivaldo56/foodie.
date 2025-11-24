@@ -164,7 +164,7 @@ export default function ChefProfileModal({
                                                 Top Rated
                                             </span>
                                         )}
-                                        {chef.total_bookings && chef.total_bookings > 50 && (
+                                        {(chef.total_bookings || 0) > 50 && (
                                             <span className="px-4 py-2 rounded-xl bg-surface text-muted-strong text-sm font-medium border border-white/5">
                                                 Popular Choice
                                             </span>
