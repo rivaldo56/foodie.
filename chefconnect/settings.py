@@ -29,9 +29,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-ounlx2o1ag8bx!n%%t@1tz5m!@s+u#yu9%#47(y4cb2g+lx#xn')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=True, cast=bool)
+DEBUG = config('DEBUG', default=False, cast=bool)
 
+# Parse ALLOWED_HOSTS from environment variable
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1').split(',')
+
+# Add Render domain if not in DEBUG mode
+if not DEBUG:
+    ALLOWED_HOSTS.append('.onrender.com')  # This allows any subdomain of onrender.com
 
 # CSRF Settings for frontend
 CSRF_TRUSTED_ORIGINS = [
