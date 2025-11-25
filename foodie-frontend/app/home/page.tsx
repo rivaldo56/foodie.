@@ -137,10 +137,6 @@ function FeedCard({ item, onCta }: { item: FeedItem; onCta: (item: FeedItem) => 
           unoptimized
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/0" />
-        <div className="absolute top-4 left-4 inline-flex items-center gap-2 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-surface">
-          <Flame className="h-3 w-3" />
-          {item.match}% Match
-        </div>
         <button
           type="button"
           className="absolute top-4 right-4 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/80 text-surface transition hover:bg-white"
@@ -171,11 +167,7 @@ function FeedCard({ item, onCta }: { item: FeedItem; onCta: (item: FeedItem) => 
 
         <p className="text-xs text-white/60 line-clamp-2">{item.highlight}</p>
 
-        <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
-          <div>
-            <p className="font-semibold">${item.price}</p>
-            <p className="text-xs text-white/50">per guest · 4 seats left</p>
-          </div>
+        <div className="flex flex-wrap items-center justify-end gap-3 text-sm">
           <button
             type="button"
             onClick={() => onCta(item)}
@@ -220,12 +212,7 @@ export default function HomeFeedPage() {
 
   const handleCta = useCallback(
     (item: FeedItem) => {
-      if (item.kind === 'chef') {
-        router.push(`/chefs/${item.slug}`);
-        return;
-      }
-
-      router.push(`/meals/${item.slug}`);
+      router.push('/register');
     },
     [router]
   );
@@ -245,7 +232,7 @@ export default function HomeFeedPage() {
 
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-[#120b0b] via-[#1a1412] to-[#0b0908] text-white">
-      <header className="sticky top-0 z-20 border-b border-white/5 bg-black/40 backdrop-blur-xl">
+      <header className="border-b border-white/5 bg-black/40 backdrop-blur-xl">
         <div className="mx-auto max-w-6xl px-6 py-6">
           <p className="text-xs uppercase tracking-[0.35em] text-accent/80">Welcome back</p>
           <h1 className="mt-3 text-3xl font-semibold sm:text-4xl">

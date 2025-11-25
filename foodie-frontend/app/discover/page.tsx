@@ -33,7 +33,15 @@ export default function DiscoverPage() {
 
       try {
         const response = await getDiscoverFeed({ limit: 12 });
-        const data = response.data && Array.isArray(response.data) ? response.data : [];
+        let data: Meal[] = [];
+
+        if (response.data) {
+          if (Array.isArray(response.data)) {
+            data = response.data;
+          } else if ('results' in (response.data as any)) {
+            data = (response.data as any).results;
+          }
+        }
 
         if (!isMounted) return;
 
@@ -139,11 +147,10 @@ export default function DiscoverPage() {
                   key={value}
                   type="button"
                   onClick={() => setSelectedCategory(value)}
-                  className={`inline-flex items-center gap-2 whitespace-nowrap rounded-full border px-4 py-2 text-sm transition ${
-                    active
-                      ? 'border-accent bg-accent text-white shadow-glow'
-                      : 'border-surface bg-surface-highlight text-muted hover:text-white'
-                  }`}
+                  className={`inline-flex items-center gap-2 whitespace-nowrap rounded-full border px-4 py-2 text-sm transition ${active
+                    ? 'border-accent bg-accent text-white shadow-glow'
+                    : 'border-surface bg-surface-highlight text-muted hover:text-white'
+                    }`}
                 >
                   <Icon className="h-4 w-4" />
                   {label}
@@ -173,7 +180,13 @@ export default function DiscoverPage() {
           ) : filteredMeals.length ? (
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
               {filteredMeals.map((meal) => (
-                <MealCard key={meal.id} meal={meal} />
+                <MealCard
+                  key={meal.id}
+                  meal={meal}
+                  hidePrice={true}
+                  hideChef={true}
+                  customHref="/login"
+                />
               ))}
             </div>
           ) : (

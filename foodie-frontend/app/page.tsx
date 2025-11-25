@@ -221,9 +221,10 @@ export default function LandingPage() {
 
           <div className="mt-8 sm:mt-10 md:mt-12 space-y-3 sm:space-y-4 columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-3 sm:gap-4 [column-fill:_balance]"><div className="contents">
             {DISCOVERY_IMAGES.map(({ src, title, subtitle, trending }, index) => (
-              <article
+              <Link
+                href="/register"
                 key={`${title}-${index}`}
-                className="group relative mb-3 sm:mb-4 break-inside-avoid rounded-2xl sm:rounded-3xl lg:rounded-4xl overflow-hidden border border-white/10 bg-white/5 backdrop-blur-sm shadow-glow transition hover:border-accent/40 hover:shadow-accent/20"
+                className="group relative mb-3 sm:mb-4 break-inside-avoid block rounded-2xl sm:rounded-3xl lg:rounded-4xl overflow-hidden border border-white/10 bg-white/5 backdrop-blur-sm shadow-glow transition hover:border-accent/40 hover:shadow-accent/20"
               >
                 <div className="relative">
                   <Image
@@ -236,13 +237,9 @@ export default function LandingPage() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20 opacity-80 transition group-hover:opacity-100" />
 
-                  <button
-                    type="button"
-                    className="absolute top-2 left-2 sm:top-3 sm:left-3 md:top-4 md:left-4 inline-flex h-7 w-7 sm:h-8 sm:w-8 md:h-9 md:w-9 items-center justify-center rounded-full bg-white/70 text-surface transition hover:bg-white"
-                    aria-label="Save dish"
-                  >
+                  <div className="absolute top-2 left-2 sm:top-3 sm:left-3 md:top-4 md:left-4 inline-flex h-7 w-7 sm:h-8 sm:w-8 md:h-9 md:w-9 items-center justify-center rounded-full bg-white/70 text-surface transition hover:bg-white">
                     <Heart className="h-3 w-3 sm:h-4 sm:w-4" />
-                  </button>
+                  </div>
 
                   {trending && (
                     <span className="absolute top-2 right-2 sm:top-3 sm:right-3 md:top-4 md:right-4 inline-flex items-center gap-1 rounded-full bg-accent px-2 sm:px-2.5 md:px-3 py-0.5 sm:py-1 text-[10px] sm:text-xs font-semibold text-white shadow-glow">
@@ -256,7 +253,7 @@ export default function LandingPage() {
                     <p className="text-[10px] sm:text-xs text-white/70">{subtitle}</p>
                   </div>
                 </div>
-              </article>
+              </Link>
             ))}
           </div></div>
 

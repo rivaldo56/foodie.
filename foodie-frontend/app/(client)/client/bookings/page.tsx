@@ -140,36 +140,36 @@ export default function ClientBookingsPage() {
       )}
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="bg-surface-elevated border border-white/5 rounded-3xl p-8 relative overflow-hidden group">
-          <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
-            <Calendar className="h-32 w-32 text-white" />
+      <div className="grid grid-cols-2 gap-3 sm:gap-4">
+        <div className="bg-surface-elevated border border-white/5 rounded-2xl sm:rounded-3xl p-4 sm:p-8 relative overflow-hidden group">
+          <div className="absolute top-0 right-0 p-4 sm:p-8 opacity-10 group-hover:opacity-20 transition-opacity">
+            <Calendar className="h-16 w-16 sm:h-32 sm:w-32 text-white" />
           </div>
           <div className="relative z-10">
-            <div className="flex items-center justify-between mb-8">
-              <h3 className="text-lg font-medium text-white/70">Upcoming</h3>
-              <div className="p-2 rounded-full bg-white/5">
-                <Calendar className="h-5 w-5 text-white/70" />
+            <div className="flex items-center justify-between mb-4 sm:mb-8">
+              <h3 className="text-sm sm:text-lg font-medium text-white/70">Upcoming</h3>
+              <div className="p-1.5 sm:p-2 rounded-full bg-white/5">
+                <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-white/70" />
               </div>
             </div>
-            <p className="text-5xl font-bold text-white mb-2">{upcomingBookings.length}</p>
-            <p className="text-sm text-white/50">Scheduled events</p>
+            <p className="text-2xl sm:text-5xl font-bold text-white mb-1 sm:mb-2">{upcomingBookings.length}</p>
+            <p className="text-xs sm:text-sm text-white/50">Scheduled events</p>
           </div>
         </div>
 
-        <div className="bg-surface-elevated border border-white/5 rounded-3xl p-8 relative overflow-hidden group">
-          <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
-            <CheckCircle className="h-32 w-32 text-white" />
+        <div className="bg-surface-elevated border border-white/5 rounded-2xl sm:rounded-3xl p-4 sm:p-8 relative overflow-hidden group">
+          <div className="absolute top-0 right-0 p-4 sm:p-8 opacity-10 group-hover:opacity-20 transition-opacity">
+            <CheckCircle className="h-16 w-16 sm:h-32 sm:w-32 text-white" />
           </div>
           <div className="relative z-10">
-            <div className="flex items-center justify-between mb-8">
-              <h3 className="text-lg font-medium text-white/70">Confirmed</h3>
-              <div className="p-2 rounded-full bg-white/5">
-                <CheckCircle className="h-5 w-5 text-white/70" />
+            <div className="flex items-center justify-between mb-4 sm:mb-8">
+              <h3 className="text-sm sm:text-lg font-medium text-white/70">Confirmed</h3>
+              <div className="p-1.5 sm:p-2 rounded-full bg-white/5">
+                <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-white/70" />
               </div>
             </div>
-            <p className="text-5xl font-bold text-white mb-2">{confirmedBookings.length}</p>
-            <p className="text-sm text-white/50">Ready to go</p>
+            <p className="text-2xl sm:text-5xl font-bold text-white mb-1 sm:mb-2">{confirmedBookings.length}</p>
+            <p className="text-xs sm:text-sm text-white/50">Ready to go</p>
           </div>
         </div>
       </div>
@@ -237,20 +237,20 @@ export default function ClientBookingsPage() {
                     key={booking.id}
                     className="bg-surface-elevated border border-white/5 rounded-3xl p-6 space-y-6 hover:border-white/10 transition-all group"
                   >
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-center gap-4">
-                        <div className="h-full w-full bg-surface-highlight flex items-center justify-center text-muted">
-                          <ChefHat className="h-8 w-8" />
+                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                      <div className="flex items-center gap-3 sm:gap-4">
+                        <div className="h-10 w-10 sm:h-full sm:w-full bg-surface-highlight flex items-center justify-center text-muted rounded-full sm:rounded-none">
+                          <ChefHat className="h-5 w-5 sm:h-8 sm:w-8" />
                         </div>
                         <div>
-                          <h3 className="text-lg font-semibold text-white">
+                          <h3 className="text-base sm:text-lg font-semibold text-white">
                             {typeof booking.chef === 'object' && booking.chef?.user?.full_name
                               ? booking.chef.user.full_name
                               : 'Chef'}
                           </h3>
-                          <div className="flex items-center gap-2 mt-1">
+                          <div className="flex flex-wrap items-center gap-2 mt-1">
                             <span
-                              className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(
+                              className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-medium border ${getStatusColor(
                                 booking.status
                               )}`}
                             >
@@ -258,18 +258,21 @@ export default function ClientBookingsPage() {
                               {booking.status.replace('_', ' ').toUpperCase()}
                             </span>
                             {booking.confirmation_code && (
-                              <span className="text-xs text-white/40 font-mono">
+                              <span className="text-[10px] sm:text-xs text-white/40 font-mono">
                                 #{booking.confirmation_code}
                               </span>
                             )}
                           </div>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <p className="text-xl font-bold text-white">
-                          KES {booking.total_amount?.toFixed(2) || booking.base_price?.toFixed(2) || '0.00'}
-                        </p>
-                        <p className="text-xs text-white/40 mt-1">Total amount</p>
+                      <div className="flex items-center justify-between sm:block sm:text-right pl-14 sm:pl-0">
+                        <p className="text-xs text-white/40 sm:hidden">Total</p>
+                        <div>
+                          <p className="text-lg sm:text-xl font-bold text-white">
+                            KES {booking.total_amount?.toFixed(2) || booking.base_price?.toFixed(2) || '0.00'}
+                          </p>
+                          <p className="hidden sm:block text-xs text-white/40 mt-1">Total amount</p>
+                        </div>
                       </div>
                     </div>
 
