@@ -92,63 +92,63 @@ export default function ChefCard({ chef, matchScore }: ChefCardProps) {
           }
         }}
       >
-        <article className="gradient-border rounded-3xl overflow-hidden hover-glow transition-all duration-300">
-          <div className="bg-surface-elevated rounded-[23px] overflow-hidden soft-border">
-            <div className="relative h-56">
+        <article className="gradient-border rounded-2xl sm:rounded-3xl overflow-hidden hover-glow transition-all duration-300">
+          <div className="bg-surface-elevated rounded-[18px] sm:rounded-[23px] overflow-hidden soft-border">
+            <div className="relative h-40 sm:h-48 md:h-52 lg:h-56">
               {chef.profile_picture ? (
                 <Image
                   src={chef.profile_picture}
                   alt={displayName}
                   fill
                   className="object-cover"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
                   priority
                 />
               ) : (
                 <div className="h-full w-full bg-surface flex items-center justify-center text-muted">
-                  <ChefHat className="h-16 w-16" />
+                  <ChefHat className="h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16" />
                 </div>
               )}
 
-              <div className="absolute top-4 left-4 badge-accent px-3 py-1 text-xs font-semibold rounded-full">
+              <div className="absolute top-2 left-2 sm:top-3 sm:left-3 md:top-4 md:left-4 badge-accent px-2 sm:px-2.5 md:px-3 py-0.5 sm:py-1 text-[10px] sm:text-xs font-semibold rounded-full">
                 ~ {match}% Match
               </div>
 
               <button
                 onClick={handleToggleFavorite}
-                className="absolute top-4 right-4 p-2 rounded-full bg-black/20 backdrop-blur-sm hover:bg-black/40 transition-colors z-10"
+                className="absolute top-2 right-2 sm:top-3 sm:right-3 md:top-4 md:right-4 p-1.5 sm:p-2 rounded-full bg-black/20 backdrop-blur-sm hover:bg-black/40 transition-colors z-10"
                 aria-label={isFavorited ? "Remove from favorites" : "Add to favorites"}
               >
                 <Heart
-                  className={`h-5 w-5 transition-colors ${isFavorited ? "fill-red-500 text-red-500" : "text-white"}`}
+                  className={`h-4 w-4 sm:h-5 sm:w-5 transition-colors ${isFavorited ? "fill-red-500 text-red-500" : "text-white"}`}
                 />
               </button>
             </div>
 
-            <div className="p-5 space-y-4">
+            <div className="p-3 sm:p-4 md:p-5 space-y-3 sm:space-y-4">
               <header className="space-y-1">
-                <h3 className="text-lg font-semibold text-white tracking-tight">
+                <h3 className="text-base sm:text-lg font-semibold text-white tracking-tight line-clamp-1">
                   {displayName}
                 </h3>
-                <p className="text-sm text-muted">
+                <p className="text-xs sm:text-sm text-muted line-clamp-1">
                   {chef.specialties?.[0] || 'Signature cuisine expert'} · {years}
                 </p>
               </header>
 
-              <div className="flex items-center gap-3 text-sm text-muted-strong">
-                <span className="inline-flex items-center gap-1 text-amber-400 font-semibold">
-                  <Star className="h-4 w-4" fill="#fbbf24" />
+              <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm text-muted-strong flex-wrap">
+                <span className="inline-flex items-center gap-1 text-amber-400 font-semibold whitespace-nowrap">
+                  <Star className="h-3 w-3 sm:h-4 sm:w-4" fill="#fbbf24" />
                   {(Number(chef.average_rating) || 4.8).toFixed(1)}
                 </span>
-                <span className="h-1 w-1 rounded-full bg-muted/40" aria-hidden />
-                <span className="inline-flex items-center gap-1">
-                  <MapPin className="h-4 w-4 text-accent" />
-                  {location}
+                <span className="h-1 w-1 rounded-full bg-muted/40 flex-shrink-0" aria-hidden />
+                <span className="inline-flex items-center gap-1 truncate">
+                  <MapPin className="h-3 w-3 sm:h-4 sm:w-4 text-accent flex-shrink-0" />
+                  <span className="truncate">{location}</span>
                 </span>
               </div>
 
               {chef.bio && (
-                <p className="text-sm text-muted line-clamp-2">
+                <p className="text-xs sm:text-sm text-muted line-clamp-2 leading-relaxed">
                   {chef.bio}
                 </p>
               )}

@@ -37,9 +37,8 @@ export default function ChefProfileModal({
     return (
         <AnimatePresence>
             {isOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
-                    {/* Backdrop */}
-                    <motion.div
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 md:p-6">
+                    {/* Backdrop */}\n                    <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
@@ -54,12 +53,12 @@ export default function ChefProfileModal({
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: 20 }}
                         transition={{ type: 'spring', duration: 0.5, bounce: 0.3 }}
-                        className="relative w-full max-w-2xl max-h-[90vh] bg-surface-elevated rounded-3xl overflow-hidden shadow-2xl border border-white/10 flex flex-col"
+                        className="relative w-full max-w-2xl max-h-[90vh] bg-surface-elevated rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border border-white/10 flex flex-col"
                     >
                         {/* Close Button */}
                         <button
                             onClick={onClose}
-                            className="absolute top-4 right-4 z-10 p-2 rounded-full bg-black/40 hover:bg-black/60 transition-colors text-white/80 hover:text-white"
+                            className="absolute top-3 right-3 sm:top-4 sm:right-4 z-10 p-2 rounded-full bg-black/40 hover:bg-black/60 transition-colors text-white/80 hover:text-white"
                             aria-label="Close"
                         >
                             <X className="h-5 w-5" />
@@ -68,10 +67,10 @@ export default function ChefProfileModal({
                         {/* Scrollable Content */}
                         <div className="overflow-y-auto flex-1 scrollbar-hide">
                             {/* Header Section */}
-                            <div className="p-6 sm:p-8 space-y-6">
-                                <div className="flex flex-col sm:flex-row items-start gap-6">
+                            <div className="p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6">
+                                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6">
                                     {/* Profile Image */}
-                                    <div className="relative h-24 w-24 sm:h-32 sm:w-32 rounded-full overflow-hidden flex-shrink-0 border-4 border-accent/20 shadow-glow">
+                                    <div className="relative h-20 w-20 sm:h-24 sm:w-24 md:h-32 md:w-32 rounded-full overflow-hidden flex-shrink-0 border-4 border-accent/20 shadow-glow">
                                         {chef.profile_picture ? (
                                             <Image
                                                 src={chef.profile_picture}

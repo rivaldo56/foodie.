@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { getPersonalizedFeed, trackInteraction } from '@/lib/api/recommendations';
@@ -8,7 +8,7 @@ import type { ChefRecommendation } from '@/lib/api/recommendations';
 import ChefCard from '@/components/ChefCard';
 import { getMenuItems, type MenuItem } from '@/lib/api';
 import MenuItemCard from '@/components/MenuItemCard';
-import { Search, Sparkles } from 'lucide-react';
+import { Search, Sparkles, Loader2 } from 'lucide-react';
 
 export default function ClientHomePage() {
   const router = useRouter();
@@ -20,6 +20,12 @@ export default function ClientHomePage() {
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
 
+  // Infinite scroll states
+  const [menuPage, setMenuPage] = useState(1);
+  const [hasMoreMenuItems, setHasMoreMenuItems] = useState(true);
+  const [loadingMoreMenuItems, setLoadingMoreMenuItems] = useState(false);
+  const observerTarget = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     if (!loading && !isAuthenticated) {
       router.replace('/auth');
@@ -28,9 +34,27 @@ export default function ClientHomePage() {
 
     if (isAuthenticated) {
       loadRecommendations();
-      loadMenuItems();
+      loadMenuItems(1, true);
     }
   }, [loading, isAuthenticated, router]);
+
+  // Infinite scroll observer
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMoreMenuItems && !loadingMoreMenuItems) {
+          loadMenuItems(menuPage + 1, false);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current);
+    }
+
+    return () => observer.disconnect();
+  }, [hasMoreMenuItems, loadingMoreMenuItems, menuPage]);
 
   const loadRecommendations = async () => {
     try {
@@ -49,10 +73,16 @@ export default function ClientHomePage() {
     }
   };
 
-  const loadMenuItems = async () => {
+  const loadMenuItems = async (page: number, isInitial: boolean) => {
     try {
-      setMenuItemsLoading(true);
+      if (isInitial) {
+        setMenuItemsLoading(true);
+      } else {
+        setLoadingMoreMenuItems(true);
+      }
+
       const response = await getMenuItems();
+
       if (response.data) {
         // Handle paginated response
         let items: MenuItem[] = [];
@@ -61,12 +91,30 @@ export default function ClientHomePage() {
         } else if (response.data && 'results' in response.data) {
           items = (response.data as any).results;
         }
-        setMenuItems(items.slice(0, 6)); // Show only first 6
+
+        // Simulate pagination by slicing the array
+        const pageSize = 8;
+        const start = (page - 1) * pageSize;
+        const end = start + pageSize;
+        const paginatedItems = items.slice(start, end);
+
+        if (isInitial) {
+          setMenuItems(paginatedItems);
+        } else {
+          setMenuItems(prev => [...prev, ...paginatedItems]);
+        }
+
+        setMenuPage(page);
+        setHasMoreMenuItems(end < items.length);
       }
     } catch (err) {
       console.error('[Load Menu Items Error]', err);
     } finally {
-      setMenuItemsLoading(false);
+      if (isInitial) {
+        setMenuItemsLoading(false);
+      } else {
+        setLoadingMoreMenuItems(false);
+      }
     }
   };
 
@@ -163,42 +211,53 @@ export default function ClientHomePage() {
       </section>
 
       {/* Featured Dishes */}
-      <section className="space-y-4">
+      <section className="space-y-4 sm:space-y-5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <svg className="h-6 w-6 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="h-5 w-5 sm:h-6 sm:w-6 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
             </svg>
-            <h2 className="text-2xl font-semibold text-white">Featured Dishes</h2>
+            <h2 className="text-xl sm:text-2xl font-semibold text-white">Featured Dishes</h2>
           </div>
           <button
             onClick={() => router.push('/client/discover')}
-            className="text-orange-500 hover:text-orange-400 transition font-medium"
+            className="text-sm sm:text-base text-orange-500 hover:text-orange-400 transition font-medium"
           >
             View All →
           </button>
         </div>
 
         {menuItemsLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-pulse">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="h-80 bg-white/5 rounded-3xl" />
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5 lg:gap-6 animate-pulse">
+            {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+              <div key={i} className="h-80 bg-white/5 rounded-2xl sm:rounded-3xl" />
             ))}
           </div>
         ) : menuItems.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
             {menuItems.map((item) => (
               <MenuItemCard key={item.id} item={item} />
             ))}
           </div>
         ) : (
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-12 text-center">
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-8 sm:p-12 text-center">
             <p className="text-white/70 mb-4">No dishes available yet</p>
             <p className="text-sm text-white/50">
               Check back soon for amazing culinary creations
             </p>
           </div>
         )}
+
+        {/* Infinite Scroll Loading Indicator */}
+        {loadingMoreMenuItems && (
+          <div className="flex justify-center items-center py-8">
+            <Loader2 className="h-8 w-8 text-orange-500 animate-spin" />
+            <span className="ml-3 text-white/70">Loading more dishes...</span>
+          </div>
+        )}
+
+        {/* Infinite Scroll Observer Target */}
+        <div ref={observerTarget} className="h-4" />
       </section>
     </div>
   );
