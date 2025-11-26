@@ -13,13 +13,11 @@ const MOCK_MEALS: Meal[] = [
         description: 'Creamy arborio rice with wild mushrooms, black truffle oil, and aged parmesan.',
         price: 2500,
         image: 'https://images.unsplash.com/photo-1476124369491-e7addf5db371?auto=format&fit=crop&w=800&q=80',
-        chef: 'Marco Pierre',
+        chef: 1,
+        chef_name: 'Marco Pierre',
         rating: 4.8,
         category: 'Italian',
-        available: true,
-        ingredients: ['Rice', 'Mushrooms', 'Truffle Oil'],
-        preparation_time: 30,
-        calories: 450
+
     },
     {
         id: 2,
@@ -27,13 +25,11 @@ const MOCK_MEALS: Meal[] = [
         description: 'Fresh Atlantic salmon fillet with asparagus and lemon butter sauce.',
         price: 3200,
         image: 'https://images.unsplash.com/photo-1467003909585-2f8a7270028d?auto=format&fit=crop&w=800&q=80',
-        chef: 'Julia Child',
+        chef: 2,
+        chef_name: 'Julia Child',
         rating: 4.9,
         category: 'Seafood',
-        available: true,
-        ingredients: ['Salmon', 'Asparagus', 'Lemon'],
-        preparation_time: 25,
-        calories: 380
+
     },
     {
         id: 3,
@@ -41,13 +37,10 @@ const MOCK_MEALS: Meal[] = [
         description: 'Premium wagyu beef patty with caramelized onions, gruyere cheese, and brioche bun.',
         price: 1800,
         image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=80',
-        chef: 'Gordon Ramsay',
+        chef: 3,
+        chef_name: 'Gordon Ramsay',
         rating: 4.7,
         category: 'American',
-        available: true,
-        ingredients: ['Beef', 'Cheese', 'Bun'],
-        preparation_time: 20,
-        calories: 650
     },
     {
         id: 4,
@@ -55,13 +48,9 @@ const MOCK_MEALS: Meal[] = [
         description: 'Assorted fresh nigiri and maki rolls with wasabi and pickled ginger.',
         price: 4500,
         image: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=800&q=80',
-        chef: 'Jiro Ono',
-        rating: 5.0,
+        chef: 4,
+        chef_name: 'Jiro Ono',
         category: 'Japanese',
-        available: true,
-        ingredients: ['Rice', 'Fish', 'Seaweed'],
-        preparation_time: 40,
-        calories: 320
     }
 ];
 
