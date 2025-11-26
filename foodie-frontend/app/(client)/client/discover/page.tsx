@@ -7,6 +7,8 @@ import { getChefs, getMenuItems } from '@/lib/api';
 import type { Chef, MenuItem } from '@/lib/api';
 import ChefCard from '@/components/ChefCard';
 import MenuItemCard from '@/components/MenuItemCard';
+import MealDetailsView from '@/components/MealDetailsView';
+import { Meal } from '@/lib/api';
 import CategoryButton from '@/components/CategoryButton';
 import { Search, SlidersHorizontal, TrendingUp, Flame, ChefHat, Award, Wand2, Sparkles, Utensils, Loader2 } from 'lucide-react';
 
@@ -53,6 +55,7 @@ export default function ClientDiscoverPage() {
   const [selectedDishCategory, setSelectedDishCategory] = useState<string | null>(null);
   const [selectedChef, setSelectedChef] = useState<number | null>(null);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 5000]);
+  const [selectedMeal, setSelectedMeal] = useState<Meal | null>(null);
 
   // Infinite scroll states
   const [displayedChefs, setDisplayedChefs] = useState<Chef[]>([]);
@@ -272,6 +275,23 @@ export default function ClientDiscoverPage() {
     setSelectedDishCategory(selectedDishCategory === category ? null : category);
   };
 
+  const handleMealClick = (item: MenuItem) => {
+    // Map MenuItem to Meal
+    const meal: Meal = {
+      id: item.id,
+      name: item.name,
+      description: item.description,
+      price: item.price_per_serving,
+      image: item.image,
+      chef: item.chef,
+      chef_name: item.chef_name,
+      category: item.category,
+      rating: 4.8, // Mock rating as it's not in MenuItem
+      location: 'Nairobi', // Mock location
+    };
+    setSelectedMeal(meal);
+  };
+
   if (loading || dataLoading) {
     return (
       <div className="space-y-6">
@@ -460,7 +480,11 @@ export default function ClientDiscoverPage() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
             {displayedMenuItems.map(item => (
-              <MenuItemCard key={item.id} item={item} />
+              <MenuItemCard
+                key={item.id}
+                item={item}
+                onClick={() => handleMealClick(item)}
+              />
             ))}
           </div>
         )
@@ -476,6 +500,15 @@ export default function ClientDiscoverPage() {
 
       {/* Infinite Scroll Observer Target */}
       <div ref={observerTarget} className="h-4" />
+
+      {/* Meal Details Modal */}
+      {selectedMeal && (
+        <MealDetailsView
+          meal={selectedMeal}
+          isOpen={!!selectedMeal}
+          onClose={() => setSelectedMeal(null)}
+        />
+      )}
     </div>
   );
 }

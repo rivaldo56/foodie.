@@ -8,6 +8,8 @@ import type { ChefRecommendation } from '@/lib/api/recommendations';
 import ChefCard from '@/components/ChefCard';
 import { getMenuItems, type MenuItem } from '@/lib/api';
 import MenuItemCard from '@/components/MenuItemCard';
+import MealDetailsView from '@/components/MealDetailsView';
+import { Meal } from '@/lib/api';
 import { Search, Sparkles, Loader2 } from 'lucide-react';
 
 export default function ClientHomePage() {
@@ -19,6 +21,7 @@ export default function ClientHomePage() {
   const [menuItemsLoading, setMenuItemsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedMeal, setSelectedMeal] = useState<Meal | null>(null);
 
   // Infinite scroll states
   const [menuPage, setMenuPage] = useState(1);
@@ -131,6 +134,23 @@ export default function ClientHomePage() {
     return fullName.split(' ')[0];
   };
 
+  const handleMealClick = (item: MenuItem) => {
+    // Map MenuItem to Meal
+    const meal: Meal = {
+      id: item.id,
+      name: item.name,
+      description: item.description,
+      price: item.price_per_serving,
+      image: item.image,
+      chef: item.chef,
+      chef_name: item.chef_name,
+      category: item.category,
+      rating: 4.8, // Mock rating as it's not in MenuItem
+      location: 'Nairobi', // Mock location
+    };
+    setSelectedMeal(meal);
+  };
+
   if (loading || recommendationsLoading) {
     return (
       <div className="space-y-6">
@@ -236,7 +256,11 @@ export default function ClientHomePage() {
         ) : menuItems.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
             {menuItems.map((item) => (
-              <MenuItemCard key={item.id} item={item} />
+              <MenuItemCard
+                key={item.id}
+                item={item}
+                onClick={() => handleMealClick(item)}
+              />
             ))}
           </div>
         ) : (
@@ -259,6 +283,15 @@ export default function ClientHomePage() {
         {/* Infinite Scroll Observer Target */}
         <div ref={observerTarget} className="h-4" />
       </section>
+
+      {/* Meal Details Modal */}
+      {selectedMeal && (
+        <MealDetailsView
+          meal={selectedMeal}
+          isOpen={!!selectedMeal}
+          onClose={() => setSelectedMeal(null)}
+        />
+      )}
     </div>
   );
 }

@@ -160,6 +160,22 @@ export interface Review {
   created_at: string;
 }
 
+export interface ChefReview {
+  id: number;
+  chef: number;
+  chef_name: string;
+  client: number;
+  client_name: string;
+  booking_id: number;
+  rating: number;
+  comment: string;
+  food_quality?: number;
+  professionalism?: number;
+  punctuality?: number;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface MenuItem {
   id: number;
   chef: number;
@@ -463,6 +479,41 @@ export async function getMealById(id: number): Promise<ApiResponse<Meal>> {
   return apiRequest({ url: `/meals/${id}/` });
 }
 
+export async function getChefMeals(chefId: number): Promise<ApiResponse<Meal[]>> {
+  const response = await apiRequest<{ count: number; results: MenuItem[] } | MenuItem[]>({
+    url: `/bookings/chef/${chefId}/menu-items/`
+  });
+
+  let items: MenuItem[] = [];
+
+  if (response.data) {
+    if (Array.isArray(response.data)) {
+      items = response.data;
+    } else if ('results' in response.data) {
+      items = response.data.results;
+    }
+  }
+
+  const meals: Meal[] = items.map(item => ({
+    id: item.id,
+    name: item.name,
+    price: item.price_per_serving,
+    chef: item.chef,
+    chef_name: item.chef_name,
+    category: item.category,
+    image: item.image,
+    description: item.description,
+    rating: 4.8, // Mock rating for now as it's not in MenuItem
+    location: 'Nairobi', // Default location
+  }));
+
+  return {
+    data: meals,
+    status: response.status,
+    error: response.error,
+  };
+}
+
 // Order APIs
 export async function createOrder(mealId: number, quantity: number = 1): Promise<ApiResponse<Order>> {
   return apiRequest({
@@ -483,6 +534,21 @@ export async function getUserOrders(): Promise<ApiResponse<Order[]>> {
 export async function getReviews(mealId?: number): Promise<ApiResponse<Review[]>> {
   const endpoint = mealId ? `/reviews/?meal=${mealId}` : '/reviews/';
   return apiRequest({ url: endpoint });
+}
+
+export async function getChefReviews(chefId: number): Promise<ApiResponse<ChefReview[]>> {
+  const response = await apiRequest<{ count: number; results: ChefReview[] } | ChefReview[]>({
+    url: `/chefs/${chefId}/reviews/`
+  });
+
+  if (response.data && !Array.isArray(response.data) && 'results' in response.data) {
+    return {
+      data: response.data.results,
+      status: response.status,
+    };
+  }
+
+  return response as unknown as ApiResponse<ChefReview[]>;
 }
 
 export async function createReview(mealId: number, rating: number, comment: string): Promise<ApiResponse<Review>> {

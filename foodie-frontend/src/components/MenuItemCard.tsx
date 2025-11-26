@@ -11,17 +11,21 @@ interface MenuItemCardProps {
     isFavorited?: boolean;
 }
 
-export default function MenuItemCard({ item, onFavorite, isFavorited = false }: MenuItemCardProps) {
+export default function MenuItemCard({ item, onFavorite, isFavorited = false, onClick }: MenuItemCardProps & { onClick?: () => void }) {
     const [favorited, setFavorited] = useState(isFavorited);
 
     const handleFavorite = (e: React.MouseEvent) => {
         e.preventDefault();
+        e.stopPropagation();
         setFavorited(!favorited);
         onFavorite?.(item.id);
     };
 
     return (
-        <div className="group rounded-3xl border border-white/10 bg-white/5 overflow-hidden hover:border-orange-500/50 transition-all duration-300">
+        <div
+            onClick={onClick}
+            className={`group rounded-3xl border border-white/10 bg-white/5 overflow-hidden hover:border-orange-500/50 transition-all duration-300 ${onClick ? 'cursor-pointer' : ''}`}
+        >
             {/* Image */}
             <div className="relative h-48 bg-white/5 overflow-hidden">
                 {item.image ? (
@@ -40,7 +44,7 @@ export default function MenuItemCard({ item, onFavorite, isFavorited = false }: 
                 {/* Favorite Button */}
                 <button
                     onClick={handleFavorite}
-                    className="absolute top-3 right-3 p-2 rounded-full bg-black/60 hover:bg-black/80 transition backdrop-blur-sm"
+                    className="absolute top-3 right-3 p-2 rounded-full bg-black/60 hover:bg-black/80 transition backdrop-blur-sm z-10"
                 >
                     <Heart
                         className={`h-5 w-5 ${favorited ? 'fill-red-500 text-red-500' : 'text-white'}`}

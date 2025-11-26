@@ -1,9 +1,9 @@
 'use client';
 
-import { MapPin, Star, Calendar, MessageCircle, Utensils, Award, ArrowLeft, ChefHat } from 'lucide-react';
+import { MapPin, Star, Calendar, MessageCircle, Utensils, Award, ArrowLeft, ChefHat, Clock } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { getChefById, getMeals, Chef, Meal, mockChefs, mockMeals } from '@/lib/api';
+import { getChefById, getChefMeals, getChefReviews, Chef, Meal, ChefReview, mockChefs, mockMeals } from '@/lib/api';
 import { startConversation } from '@/lib/api/messages';
 import MealCard from '@/components/MealCard';
 import LoadingSpinner from '@/components/LoadingSpinner';
@@ -19,7 +19,9 @@ export default function ChefDetailPage() {
 
   const [chef, setChef] = useState<Chef | null>(null);
   const [meals, setMeals] = useState<Meal[]>([]);
+  const [reviews, setReviews] = useState<ChefReview[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<'meals' | 'reviews'>('meals');
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
 
   useEffect(() => {
@@ -34,11 +36,16 @@ export default function ChefDetailPage() {
         if (mockChef) setChef(mockChef);
       }
 
-      const mealsResponse = await getMeals();
+      const mealsResponse = await getChefMeals(chefId);
       if (mealsResponse.data) {
-        setMeals(mealsResponse.data.filter(m => m.chef === chefId));
+        setMeals(mealsResponse.data);
       } else {
         setMeals(mockMeals.filter(m => m.chef === chefId));
+      }
+
+      const reviewsResponse = await getChefReviews(chefId);
+      if (reviewsResponse.data) {
+        setReviews(reviewsResponse.data);
       }
 
       setLoading(false);
@@ -193,33 +200,102 @@ export default function ChefDetailPage() {
           </div>
 
           {/* Content Tabs */}
-          <div className="border-t border-white/10 mb-1">
+          <div className="border-t border-white/10 mb-6">
             <div className="flex justify-center gap-12">
-              <button className="flex items-center gap-2 py-4 border-t-2 border-white text-xs md:text-sm font-medium tracking-widest">
+              <button
+                onClick={() => setActiveTab('meals')}
+                className={`flex items-center gap-2 py-4 border-t-2 text-xs md:text-sm font-medium tracking-widest transition-colors ${activeTab === 'meals'
+                    ? 'border-white text-white'
+                    : 'border-transparent text-white/40 hover:text-white/70'
+                  }`}
+              >
                 MEALS
               </button>
-              <button className="flex items-center gap-2 py-4 border-t-2 border-transparent text-white/40 text-xs md:text-sm font-medium tracking-widest hover:text-white/70 transition-colors">
+              <button
+                onClick={() => setActiveTab('reviews')}
+                className={`flex items-center gap-2 py-4 border-t-2 text-xs md:text-sm font-medium tracking-widest transition-colors ${activeTab === 'reviews'
+                    ? 'border-white text-white'
+                    : 'border-transparent text-white/40 hover:text-white/70'
+                  }`}
+              >
                 <Star className="h-3 w-3 md:h-4 md:w-4" />
                 REVIEWS
               </button>
             </div>
           </div>
 
-          {/* Meals Grid */}
-          {meals.length === 0 ? (
-            <div className="py-20 text-center">
-              <div className="h-16 w-16 rounded-full border-2 border-white/20 flex items-center justify-center mx-auto mb-4">
-                <Utensils className="h-8 w-8 text-white/40" />
+          {/* Content Grid */}
+          {activeTab === 'meals' ? (
+            meals.length === 0 ? (
+              <div className="py-20 text-center">
+                <div className="h-16 w-16 rounded-full border-2 border-white/20 flex items-center justify-center mx-auto mb-4">
+                  <Utensils className="h-8 w-8 text-white/40" />
+                </div>
+                <h3 className="text-xl font-bold mb-2">No Meals Yet</h3>
+                <p className="text-white/60">When {displayName} posts meals, they'll appear here.</p>
               </div>
-              <h3 className="text-xl font-bold mb-2">No Meals Yet</h3>
-              <p className="text-white/60">When {displayName} posts meals, they'll appear here.</p>
-            </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {meals.map((meal) => (
+                  <MealCard key={meal.id} meal={meal} />
+                ))}
+              </div>
+            )
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {meals.map((meal) => (
-                <MealCard key={meal.id} meal={meal} />
-              ))}
-            </div>
+            reviews.length === 0 ? (
+              <div className="py-20 text-center">
+                <div className="h-16 w-16 rounded-full border-2 border-white/20 flex items-center justify-center mx-auto mb-4">
+                  <MessageCircle className="h-8 w-8 text-white/40" />
+                </div>
+                <h3 className="text-xl font-bold mb-2">No Reviews Yet</h3>
+                <p className="text-white/60">Be the first to review {displayName}!</p>
+              </div>
+            ) : (
+              <div className="space-y-4 max-w-3xl mx-auto">
+                {reviews.map((review) => (
+                  <div key={review.id} className="bg-surface-elevated p-6 rounded-2xl border border-white/5">
+                    <div className="flex justify-between items-start mb-4">
+                      <div className="flex items-center gap-3">
+                        <div className="h-10 w-10 rounded-full bg-accent/20 flex items-center justify-center text-accent font-bold">
+                          {review.client_name.charAt(0)}
+                        </div>
+                        <div>
+                          <h4 className="font-semibold text-white">{review.client_name}</h4>
+                          <p className="text-xs text-white/40">{new Date(review.created_at).toLocaleDateString()}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1 bg-white/5 px-2 py-1 rounded-lg">
+                        <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
+                        <span className="font-bold text-white">{review.rating}</span>
+                      </div>
+                    </div>
+                    <p className="text-white/80 leading-relaxed">{review.comment}</p>
+                    {(review.food_quality || review.professionalism || review.punctuality) && (
+                      <div className="mt-4 pt-4 border-t border-white/5 flex gap-6 text-xs text-white/60">
+                        {review.food_quality && (
+                          <div className="flex items-center gap-1">
+                            <Utensils className="h-3 w-3" />
+                            <span>Food: {review.food_quality}</span>
+                          </div>
+                        )}
+                        {review.professionalism && (
+                          <div className="flex items-center gap-1">
+                            <ChefHat className="h-3 w-3" />
+                            <span>Pro: {review.professionalism}</span>
+                          </div>
+                        )}
+                        {review.punctuality && (
+                          <div className="flex items-center gap-1">
+                            <Clock className="h-3 w-3" />
+                            <span>Time: {review.punctuality}</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )
           )}
         </div>
       </div>
