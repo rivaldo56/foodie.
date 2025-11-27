@@ -233,7 +233,7 @@ export default function ChefMessagesPage() {
           ) : filteredConversations.length === 0 ? (
             <div className="p-8 text-center">
               <MessageCircle className="h-12 w-12 text-muted mx-auto mb-3 opacity-50" />
-              <p className="text-muted">No {activeTab === 'all' ? '' : activeTab} messages</p>
+              <p className="text-muted">No {activeTab} messages</p>
             </div>
           ) : (
             <div className="divide-y divide-white/5">
