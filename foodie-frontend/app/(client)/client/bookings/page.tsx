@@ -3,9 +3,9 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { getBookings } from '@/lib/api/bookings';
-import type { Booking } from '@/lib/api';
+import { getBookings, type Booking } from '@/services/booking.service';
 import CalendarWidget, { type CalendarEvent } from '@/components/CalendarWidget';
+import ClientBookingModal from '@/components/modals/ClientBookingModal';
 import { Calendar, MapPin, Users, Clock, CheckCircle, XCircle, AlertCircle, ChefHat } from 'lucide-react';
 
 export default function ClientBookingsPage() {
@@ -15,6 +15,8 @@ export default function ClientBookingsPage() {
   const [bookingsLoading, setBookingsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'upcoming' | 'past'>('upcoming');
+  const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
@@ -235,7 +237,11 @@ export default function ClientBookingsPage() {
                 return (
                   <div
                     key={booking.id}
-                    className="bg-surface-elevated border border-white/5 rounded-3xl p-6 space-y-6 hover:border-white/10 transition-all group"
+                    onClick={() => {
+                      setSelectedBooking(booking);
+                      setIsModalOpen(true);
+                    }}
+                    className="bg-surface-elevated border border-white/5 rounded-3xl p-6 space-y-6 hover:border-white/10 transition-all group cursor-pointer hover:bg-white/[0.02]"
                   >
                     <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                       <div className="flex items-center gap-3 sm:gap-4">
@@ -269,7 +275,7 @@ export default function ClientBookingsPage() {
                         <p className="text-xs text-white/40 sm:hidden">Total</p>
                         <div>
                           <p className="text-lg sm:text-xl font-bold text-white">
-                            KES {booking.total_amount?.toFixed(2) || booking.base_price?.toFixed(2) || '0.00'}
+                            KES {Number(booking.total_amount || booking.base_price || 0).toFixed(2)}
                           </p>
                           <p className="hidden sm:block text-xs text-white/40 mt-1">Total amount</p>
                         </div>
@@ -328,6 +334,18 @@ export default function ClientBookingsPage() {
           )}
         </div>
       </div>
+      {/* Booking Action Modal */}
+      {selectedBooking && (
+        <ClientBookingModal
+          booking={selectedBooking}
+          isOpen={isModalOpen}
+          onClose={() => {
+            setIsModalOpen(false);
+            setSelectedBooking(null);
+          }}
+          onUpdate={loadBookings}
+        />
+      )}
     </div>
   );
 }

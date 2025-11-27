@@ -76,15 +76,12 @@ class ChefProfile(models.Model):
     @property
     def get_badge(self):
         """Calculate chef badge based on performance"""
-        from bookings.models import MenuItem
-        from datetime import timedelta
-        from django.utils import timezone
-        
-        # Count dishes posted by this chef
-        dish_count = MenuItem.objects.filter(chef=self).count()
-        
-        # Check account age
-        account_age_months = (timezone.now() - self.created_at).days / 30
+        # Optimization: Use annotated dish_count if available to avoid N+1 query
+        if hasattr(self, 'dish_count'):
+            dish_count = self.dish_count
+        else:
+            from bookings.models import MenuItem
+            dish_count = MenuItem.objects.filter(chef=self).count()
         
         # Badge Logic
         if dish_count >= 20 and self.average_rating >= 4.8:

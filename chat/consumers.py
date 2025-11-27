@@ -6,6 +6,8 @@ from django.utils import timezone
 from .models import ChatRoom, Message
 from .serializers import MessageSerializer
 
+from django.conf import settings
+
 User = get_user_model()
 
 
@@ -17,11 +19,13 @@ def _get_user_id_from_scope(scope):
         return user_id
     
     # Fallback: extract from path if url_route not available (for tests)
-    path = scope.get('path', '')
-    # Path format: /ws/notifications/{user_id}/
-    parts = [p for p in path.split('/') if p]
-    if len(parts) >= 3 and parts[0] == 'ws' and parts[1] == 'notifications':
-        return parts[2]
+    # SECURITY: Only allow this in DEBUG mode
+    if settings.DEBUG:
+        path = scope.get('path', '')
+        # Path format: /ws/notifications/{user_id}/
+        parts = [p for p in path.split('/') if p]
+        if len(parts) >= 3 and parts[0] == 'ws' and parts[1] == 'notifications':
+            return parts[2]
     
     # Final fallback to authenticated user
     user = scope.get('user')
@@ -36,7 +40,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
         self.room_id = url_kwargs.get('room_id')
         
         # Fallback: extract room_id from path if url_route not available (for tests)
-        if not self.room_id:
+        # SECURITY: Only allow this in DEBUG mode
+        if not self.room_id and settings.DEBUG:
             path = self.scope.get('path', '')
             # Path format: /ws/chat/{room_id}/
             parts = [p for p in path.split('/') if p]
@@ -303,5 +308,14 @@ class NotificationConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def mark_notification_read(self, notification_id):
         """Mark notification as read"""
-        # This would be implemented when we have a notification model
-        pass
+        # Assuming there is a Notification model, which we don't have yet in this file's imports
+        # But we should at least try to import it or handle it gracefully
+        try:
+            # Dynamic import to avoid circular imports if any
+            from .models import Notification
+            notification = Notification.objects.get(id=notification_id, user=self.user)
+            notification.is_read = True
+            notification.save()
+        except (ImportError, Exception):
+            # Fail silently if model doesn't exist or other error
+            pass

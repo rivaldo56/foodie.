@@ -1,11 +1,10 @@
 'use client';
 
 import Image from 'next/image';
-import type { Chef } from '@/lib/api';
+import { Chef, chefService } from '@/services/chef.service';
 import { stableScore } from '@/lib/utils';
 import { MapPin, Star, Heart, ChefHat } from 'lucide-react';
 import { useState } from 'react';
-import { toggleFavoriteChef } from '@/lib/api';
 import { useRouter } from 'next/navigation';
 import ChefProfileModal from '@/components/modals/ChefProfileModal';
 import BookingModal from '@/components/modals/BookingModal';
@@ -35,7 +34,7 @@ export default function ChefCard({ chef, matchScore }: ChefCardProps) {
     setIsFavorited(newState);
 
     try {
-      const response = await toggleFavoriteChef(chef.id);
+      const response = await chefService.toggleFavorite(chef.id);
       if (response.error) {
         setIsFavorited(!newState);
         console.error('Failed to toggle favorite:', response.error);

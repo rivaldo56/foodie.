@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { X, Star, MapPin, Calendar, MessageCircle, Award, Utensils, ChefHat, Trophy } from 'lucide-react';
 import Image from 'next/image';
-import type { Chef } from '@/lib/api';
+import type { Chef } from '@/services/chef.service';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface ChefProfileModalProps {

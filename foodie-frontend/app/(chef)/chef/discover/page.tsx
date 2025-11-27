@@ -3,12 +3,12 @@
 import { useEffect, useState, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { getChefs, getMenuItems } from '@/lib/api';
-import type { Chef, MenuItem } from '@/lib/api';
+import { getChefs, getMenuItems } from '@/services/chef.service';
+import type { Chef, MenuItem } from '@/services/chef.service';
 import ChefCard from '@/components/ChefCard';
 import MenuItemCard from '@/components/MenuItemCard';
 import MealDetailsView from '@/components/MealDetailsView';
-import { Meal } from '@/lib/api';
+import { Meal } from '@/services/booking.service';
 import CategoryButton from '@/components/CategoryButton';
 import { Search, SlidersHorizontal, TrendingUp, Flame, ChefHat, Award, Wand2, Sparkles, Utensils, Loader2 } from 'lucide-react';
 

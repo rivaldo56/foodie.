@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { getMeals, Meal, mockMeals } from '@/lib/api';
+import { getMeals, Meal } from '@/services/booking.service';
+import { mockMeals } from '@/lib/api';
 import MealCard from '@/components/MealCard';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import SearchBar from '@/components/SearchBar';

@@ -13459,3 +13459,1632 @@ Not Found: /api/meals/
 Not Found: /api/meals/
 Not Found: /api/meals/
 Not Found: /api/meals/
+/home/rivaldo/codes/foodie-v2/ai/chatbot.py changed, reloading.
+Watching for file changes with StatReloader
+/home/rivaldo/codes/foodie-v2/ai/chatbot.py changed, reloading.
+Watching for file changes with StatReloader
+/home/rivaldo/codes/foodie-v2/ai/chatbot_views.py changed, reloading.
+Watching for file changes with StatReloader
+Internal Server Error: /api/ai/chatbot/message/
+/home/rivaldo/codes/foodie-v2/ai/chatbot_views.py changed, reloading.
+Watching for file changes with StatReloader
+Internal Server Error: /api/ai/chatbot/message/
+Watching for file changes with StatReloader
+Internal Server Error: /api/ai/chatbot/message/
+/home/rivaldo/codes/foodie-v2/ai/chatbot.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Internal Server Error: /api/ai/chatbot/message/
+Internal Server Error: /api/ai/chatbot/message/
+Internal Server Error: /api/ai/chatbot/message/
+/home/rivaldo/codes/foodie-v2/ai/chatbot.py changed, reloading.
+Watching for file changes with StatReloader
+Internal Server Error: /api/ai/chatbot/message/
+Internal Server Error: /api/ai/chatbot/message/
+/home/rivaldo/codes/foodie-v2/ai/chatbot.py changed, reloading.
+Watching for file changes with StatReloader
+Internal Server Error: /api/ai/chatbot/message/
+Internal Server Error: /api/ai/chatbot/message/
+Internal Server Error: /api/ai/chatbot/message/
+/home/rivaldo/codes/foodie-v2/ai/chatbot.py changed, reloading.
+Watching for file changes with StatReloader
+/home/rivaldo/codes/foodie-v2/manage.py changed, reloading.
+Watching for file changes with StatReloader
+/home/rivaldo/codes/foodie-v2/chefconnect/wsgi.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Internal Server Error: /api/ai/chatbot/message/
+Internal Server Error: /api/ai/chatbot/message/
+/home/rivaldo/codes/foodie-v2/ai/chatbot.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Internal Server Error: /api/ai/chatbot/message/
+Internal Server Error: /api/ai/chatbot/message/
+Watching for file changes with StatReloader
+Not Found: /api/meals/
+Not Found: /api/meals/
+Not Found: /api/meals/
+Not Found: /api/meals/
+Not Found: /api/meals/
+Not Found: /api/meals/
+Not Found: /api/meals/
+Not Found: /api/meals/
+Not Found: /api/meals/
+Not Found: /api/meals/
+Not Found: /api/meals/
+Not Found: /api/meals/
+Not Found: /api/meals/2/
+Not Found: /api/meals/2/
+Not Found: /api/reviews/
+Not Found: /api/reviews/
+/home/rivaldo/codes/foodie-v2/chefconnect/settings.py changed, reloading.
+Watching for file changes with StatReloader
+/home/rivaldo/codes/foodie-v2/users/views.py changed, reloading.
+Watching for file changes with StatReloader
+/home/rivaldo/codes/foodie-v2/chefs/views.py changed, reloading.
+Watching for file changes with StatReloader
+/home/rivaldo/codes/foodie-v2/chefs/models.py changed, reloading.
+Watching for file changes with StatReloader
+Bad Request: /api/users/login/
+Unauthorized: /api/users/profile/
+Bad Request: /api/users/register/
+Bad Request: /api/users/register/
+/home/rivaldo/codes/foodie-v2/payments/mpesa_service.py changed, reloading.
+Watching for file changes with StatReloader
+/home/rivaldo/codes/foodie-v2/bookings/models.py changed, reloading.
+Watching for file changes with StatReloader
+/home/rivaldo/codes/foodie-v2/bookings/serializers.py changed, reloading.
+Watching for file changes with StatReloader
+Bad Request: /api/users/login/
+Unauthorized: /api/users/profile/
+Bad Request: /api/users/register/
+Bad Request: /api/users/register/
+Forbidden: /api/chefs/analytics/
+Forbidden: /api/chefs/events/
+Forbidden: /api/chefs/analytics/
+Forbidden: /api/chefs/events/
+Forbidden: /api/chefs/analytics/
+Forbidden: /api/chefs/events/
+Forbidden: /api/chefs/analytics/
+Forbidden: /api/chefs/events/
+Forbidden: /api/chefs/analytics/
+Forbidden: /api/chefs/events/
+Forbidden: /api/chefs/analytics/
+Forbidden: /api/chefs/events/
+/home/rivaldo/codes/foodie-v2/ai/recommendation_engine.py changed, reloading.
+Watching for file changes with StatReloader
+Unauthorized: /api/ai/recommendations/
+Internal Server Error: /api/ai/recommendations/feed/
+Traceback (most recent call last):
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/ai/recommendation_views.py", line 25, in get
+    recommendations = engine.get_personalized_feed(
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/ai/recommendation_engine.py", line 41, in get_personalized_feed
+    return self._get_chef_recommendations(limit)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/ai/recommendation_engine.py", line 99, in _get_chef_recommendations
+    for chef in candidate_chefs:
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 400, in __iter__
+    self._fetch_all()
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 1930, in _fetch_all
+    self._prefetch_related_objects()
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 1320, in _prefetch_related_objects
+    prefetch_related_objects(self._result_cache, *self._prefetch_related_lookups)
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 2356, in prefetch_related_objects
+    raise AttributeError(
+AttributeError: Cannot find 'favoritechef_set' on ChefProfile object, 'favoritechef_set' is an invalid parameter to prefetch_related()
+Internal Server Error: /api/ai/recommendations/feed/
+Traceback (most recent call last):
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/ai/recommendation_views.py", line 25, in get
+    recommendations = engine.get_personalized_feed(
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/ai/recommendation_engine.py", line 41, in get_personalized_feed
+    return self._get_chef_recommendations(limit)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/ai/recommendation_engine.py", line 99, in _get_chef_recommendations
+    for chef in candidate_chefs:
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 400, in __iter__
+    self._fetch_all()
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 1930, in _fetch_all
+    self._prefetch_related_objects()
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 1320, in _prefetch_related_objects
+    prefetch_related_objects(self._result_cache, *self._prefetch_related_lookups)
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 2356, in prefetch_related_objects
+    raise AttributeError(
+AttributeError: Cannot find 'favoritechef_set' on ChefProfile object, 'favoritechef_set' is an invalid parameter to prefetch_related()
+Internal Server Error: /api/ai/recommendations/feed/
+Traceback (most recent call last):
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/ai/recommendation_views.py", line 25, in get
+    recommendations = engine.get_personalized_feed(
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/ai/recommendation_engine.py", line 41, in get_personalized_feed
+    return self._get_chef_recommendations(limit)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/ai/recommendation_engine.py", line 99, in _get_chef_recommendations
+    for chef in candidate_chefs:
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 400, in __iter__
+    self._fetch_all()
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 1930, in _fetch_all
+    self._prefetch_related_objects()
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 1320, in _prefetch_related_objects
+    prefetch_related_objects(self._result_cache, *self._prefetch_related_lookups)
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 2356, in prefetch_related_objects
+    raise AttributeError(
+AttributeError: Cannot find 'favoritechef_set' on ChefProfile object, 'favoritechef_set' is an invalid parameter to prefetch_related()
+/home/rivaldo/codes/foodie-v2/ai/recommendation_engine.py changed, reloading.
+Watching for file changes with StatReloader
+Unauthorized: /api/ai/recommendations/
+Internal Server Error: /api/ai/recommendations/feed/
+Traceback (most recent call last):
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/ai/recommendation_views.py", line 39, in get
+    'collaborative': round(item['breakdown']['collaborative'], 3),
+                           ~~~~^^^^^^^^^^^^^
+KeyError: 'breakdown'
+Internal Server Error: /api/ai/recommendations/feed/
+Traceback (most recent call last):
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/ai/recommendation_views.py", line 39, in get
+    'collaborative': round(item['breakdown']['collaborative'], 3),
+                           ~~~~^^^^^^^^^^^^^
+KeyError: 'breakdown'
+Internal Server Error: /api/ai/recommendations/feed/
+Traceback (most recent call last):
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/ai/recommendation_views.py", line 39, in get
+    'collaborative': round(item['breakdown']['collaborative'], 3),
+                           ~~~~^^^^^^^^^^^^^
+KeyError: 'breakdown'
+Internal Server Error: /api/ai/recommendations/feed/
+Traceback (most recent call last):
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/ai/recommendation_views.py", line 39, in get
+    'collaborative': round(item['breakdown']['collaborative'], 3),
+                           ~~~~^^^^^^^^^^^^^
+KeyError: 'breakdown'
+Internal Server Error: /api/ai/recommendations/feed/
+Traceback (most recent call last):
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/ai/recommendation_views.py", line 39, in get
+    'collaborative': round(item['breakdown']['collaborative'], 3),
+                           ~~~~^^^^^^^^^^^^^
+KeyError: 'breakdown'
+Internal Server Error: /api/ai/recommendations/feed/
+Traceback (most recent call last):
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/ai/recommendation_views.py", line 39, in get
+    'collaborative': round(item['breakdown']['collaborative'], 3),
+                           ~~~~^^^^^^^^^^^^^
+KeyError: 'breakdown'
+Internal Server Error: /api/ai/recommendations/feed/
+Traceback (most recent call last):
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/ai/recommendation_views.py", line 39, in get
+    'collaborative': round(item['breakdown']['collaborative'], 3),
+                           ~~~~^^^^^^^^^^^^^
+KeyError: 'breakdown'
+Internal Server Error: /api/ai/recommendations/feed/
+Traceback (most recent call last):
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/ai/recommendation_views.py", line 39, in get
+    'collaborative': round(item['breakdown']['collaborative'], 3),
+                           ~~~~^^^^^^^^^^^^^
+KeyError: 'breakdown'
+/home/rivaldo/codes/foodie-v2/ai/recommendation_engine.py changed, reloading.
+Watching for file changes with StatReloader
+Unauthorized: /api/ai/recommendations/
+Error scoring chef 3: name 'popularity_score' is not defined
+Error scoring chef 2: name 'popularity_score' is not defined
+Error scoring chef 1: name 'popularity_score' is not defined
+Error scoring chef 3: name 'popularity_score' is not defined
+Error scoring chef 2: name 'popularity_score' is not defined
+Error scoring chef 1: name 'popularity_score' is not defined
+Error scoring chef 3: name 'popularity_score' is not defined
+Error scoring chef 2: name 'popularity_score' is not defined
+Error scoring chef 1: name 'popularity_score' is not defined
+Error scoring chef 3: name 'popularity_score' is not defined
+Error scoring chef 2: name 'popularity_score' is not defined
+Error scoring chef 1: name 'popularity_score' is not defined
+Error scoring chef 3: name 'popularity_score' is not defined
+Error scoring chef 2: name 'popularity_score' is not defined
+Error scoring chef 1: name 'popularity_score' is not defined
+Error scoring chef 3: name 'popularity_score' is not defined
+Error scoring chef 2: name 'popularity_score' is not defined
+Error scoring chef 1: name 'popularity_score' is not defined
+Error scoring chef 3: name 'popularity_score' is not defined
+Error scoring chef 2: name 'popularity_score' is not defined
+Error scoring chef 1: name 'popularity_score' is not defined
+Error scoring chef 3: name 'popularity_score' is not defined
+Error scoring chef 2: name 'popularity_score' is not defined
+Error scoring chef 1: name 'popularity_score' is not defined
+Error scoring chef 3: name 'popularity_score' is not defined
+Error scoring chef 2: name 'popularity_score' is not defined
+Error scoring chef 1: name 'popularity_score' is not defined
+Error scoring chef 3: name 'popularity_score' is not defined
+Error scoring chef 2: name 'popularity_score' is not defined
+Error scoring chef 1: name 'popularity_score' is not defined
+Error scoring chef 3: name 'popularity_score' is not defined
+Error scoring chef 2: name 'popularity_score' is not defined
+Error scoring chef 1: name 'popularity_score' is not defined
+/home/rivaldo/codes/foodie-v2/bookings/models.py changed, reloading.
+Watching for file changes with StatReloader
+Internal Server Error: /api/ai/recommendations/feed/
+Traceback (most recent call last):
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/sqlite3/base.py", line 329, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such column: bookings_booking.is_priority
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/ai/recommendation_views.py", line 25, in get
+    recommendations = engine.get_personalized_feed(
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/ai/recommendation_engine.py", line 41, in get_personalized_feed
+    return self._get_chef_recommendations(limit)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/ai/recommendation_engine.py", line 99, in _get_chef_recommendations
+    for chef in candidate_chefs:
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 400, in __iter__
+    self._fetch_all()
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 1930, in _fetch_all
+    self._prefetch_related_objects()
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 1320, in _prefetch_related_objects
+    prefetch_related_objects(self._result_cache, *self._prefetch_related_lookups)
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 2381, in prefetch_related_objects
+    obj_list, additional_lookups = prefetch_one_level(
+                                   ^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 2545, in prefetch_one_level
+    ) = prefetcher.get_prefetch_querysets(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/fields/related_descriptors.py", line 791, in get_prefetch_querysets
+    for rel_obj in queryset:
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 400, in __iter__
+    self._fetch_all()
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 1928, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/sql/compiler.py", line 1562, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 122, in execute
+    return super().execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/sqlite3/base.py", line 329, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.db.utils.OperationalError: no such column: bookings_booking.is_priority
+Internal Server Error: /api/ai/recommendations/feed/
+Traceback (most recent call last):
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/sqlite3/base.py", line 329, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such column: bookings_booking.is_priority
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/ai/recommendation_views.py", line 25, in get
+    recommendations = engine.get_personalized_feed(
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/ai/recommendation_engine.py", line 41, in get_personalized_feed
+    return self._get_chef_recommendations(limit)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/ai/recommendation_engine.py", line 99, in _get_chef_recommendations
+    for chef in candidate_chefs:
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 400, in __iter__
+    self._fetch_all()
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 1930, in _fetch_all
+    self._prefetch_related_objects()
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 1320, in _prefetch_related_objects
+    prefetch_related_objects(self._result_cache, *self._prefetch_related_lookups)
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 2381, in prefetch_related_objects
+    obj_list, additional_lookups = prefetch_one_level(
+                                   ^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 2545, in prefetch_one_level
+    ) = prefetcher.get_prefetch_querysets(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/fields/related_descriptors.py", line 791, in get_prefetch_querysets
+    for rel_obj in queryset:
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 400, in __iter__
+    self._fetch_all()
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 1928, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/sql/compiler.py", line 1562, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 122, in execute
+    return super().execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/sqlite3/base.py", line 329, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.db.utils.OperationalError: no such column: bookings_booking.is_priority
+/home/rivaldo/codes/foodie-v2/payments/mpesa_service.py changed, reloading.
+Watching for file changes with StatReloader
+M-Pesa token request failed: Error message
+Internal Server Error: /api/ai/recommendations/feed/
+Traceback (most recent call last):
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/sqlite3/base.py", line 329, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such column: bookings_booking.is_priority
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/ai/recommendation_views.py", line 25, in get
+    recommendations = engine.get_personalized_feed(
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/ai/recommendation_engine.py", line 41, in get_personalized_feed
+    return self._get_chef_recommendations(limit)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/ai/recommendation_engine.py", line 99, in _get_chef_recommendations
+    for chef in candidate_chefs:
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 400, in __iter__
+    self._fetch_all()
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 1930, in _fetch_all
+    self._prefetch_related_objects()
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 1320, in _prefetch_related_objects
+    prefetch_related_objects(self._result_cache, *self._prefetch_related_lookups)
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 2381, in prefetch_related_objects
+    obj_list, additional_lookups = prefetch_one_level(
+                                   ^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 2545, in prefetch_one_level
+    ) = prefetcher.get_prefetch_querysets(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/fields/related_descriptors.py", line 791, in get_prefetch_querysets
+    for rel_obj in queryset:
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 400, in __iter__
+    self._fetch_all()
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 1928, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/sql/compiler.py", line 1562, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 122, in execute
+    return super().execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/sqlite3/base.py", line 329, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.db.utils.OperationalError: no such column: bookings_booking.is_priority
+Internal Server Error: /api/ai/recommendations/feed/
+Traceback (most recent call last):
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/sqlite3/base.py", line 329, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such column: bookings_booking.is_priority
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/ai/recommendation_views.py", line 25, in get
+    recommendations = engine.get_personalized_feed(
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/ai/recommendation_engine.py", line 41, in get_personalized_feed
+    return self._get_chef_recommendations(limit)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/ai/recommendation_engine.py", line 99, in _get_chef_recommendations
+    for chef in candidate_chefs:
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 400, in __iter__
+    self._fetch_all()
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 1930, in _fetch_all
+    self._prefetch_related_objects()
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 1320, in _prefetch_related_objects
+    prefetch_related_objects(self._result_cache, *self._prefetch_related_lookups)
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 2381, in prefetch_related_objects
+    obj_list, additional_lookups = prefetch_one_level(
+                                   ^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 2545, in prefetch_one_level
+    ) = prefetcher.get_prefetch_querysets(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/fields/related_descriptors.py", line 791, in get_prefetch_querysets
+    for rel_obj in queryset:
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 400, in __iter__
+    self._fetch_all()
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 1928, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/sql/compiler.py", line 1562, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 122, in execute
+    return super().execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/sqlite3/base.py", line 329, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.db.utils.OperationalError: no such column: bookings_booking.is_priority
+/home/rivaldo/codes/foodie-v2/bookings/serializers.py changed, reloading.
+Watching for file changes with StatReloader
+M-Pesa token request failed: Error message
+Method Not Allowed: /api/bookings/1/cancel/
+Bad Request: /api/bookings/create/
+Bad Request: /api/bookings/create/
+Method Not Allowed: /api/bookings/1/cancel/
+/home/rivaldo/codes/foodie-v2/bookings/serializers.py changed, reloading.
+Watching for file changes with StatReloader
+Internal Server Error: /api/bookings/create/
+Traceback (most recent call last):
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/generics.py", line 194, in post
+    return self.create(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/bookings/views.py", line 36, in create
+    booking = serializer.save()
+              ^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/serializers.py", line 208, in save
+    self.instance = self.create(validated_data)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/bookings/serializers.py", line 134, in create
+    menu_items_cost = Decimal('0.00')
+                      ^^^^^^^
+NameError: name 'Decimal' is not defined
+Internal Server Error: /api/bookings/create/
+Traceback (most recent call last):
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/generics.py", line 194, in post
+    return self.create(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/bookings/views.py", line 36, in create
+    booking = serializer.save()
+              ^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/serializers.py", line 208, in save
+    self.instance = self.create(validated_data)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/bookings/serializers.py", line 134, in create
+    menu_items_cost = Decimal('0.00')
+                      ^^^^^^^
+NameError: name 'Decimal' is not defined
+/home/rivaldo/codes/foodie-v2/bookings/serializers.py changed, reloading.
+Watching for file changes with StatReloader
+Internal Server Error: /api/bookings/create/
+Traceback (most recent call last):
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/generics.py", line 194, in post
+    return self.create(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/bookings/views.py", line 36, in create
+    booking = serializer.save()
+              ^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/serializers.py", line 208, in save
+    self.instance = self.create(validated_data)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/bookings/serializers.py", line 162, in create
+    booking.total_amount = base_price + menu_items_cost + booking.additional_fees
+                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
+TypeError: unsupported operand type(s) for +: 'decimal.Decimal' and 'float'
+Internal Server Error: /api/bookings/create/
+Traceback (most recent call last):
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/generics.py", line 194, in post
+    return self.create(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/bookings/views.py", line 36, in create
+    booking = serializer.save()
+              ^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/serializers.py", line 208, in save
+    self.instance = self.create(validated_data)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/bookings/serializers.py", line 162, in create
+    booking.total_amount = base_price + menu_items_cost + booking.additional_fees
+                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
+TypeError: unsupported operand type(s) for +: 'decimal.Decimal' and 'float'
+/home/rivaldo/codes/foodie-v2/bookings/serializers.py changed, reloading.
+Watching for file changes with StatReloader
+M-Pesa token request failed: Error message
+M-Pesa token request failed: Error message
+Bad Request: /api/payments/mpesa/pay/
+Unauthorized: /api/payments/
+Not Found: /api/payments/stripe/create-intent/
+Not Found: /api/payments/stripe/create-intent/
+Payment processing failed: 'Booking' object has no attribute 'total_price'
+M-Pesa payment processing failed: 'Booking' object has no attribute 'total_price'
+/home/rivaldo/codes/foodie-v2/payments/mpesa_service.py changed, reloading.
+Watching for file changes with StatReloader
+M-Pesa token request failed: Error message
+Bad Request: /api/payments/mpesa/pay/
+Unauthorized: /api/payments/
+Not Found: /api/payments/stripe/create-intent/
+Not Found: /api/payments/stripe/create-intent/
+Payment processing failed: 'Booking' object has no attribute 'total_price'
+M-Pesa payment processing failed: Payment() got unexpected keyword arguments: 'chef'
+M-Pesa payment processing failed: Payment() got unexpected keyword arguments: 'chef'
+/home/rivaldo/codes/foodie-v2/payments/mpesa_service.py changed, reloading.
+Watching for file changes with StatReloader
+M-Pesa token request failed: Error message
+Bad Request: /api/payments/mpesa/pay/
+Unauthorized: /api/payments/
+Not Found: /api/payments/stripe/create-intent/
+Not Found: /api/payments/stripe/create-intent/
+Payment processing failed: 'Booking' object has no attribute 'total_price'
+/home/rivaldo/codes/foodie-v2/payments/services.py changed, reloading.
+Watching for file changes with StatReloader
+M-Pesa token request failed: Error message
+Bad Request: /api/payments/mpesa/pay/
+Unauthorized: /api/payments/
+Not Found: /api/payments/stripe/create-intent/
+Not Found: /api/payments/stripe/create-intent/
+Payment processing failed: Cannot assign "<ChefProfile: Chef  - beginner>": "ChefPayout.chef" must be a "User" instance.
+/home/rivaldo/codes/foodie-v2/payments/services.py changed, reloading.
+Watching for file changes with StatReloader
+Payment processing failed: Cannot assign "<ChefProfile: Chef  - beginner>": "ChefPayout.chef" must be a "User" instance.
+/home/rivaldo/codes/foodie-v2/payments/services.py changed, reloading.
+Watching for file changes with StatReloader
+M-Pesa token request failed: Error message
+Bad Request: /api/payments/mpesa/pay/
+Unauthorized: /api/payments/
+Not Found: /api/payments/stripe/create-intent/
+Not Found: /api/payments/stripe/create-intent/
+Payment processing failed: NOT NULL constraint failed: payments_chefpayout.booking_id
+/home/rivaldo/codes/foodie-v2/payments/services.py changed, reloading.
+Watching for file changes with StatReloader
+M-Pesa token request failed: Error message
+Bad Request: /api/payments/mpesa/pay/
+Unauthorized: /api/payments/
+Not Found: /api/payments/stripe/create-intent/
+Not Found: /api/payments/stripe/create-intent/
+M-Pesa token request failed: Error message
+Bad Request: /api/payments/mpesa/pay/
+Unauthorized: /api/payments/
+M-Pesa token request failed: Error message
+Bad Request: /api/payments/mpesa/pay/
+Unauthorized: /api/payments/
+/home/rivaldo/codes/foodie-v2/payments/services.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Error scoring chef 3: name 'popularity_score' is not defined
+Error scoring chef 2: name 'popularity_score' is not defined
+Error scoring chef 1: name 'popularity_score' is not defined
+Error scoring chef 3: name 'popularity_score' is not defined
+Error scoring chef 2: name 'popularity_score' is not defined
+Error scoring chef 1: name 'popularity_score' is not defined
+M-Pesa token request failed: Error message
+Bad Request: /api/payments/mpesa/pay/
+Unauthorized: /api/payments/
+M-Pesa token request failed: Error message
+Bad Request: /api/payments/mpesa/pay/
+Unauthorized: /api/payments/
+Error scoring chef 3: name 'popularity_score' is not defined
+Error scoring chef 2: name 'popularity_score' is not defined
+Error scoring chef 1: name 'popularity_score' is not defined
+Error scoring chef 3: name 'popularity_score' is not defined
+Error scoring chef 2: name 'popularity_score' is not defined
+Error scoring chef 1: name 'popularity_score' is not defined
+Error scoring chef 3: name 'popularity_score' is not defined
+Error scoring chef 2: name 'popularity_score' is not defined
+Error scoring chef 1: name 'popularity_score' is not defined
+Error scoring chef 3: name 'popularity_score' is not defined
+Error scoring chef 2: name 'popularity_score' is not defined
+Error scoring chef 1: name 'popularity_score' is not defined
+Error scoring chef 3: name 'popularity_score' is not defined
+Error scoring chef 2: name 'popularity_score' is not defined
+Error scoring chef 1: name 'popularity_score' is not defined
+Error scoring chef 3: name 'popularity_score' is not defined
+Error scoring chef 2: name 'popularity_score' is not defined
+Error scoring chef 1: name 'popularity_score' is not defined
+Error scoring chef 3: name 'popularity_score' is not defined
+Error scoring chef 2: name 'popularity_score' is not defined
+Error scoring chef 1: name 'popularity_score' is not defined
+Bad Request: /api/bookings/create/
+Bad Request: /api/bookings/create/
+Bad Request: /api/bookings/create/
+Bad Request: /api/bookings/create/
+Error scoring chef 3: name 'popularity_score' is not defined
+Error scoring chef 2: name 'popularity_score' is not defined
+Error scoring chef 1: name 'popularity_score' is not defined
+Error scoring chef 3: name 'popularity_score' is not defined
+Error scoring chef 2: name 'popularity_score' is not defined
+Error scoring chef 1: name 'popularity_score' is not defined
+Error scoring chef 3: name 'popularity_score' is not defined
+Error scoring chef 2: name 'popularity_score' is not defined
+Error scoring chef 1: name 'popularity_score' is not defined
+Error scoring chef 3: name 'popularity_score' is not defined
+Error scoring chef 2: name 'popularity_score' is not defined
+Error scoring chef 1: name 'popularity_score' is not defined
+Bad Request: /api/bookings/create/
+Bad Request: /api/users/login/
+Not Found: /favicon.ico
+/home/rivaldo/codes/foodie-v2/bookings/models.py changed, reloading.
+Watching for file changes with StatReloader
+/home/rivaldo/codes/foodie-v2/bookings/serializers.py changed, reloading.
+Watching for file changes with StatReloader
+Bad Request: /api/bookings/menu-items/create/
+Bad Request: /api/bookings/menu-items/create/
+Bad Request: /api/bookings/menu-items/create/
+Bad Request: /api/bookings/menu-items/create/
+Internal Server Error: /api/bookings/menu-items/
+Traceback (most recent call last):
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/sqlite3/base.py", line 329, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such column: bookings_menuitem.meal_prep_available
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/generics.py", line 203, in get
+    return self.list(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/mixins.py", line 40, in list
+    page = self.paginate_queryset(queryset)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/generics.py", line 175, in paginate_queryset
+    return self.paginator.paginate_queryset(queryset, self.request, view=self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/pagination.py", line 222, in paginate_queryset
+    return list(self.page)
+           ^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/paginator.py", line 191, in __len__
+    return len(self.object_list)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 382, in __len__
+    self._fetch_all()
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 1928, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/sql/compiler.py", line 1562, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 122, in execute
+    return super().execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/sqlite3/base.py", line 329, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.db.utils.OperationalError: no such column: bookings_menuitem.meal_prep_available
+Internal Server Error: /api/bookings/menu-items/
+Traceback (most recent call last):
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/sqlite3/base.py", line 329, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such column: bookings_menuitem.meal_prep_available
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/generics.py", line 203, in get
+    return self.list(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/mixins.py", line 40, in list
+    page = self.paginate_queryset(queryset)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/generics.py", line 175, in paginate_queryset
+    return self.paginator.paginate_queryset(queryset, self.request, view=self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/pagination.py", line 222, in paginate_queryset
+    return list(self.page)
+           ^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/paginator.py", line 191, in __len__
+    return len(self.object_list)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 382, in __len__
+    self._fetch_all()
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 1928, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/sql/compiler.py", line 1562, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 122, in execute
+    return super().execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/sqlite3/base.py", line 329, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.db.utils.OperationalError: no such column: bookings_menuitem.meal_prep_available
+Internal Server Error: /api/bookings/menu-items/
+Traceback (most recent call last):
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/sqlite3/base.py", line 329, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such column: bookings_menuitem.meal_prep_available
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/generics.py", line 203, in get
+    return self.list(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/mixins.py", line 40, in list
+    page = self.paginate_queryset(queryset)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/generics.py", line 175, in paginate_queryset
+    return self.paginator.paginate_queryset(queryset, self.request, view=self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/pagination.py", line 222, in paginate_queryset
+    return list(self.page)
+           ^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/paginator.py", line 191, in __len__
+    return len(self.object_list)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 382, in __len__
+    self._fetch_all()
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 1928, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/sql/compiler.py", line 1562, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 122, in execute
+    return super().execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/sqlite3/base.py", line 329, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.db.utils.OperationalError: no such column: bookings_menuitem.meal_prep_available
+Internal Server Error: /api/bookings/menu-items/
+Traceback (most recent call last):
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/sqlite3/base.py", line 329, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such column: bookings_menuitem.meal_prep_available
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/generics.py", line 203, in get
+    return self.list(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/mixins.py", line 40, in list
+    page = self.paginate_queryset(queryset)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/generics.py", line 175, in paginate_queryset
+    return self.paginator.paginate_queryset(queryset, self.request, view=self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/pagination.py", line 222, in paginate_queryset
+    return list(self.page)
+           ^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/paginator.py", line 191, in __len__
+    return len(self.object_list)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 382, in __len__
+    self._fetch_all()
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 1928, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/sql/compiler.py", line 1562, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 122, in execute
+    return super().execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/sqlite3/base.py", line 329, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.db.utils.OperationalError: no such column: bookings_menuitem.meal_prep_available
+Internal Server Error: /api/bookings/menu-items/
+Traceback (most recent call last):
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/sqlite3/base.py", line 329, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such column: bookings_menuitem.meal_prep_available
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/generics.py", line 203, in get
+    return self.list(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/mixins.py", line 40, in list
+    page = self.paginate_queryset(queryset)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/generics.py", line 175, in paginate_queryset
+    return self.paginator.paginate_queryset(queryset, self.request, view=self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/pagination.py", line 222, in paginate_queryset
+    return list(self.page)
+           ^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/paginator.py", line 191, in __len__
+    return len(self.object_list)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 382, in __len__
+    self._fetch_all()
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 1928, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/sql/compiler.py", line 1562, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 122, in execute
+    return super().execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/sqlite3/base.py", line 329, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.db.utils.OperationalError: no such column: bookings_menuitem.meal_prep_available
+Internal Server Error: /api/bookings/menu-items/
+Traceback (most recent call last):
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/sqlite3/base.py", line 329, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such column: bookings_menuitem.meal_prep_available
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/generics.py", line 203, in get
+    return self.list(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/mixins.py", line 40, in list
+    page = self.paginate_queryset(queryset)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/generics.py", line 175, in paginate_queryset
+    return self.paginator.paginate_queryset(queryset, self.request, view=self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/rest_framework/pagination.py", line 222, in paginate_queryset
+    return list(self.page)
+           ^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/core/paginator.py", line 191, in __len__
+    return len(self.object_list)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 382, in __len__
+    self._fetch_all()
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 1928, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/models/sql/compiler.py", line 1562, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 122, in execute
+    return super().execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rivaldo/codes/foodie-v2/venv/lib/python3.12/site-packages/django/db/backends/sqlite3/base.py", line 329, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.db.utils.OperationalError: no such column: bookings_menuitem.meal_prep_available
+Bad Request: /api/bookings/menu-items/create/
+Bad Request: /api/bookings/menu-items/create/
+Bad Request: /api/bookings/menu-items/create/
+Bad Request: /api/bookings/menu-items/create/
+Bad Request: /api/bookings/menu-items/create/
+Bad Request: /api/bookings/menu-items/create/
+Bad Request: /api/bookings/menu-items/create/
+Bad Request: /api/bookings/menu-items/create/
+Bad Request: /api/bookings/menu-items/create/
+Received update request with data: {'bio': 'the place to get insights on meals chefs and good vibes'}
+ChefProfile bio updated: the place to get insights on meals chefs and good vibes
+Error scoring chef 3: name 'popularity_score' is not defined
+Error scoring chef 2: name 'popularity_score' is not defined
+Error scoring chef 1: name 'popularity_score' is not defined
+Error scoring chef 3: name 'popularity_score' is not defined
+Error scoring chef 2: name 'popularity_score' is not defined
+Error scoring chef 1: name 'popularity_score' is not defined
+Error scoring chef 3: name 'popularity_score' is not defined
+Error scoring chef 2: name 'popularity_score' is not defined
+Error scoring chef 1: name 'popularity_score' is not defined
+Error scoring chef 3: name 'popularity_score' is not defined
+Error scoring chef 2: name 'popularity_score' is not defined
+Error scoring chef 1: name 'popularity_score' is not defined
+Method Not Allowed: /api/bookings/1/cancel/
+Error scoring chef 3: name 'popularity_score' is not defined
+Error scoring chef 1: name 'popularity_score' is not defined
+Error scoring chef 3: name 'popularity_score' is not defined
+Error scoring chef 1: name 'popularity_score' is not defined
+Error scoring chef 3: name 'popularity_score' is not defined
+Error scoring chef 1: name 'popularity_score' is not defined
+Error scoring chef 3: name 'popularity_score' is not defined
+Error scoring chef 1: name 'popularity_score' is not defined

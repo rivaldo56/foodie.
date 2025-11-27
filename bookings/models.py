@@ -40,7 +40,7 @@ class Booking(models.Model):
     service_zip_code = models.CharField(max_length=20)
     
     # Menu and preferences
-    menu_items = models.JSONField(default=list, blank=True)  # Selected menu items
+    # menu_items removed - using BookingMenuItem relational model instead
     dietary_requirements = models.JSONField(default=list, blank=True)
     special_requests = models.TextField(blank=True)
     
@@ -48,6 +48,10 @@ class Booking(models.Model):
     base_price = models.DecimalField(max_digits=10, decimal_places=2)
     additional_fees = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    
+    # Priority / Commitment
+    is_priority = models.BooleanField(default=False, help_text="Client committed with a down payment")
+    down_payment_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     
     # Status and tracking
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
@@ -116,6 +120,7 @@ class MenuItem(models.Model):
     # Fulfillment options
     delivery_available = models.BooleanField(default=True)
     pickup_available = models.BooleanField(default=True)
+    meal_prep_available = models.BooleanField(default=False)
     
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

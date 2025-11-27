@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Order } from '@/lib/api';
+import { Order } from '@/services/booking.service';
 import { CalendarClock, MessageCircle, User2 } from 'lucide-react';
 
 interface OrderCardProps {

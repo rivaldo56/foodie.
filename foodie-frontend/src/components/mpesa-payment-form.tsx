@@ -3,8 +3,8 @@
 import type React from "react"
 
 import { useState } from "react"
-import { mpesaApi } from "@/lib/api/mpesa"
-import type { Booking } from "@/lib/api"
+import { initiateMpesaPayment, checkPaymentStatus } from "@/services/payment.service"
+import type { Booking } from "@/services/booking.service"
 
 interface MpesaPaymentFormProps {
   booking: Booking
@@ -27,8 +27,15 @@ export default function MpesaPaymentForm({ booking, onSuccess }: MpesaPaymentFor
     setLoading(true)
 
     try {
-      const response = await mpesaApi.initiatePayment(amount, bookingId, phoneNumber)
-      setTransactionId(response.transaction_id)
+      const result = await initiateMpesaPayment(booking.id, phoneNumber)
+      if (result.error || !result.data) {
+        throw new Error(result.error || "Failed to initiate payment")
+      }
+      const mpesaPaymentId = result.data.mpesa_payment_id
+      if (!mpesaPaymentId) {
+        throw new Error("No payment ID returned")
+      }
+      setTransactionId(String(mpesaPaymentId))
 
       setStatusMessage({
         tone: "info",
@@ -38,7 +45,9 @@ export default function MpesaPaymentForm({ booking, onSuccess }: MpesaPaymentFor
       // Poll for payment confirmation
       const checkStatus = async () => {
         try {
-          const status = await mpesaApi.checkPaymentStatus(response.transaction_id)
+          const statusResult = await checkPaymentStatus(mpesaPaymentId)
+          if (!statusResult.data) return
+          const status = statusResult.data
           if (status.status === "completed") {
             setStatusMessage({ tone: "success", text: "Payment successful!" })
             onSuccess()
@@ -94,13 +103,12 @@ export default function MpesaPaymentForm({ booking, onSuccess }: MpesaPaymentFor
 
       {statusMessage && (
         <p
-          className={`text-xs ${
-            statusMessage.tone === "error"
+          className={`text-xs ${statusMessage.tone === "error"
               ? "text-red-400"
               : statusMessage.tone === "success"
-              ? "text-green-400"
-              : "text-blue-300"
-          }`}
+                ? "text-green-400"
+                : "text-blue-300"
+            }`}
         >
           {statusMessage.text}
         </p>

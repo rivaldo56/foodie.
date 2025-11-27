@@ -23,6 +23,7 @@ interface DishFormData {
   price: string;
   delivery: boolean;
   pickup: boolean;
+  meal_prep: boolean;
 }
 
 const CATEGORIES = [
@@ -43,6 +44,7 @@ export default function ChefCreatePage() {
     price: '',
     delivery: true,
     pickup: true,
+    meal_prep: false,
   });
   const [mediaFiles, setMediaFiles] = useState<File[]>([]);
   const [mediaPreviews, setMediaPreviews] = useState<string[]>([]);
@@ -85,15 +87,15 @@ export default function ChefCreatePage() {
       setError('Please enter a valid price');
       return;
     }
-    if (!formData.delivery && !formData.pickup) {
-      setError('Please select at least one fulfillment option (delivery or pickup)');
+    if (!formData.delivery && !formData.pickup && !formData.meal_prep) {
+      setError('Please select at least one fulfillment option');
       return;
     }
 
     setIsSubmitting(true);
 
     try {
-      const { createMenuItem } = await import('@/lib/api');
+      const { createMenuItem } = await import('@/services/chef.service');
 
       const response = await createMenuItem({
         name: formData.name,
@@ -113,6 +115,7 @@ export default function ChefCreatePage() {
       // Success - redirect to success page
       router.push(`/chef/create/success?id=${response.data?.id}`);
     } catch (err) {
+      console.error('[Create Post Error]:', err);
       setError(err instanceof Error ? err.message : 'Failed to post dish');
     } finally {
       setIsSubmitting(false);
@@ -318,6 +321,24 @@ export default function ChefCreatePage() {
                   </div>
                   <p className="text-xs text-white/60 mt-1">
                     Customers can pick up their order
+                  </p>
+                </div>
+              </label>
+
+              <label className="flex items-center gap-3 p-4 rounded-2xl border border-white/10 bg-white/5 cursor-pointer hover:border-orange-500/50 transition">
+                <input
+                  type="checkbox"
+                  checked={formData.meal_prep}
+                  onChange={(e) => handleInputChange('meal_prep', e.target.checked)}
+                  className="h-5 w-5 rounded border-white/20 bg-white/10 text-orange-500 focus:ring-orange-500/20"
+                />
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <Package className="h-5 w-5 text-orange-500" />
+                    <span className="font-medium">Meal Prep Available</span>
+                  </div>
+                  <p className="text-xs text-white/60 mt-1">
+                    Offer as meal prep/batch cooking service
                   </p>
                 </div>
               </label>

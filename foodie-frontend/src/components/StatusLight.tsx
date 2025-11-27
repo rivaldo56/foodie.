@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { checkHealth } from '@/lib/api';
+import { checkHealth } from '@/services/system.service';
 
 export default function StatusLight() {
   const [status, setStatus] = useState<'checking' | 'online' | 'offline'>('checking');

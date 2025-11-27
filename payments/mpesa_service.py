@@ -208,14 +208,40 @@ class MpesaPaymentService:
         try:
             booking = Booking.objects.get(id=booking_id)
             
-            # Calculate total amount including platform fee
-            subtotal = booking.total_price
+            # Idempotency Check: Check for existing pending payment
+            existing_payment = Payment.objects.filter(
+                booking=booking, 
+                status='pending',
+                payment_method='mpesa'
+            ).first()
+            
+            if existing_payment:
+                # Check if there's a corresponding M-Pesa record
+                mpesa_record = MpesaPayment.objects.filter(payment=existing_payment).first()
+                if mpesa_record:
+                    return {
+                        'success': True,
+                        'payment_id': existing_payment.id,
+                        'mpesa_payment_id': mpesa_record.id,
+                        'checkout_request_id': mpesa_record.checkout_request_id,
+                        'message': 'Pending payment already exists. Please check your phone.'
+                    }
+            
+            # Calculate total amount
+            if booking.is_priority and booking.down_payment_amount > 0:
+                # Priority booking: Pay down payment only
+                subtotal = booking.down_payment_amount
+                transaction_desc = f"Down payment for booking {booking.id}"
+            else:
+                # Regular booking: Pay full amount + fee
+                subtotal = booking.total_amount
+                transaction_desc = f"Payment for booking {booking.id}"
+            
             platform_fee = subtotal * Decimal('0.05')  # 5% platform fee
             total_amount = subtotal + platform_fee
             
-            # Create account reference and description
+            # Create account reference
             account_reference = f"BOOKING-{booking.id}"
-            transaction_desc = f"Payment for booking {booking.id}"
             
             # Initiate STK push
             stk_result = self.mpesa.initiate_stk_push(
@@ -230,7 +256,6 @@ class MpesaPaymentService:
                 payment = Payment.objects.create(
                     booking=booking,
                     client=booking.client,
-                    chef=booking.chef,
                     amount=total_amount,
                     platform_fee=platform_fee,
                     payment_method='mpesa',
@@ -293,7 +318,6 @@ class MpesaPaymentService:
                     payment.save()
                     
                     # Update booking
-                    payment.booking.payment_status = 'paid'
                     payment.booking.status = 'confirmed'
                     payment.booking.save()
                     
@@ -370,6 +394,27 @@ class MpesaPaymentService:
                     'error': 'Payment record not found'
                 }
             
+            # SECURITY: Verify the transaction status with M-Pesa directly
+            # This prevents callback spoofing attacks
+            verification = self.mpesa.query_stk_status(checkout_request_id)
+            
+            if not verification['success']:
+                logger.warning(f"Could not verify payment status with M-Pesa: {verification.get('error')}")
+                # If verification fails (e.g. network issue), we log it but might still process if critical
+                # For high security, we should probably fail or mark as 'verification_needed'
+                # Here we will fail to be safe
+                return {
+                    'success': False,
+                    'error': 'Payment verification failed'
+                }
+                
+            # Check if verification result matches success
+            if verification.get('result_code') != '0':
+                logger.error(f"Payment verification returned non-success: {verification.get('result_code')}")
+                # If verification says failed, we treat it as failed regardless of callback content
+                result_code = 1  # Force failure
+                result_desc = verification.get('result_desc', 'Verification failed')
+
             if result_code == 0:  # Success
                 # Extract transaction details
                 callback_metadata = stk_callback.get('CallbackMetadata', {}).get('Item', [])
@@ -397,7 +442,6 @@ class MpesaPaymentService:
                 payment.save()
                 
                 # Update booking
-                payment.booking.payment_status = 'paid'
                 payment.booking.status = 'confirmed'
                 payment.booking.save()
                 

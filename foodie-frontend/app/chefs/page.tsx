@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { Chef, getChefs, mockChefs } from '@/lib/api';
+import { Chef, getChefs } from '@/services/chef.service';
+import { mockChefs } from '@/lib/api';
 import { stableScore } from '@/lib/utils';
 import ChefCard from '@/components/ChefCard';
 import LoadingSpinner from '@/components/LoadingSpinner';

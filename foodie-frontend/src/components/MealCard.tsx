@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Meal } from '@/lib/api';
+import { Meal } from '@/services/booking.service';
 import { stableScore } from '@/lib/utils';
 import { Flame, MapPin, Star, Clock, Utensils } from 'lucide-react';
 

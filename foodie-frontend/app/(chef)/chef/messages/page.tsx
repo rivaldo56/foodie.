@@ -25,7 +25,7 @@ export default function ChefMessagesPage() {
   const [isLoadingConversations, setIsLoadingConversations] = useState(true);
   const [isLoadingMessages, setIsLoadingMessages] = useState(false);
   const [isSending, setIsSending] = useState(false);
-  const [activeTab, setActiveTab] = useState<'all' | 'primary' | 'requests'>('all');
+  const [activeTab, setActiveTab] = useState<'primary' | 'committed' | 'requests'>('primary');
 
   // Initialize active conversation from URL
   useEffect(() => {
@@ -34,6 +34,30 @@ export default function ChefMessagesPage() {
       setActiveConversationId(Number(conversationIdParam));
     }
   }, [searchParams]);
+
+  // Handle user parameter for deduplication - find existing conversation
+  useEffect(() => {
+    const userIdParam = searchParams.get('user');
+    if (userIdParam && conversations.length > 0 && !activeConversationId) {
+      const userId = Number(userIdParam);
+
+      // Try to find existing conversation with this user
+      const existingConversation = conversations.find(conv => {
+        const otherUserId = conv.other_user?.id ||
+          conv.client?.id ||
+          (conv as any).chef?.id;
+        return otherUserId === userId;
+      });
+
+      if (existingConversation) {
+        // Found existing conversation - activate it
+        setActiveConversationId(existingConversation.id);
+        router.replace(`/chef/messages?conversationId=${existingConversation.id}`);
+      }
+      // If no existing conversation found, the user can manually start a new one
+      // This prevents auto-creating duplicate conversations
+    }
+  }, [searchParams, conversations, activeConversationId, router]);
 
   // Load conversations
   useEffect(() => {
@@ -134,9 +158,21 @@ export default function ChefMessagesPage() {
   const activeConversation = conversations.find(c => c.id === activeConversationId);
 
   const filteredConversations = conversations.filter(c => {
-    if (activeTab === 'all') return true;
-    if (activeTab === 'primary') return c.has_replied;
-    if (activeTab === 'requests') return !c.has_replied;
+    // Check if client has made any priority bookings (committed)
+    const isCommitted = (c as any).has_priority_booking || false;
+
+    if (activeTab === 'primary') {
+      // Primary: conversations with replies OR committed clients
+      return c.has_replied || isCommitted;
+    }
+    if (activeTab === 'committed') {
+      // Committed: only clients with priority bookings
+      return isCommitted;
+    }
+    if (activeTab === 'requests') {
+      // Requests: no replies and not committed
+      return !c.has_replied && !isCommitted;
+    }
     return true;
   });
 
@@ -154,13 +190,6 @@ export default function ChefMessagesPage() {
           {/* Tabs */}
           <div className="flex p-1 bg-white/5 rounded-xl">
             <button
-              onClick={() => setActiveTab('all')}
-              className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === 'all' ? 'bg-accent text-white shadow-lg' : 'text-muted hover:text-white'
-                }`}
-            >
-              All
-            </button>
-            <button
               onClick={() => setActiveTab('primary')}
               className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === 'primary' ? 'bg-accent text-white shadow-lg' : 'text-muted hover:text-white'
                 }`}
@@ -168,14 +197,21 @@ export default function ChefMessagesPage() {
               Primary
             </button>
             <button
+              onClick={() => setActiveTab('committed')}
+              className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === 'committed' ? 'bg-accent text-white shadow-lg' : 'text-muted hover:text-white'
+                }`}
+            >
+              Committed
+            </button>
+            <button
               onClick={() => setActiveTab('requests')}
               className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === 'requests' ? 'bg-accent text-white shadow-lg' : 'text-muted hover:text-white'
                 }`}
             >
               Requests
-              {conversations.filter(c => !c.has_replied).length > 0 && (
+              {conversations.filter(c => !c.has_replied && !(c as any).has_priority_booking).length > 0 && (
                 <span className="bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full ml-1">
-                  {conversations.filter(c => !c.has_replied).length}
+                  {conversations.filter(c => !c.has_replied && !(c as any).has_priority_booking).length}
                 </span>
               )}
             </button>

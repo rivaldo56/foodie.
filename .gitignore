@@ -57,6 +57,12 @@ foodie-frontend/test-results/
 foodie-frontend/playwright-report/
 foodie-frontend/.playwright/
 
+
 # OS
 .DS_Store
 Thumbs.db
+
+# Documentation
+*.md
+!README.md
+!foodie-frontend/README.md

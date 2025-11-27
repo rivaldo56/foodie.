@@ -1,6 +1,6 @@
 'use client';
 
-import { MenuItem } from '@/lib/api';
+import { MenuItem } from '@/services/chef.service';
 import Image from 'next/image';
 import { Heart, Star, Truck, Store, Utensils, ChefHat } from 'lucide-react';
 import { useState } from 'react';
@@ -117,6 +117,12 @@ export default function MenuItemCard({ item, onFavorite, isFavorited = false, on
                         <div className="flex items-center gap-1.5 text-xs text-blue-400">
                             <Store className="h-4 w-4" />
                             <span>Pickup</span>
+                        </div>
+                    )}
+                    {(item as any).meal_prep_available && (
+                        <div className="flex items-center gap-1.5 text-xs text-purple-400">
+                            <Utensils className="h-4 w-4" />
+                            <span>Meal Prep</span>
                         </div>
                     )}
                 </div>

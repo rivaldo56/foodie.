@@ -144,7 +144,7 @@ class PaymentProcessingService:
             booking = Booking.objects.get(id=booking_id)
             
             # Calculate total amount including platform fee
-            subtotal = booking.total_price
+            subtotal = booking.total_amount
             platform_fee = subtotal * Decimal('0.05')  # 5% platform fee
             total_amount = subtotal + platform_fee
             
@@ -169,7 +169,6 @@ class PaymentProcessingService:
             payment = Payment.objects.create(
                 booking=booking,
                 client=booking.client,
-                chef=booking.chef,
                 amount=total_amount,
                 platform_fee=platform_fee,
                 stripe_payment_intent_id=intent_result['payment_intent_id'],
@@ -187,14 +186,14 @@ class PaymentProcessingService:
                 payment.save()
                 
                 # Update booking status
-                booking.payment_status = 'paid'
                 booking.status = 'confirmed'
                 booking.save()
                 
                 # Create chef payout record (to be processed later)
                 chef_amount = subtotal * Decimal('0.95')  # 95% to chef (5% platform fee)
                 ChefPayout.objects.create(
-                    chef=booking.chef,
+                    chef=booking.chef.user,
+                    booking=booking,
                     payment=payment,
                     amount=chef_amount,
                     status='pending'

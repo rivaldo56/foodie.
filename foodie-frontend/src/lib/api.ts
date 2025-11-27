@@ -7,8 +7,7 @@ import axios, { AxiosError, type AxiosRequestConfig, type AxiosRequestHeaders } 
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL ||
-  process.env.NEXT_PUBLIC_API_URL ||
-  'http://127.0.0.1:8000/api';
+  process.env.NEXT_PUBLIC_API_URL;
 
 const initialToken =
   typeof window !== 'undefined' ? localStorage.getItem('token') : null;
@@ -355,497 +354,41 @@ export async function apiRequest<T>(
 }
 
 // Authentication APIs
-export async function loginUser(credentials: LoginCredentials): Promise<{ token: string; user: User }> {
-  const response = await fetch(`${API_BASE_URL}/users/login/`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      email: credentials.email,
-      password: credentials.password,
-    }),
-  });
-
-  if (!response.ok) {
-    const err = await response.json().catch(() => ({} as { detail?: string }));
-    throw new Error(err.detail || `Login failed: ${response.status}`);
-  }
-
-  const data = await response.json();
-
-  if (!data?.token || !data?.user) {
-    throw new Error('Login response missing token or user');
-  }
-
-  return data;
-}
-
-export async function registerUser(data: RegisterData): Promise<ApiResponse<{ token: string; user: User }>> {
-  const [firstName = '', ...rest] = data.full_name.trim().split(/\s+/);
-  const lastName = rest.join(' ');
-
-  return apiRequest({
-    url: '/users/register/',
-    method: 'POST',
-    data: {
-      email: data.email,
-      username: data.username,
-      first_name: firstName || data.username,
-      last_name: lastName,
-      phone_number: data.phone_number ?? '',
-      role: data.role ?? 'client',
-      password: data.password,
-      password_confirm: data.password2,
-    },
-  });
-}
-
-export async function getCurrentUser(): Promise<ApiResponse<User>> {
-  return apiRequest({
-    url: '/users/profile/',
-    method: 'GET',
-  }, true);
-}
-
-export async function logoutUser(): Promise<void> {
-  if (typeof window !== 'undefined') {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-  }
-}
+// Moved to services/auth.service.ts
 
 // Chef APIs
-export async function getChefs(): Promise<ApiResponse<Chef[]>> {
-  const response = await apiRequest<{ count: number; results: Chef[] }>({ url: '/chefs/' });
-
-  // Django returns paginated response {count, results}, extract the results array
-  if (response.data && 'results' in response.data) {
-    return {
-      data: response.data.results,
-      status: response.status,
-    };
-  }
-
-  // If it's already an array, return as is
-  if (Array.isArray(response.data)) {
-    return response as unknown as ApiResponse<Chef[]>;
-  }
-
-  // Otherwise return the error
-  return response as unknown as ApiResponse<Chef[]>;
-}
-
-export async function getChefById(id: number): Promise<ApiResponse<Chef>> {
-  return apiRequest({ url: `/chefs/${id}/` });
-}
-
-export async function toggleFavoriteChef(chefId: number): Promise<ApiResponse<{ status: string; is_favorited: boolean }>> {
-  return apiRequest({
-    url: `/chefs/${chefId}/favorite/`,
-    method: 'POST',
-  }, true);
-}
-
-export async function getFavoriteChefs(): Promise<ApiResponse<Chef[]>> {
-  return apiRequest({
-    url: '/chefs/favorites/',
-    method: 'GET',
-  }, true);
-}
+// Moved to services/chef.service.ts
 
 // Meal APIs
-export async function getMeals(params?: { category?: string; search?: string }): Promise<ApiResponse<Meal[]>> {
-  const queryParams = new URLSearchParams();
-  if (params?.category) queryParams.append('category', params.category);
-  if (params?.search) queryParams.append('search', params.search);
-
-  const queryString = queryParams.toString();
-  const endpoint = queryString ? `/meals/?${queryString}` : '/meals/';
-
-  return apiRequest({ url: endpoint });
-}
-
-export async function getDiscoverFeed(params?: { search?: string; limit?: number }): Promise<ApiResponse<Meal[]>> {
-  const query = new URLSearchParams();
-  if (params?.search) query.append('search', params.search);
-  if (params?.limit) query.append('limit', String(params.limit));
-
-  const endpoint = query.toString() ? `/meals/?${query.toString()}` : '/meals/';
-  return apiRequest({ url: endpoint });
-}
-
-export async function getMealById(id: number): Promise<ApiResponse<Meal>> {
-  return apiRequest({ url: `/meals/${id}/` });
-}
-
-export async function getChefMeals(chefId: number): Promise<ApiResponse<Meal[]>> {
-  const response = await apiRequest<{ count: number; results: MenuItem[] } | MenuItem[]>({
-    url: `/bookings/chef/${chefId}/menu-items/`
-  });
-
-  let items: MenuItem[] = [];
-
-  if (response.data) {
-    if (Array.isArray(response.data)) {
-      items = response.data;
-    } else if ('results' in response.data) {
-      items = response.data.results;
-    }
-  }
-
-  const meals: Meal[] = items.map(item => ({
-    id: item.id,
-    name: item.name,
-    price: item.price_per_serving,
-    chef: item.chef,
-    chef_name: item.chef_name,
-    category: item.category,
-    image: item.image,
-    description: item.description,
-    rating: 4.8, // Mock rating for now as it's not in MenuItem
-    location: 'Nairobi', // Default location
-  }));
-
-  return {
-    data: meals,
-    status: response.status,
-    error: response.error,
-  };
-}
+// Moved to services/booking.service.ts
 
 // Order APIs
-export async function createOrder(mealId: number, quantity: number = 1): Promise<ApiResponse<Order>> {
-  return apiRequest({
-    url: '/orders/',
-    method: 'POST',
-    data: { meal: mealId, quantity },
-  }, true);
-}
-
-export async function getUserOrders(): Promise<ApiResponse<Order[]>> {
-  return apiRequest({
-    url: '/orders/user/',
-    method: 'GET',
-  }, true);
-}
+// Moved to services/booking.service.ts
 
 // Review APIs
-export async function getReviews(mealId?: number): Promise<ApiResponse<Review[]>> {
-  const endpoint = mealId ? `/reviews/?meal=${mealId}` : '/reviews/';
-  return apiRequest({ url: endpoint });
-}
-
-export async function getChefReviews(chefId: number): Promise<ApiResponse<ChefReview[]>> {
-  const response = await apiRequest<{ count: number; results: ChefReview[] } | ChefReview[]>({
-    url: `/chefs/${chefId}/reviews/`
-  });
-
-  if (response.data && !Array.isArray(response.data) && 'results' in response.data) {
-    return {
-      data: response.data.results,
-      status: response.status,
-    };
-  }
-
-  return response as unknown as ApiResponse<ChefReview[]>;
-}
-
-export async function createReview(mealId: number, rating: number, comment: string): Promise<ApiResponse<Review>> {
-  return apiRequest({
-    url: '/reviews/',
-    method: 'POST',
-    data: { meal: mealId, rating, comment },
-  }, true);
-}
+// Moved to services/booking.service.ts
 
 // Health Check API
 export async function checkHealth(): Promise<ApiResponse<{ status: string }>> {
   return apiRequest({ url: '/' });
 }
 
-export interface ChefEvent {
-  id: number;
-  title: string;
-  start_time: string;
-  end_time: string;
-  description?: string;
-  is_all_day: boolean;
-}
-
-export async function getChefEvents(): Promise<ApiResponse<ChefEvent[]>> {
-  const response = await apiRequest<{ count: number; results: ChefEvent[] } | ChefEvent[]>({
-    url: '/chefs/events/',
-    method: 'GET',
-  }, true);
-
-  if (response.data && !Array.isArray(response.data) && 'results' in response.data) {
-    return {
-      data: response.data.results,
-      status: response.status,
-    };
-  }
-
-  return response as unknown as ApiResponse<ChefEvent[]>;
-}
-
-export async function createChefEvent(data: Omit<ChefEvent, 'id'>): Promise<ApiResponse<ChefEvent>> {
-  return apiRequest({
-    url: '/chefs/events/',
-    method: 'POST',
-    data,
-  }, true);
-}
-
-export async function deleteChefEvent(id: number): Promise<ApiResponse<void>> {
-  return apiRequest({
-    url: `/chefs/events/${id}/`,
-    method: 'DELETE',
-  }, true);
-}
+// Chef Event APIs
+// Moved to services/chef.service.ts
 
 // Cloudinary upload function
-export async function uploadToCloudinary(file: File, preset: string = 'menu_items'): Promise<string | null> {
-  try {
-    const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'dxdkr0jby';
+// Moved to services/chef.service.ts
 
-    console.log(`[Cloudinary] Uploading to cloud: ${cloudName}, preset: ${preset}`);
+// Menu Item APIs
+// Moved to services/chef.service.ts
 
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('upload_preset', preset);
-
-    const response = await fetch(
-      `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-      {
-        method: 'POST',
-        body: formData,
-      }
-    );
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('[Cloudinary] Upload failed with status:', response.status);
-      console.error('[Cloudinary] Error response:', errorText);
-      return null;
-    }
-
-    const data = await response.json();
-    console.log('[Cloudinary] Upload successful:', data.secure_url);
-    return data.secure_url || null;
-  } catch (error) {
-    console.error('[Cloudinary Upload Error]', error);
-    return null;
-  }
-}
-
-export interface CreateMenuItemData {
-  name: string;
-  description: string;
-  category: string;
-  price_per_serving: number;
-  delivery_available: boolean;
-  pickup_available: boolean;
-  image?: File;
-}
-
-export async function createMenuItem(data: CreateMenuItemData): Promise<ApiResponse<MenuItem>> {
-  try {
-    // Use FormData to send file to backend
-    const formData = new FormData();
-    formData.append('name', data.name);
-    formData.append('description', data.description);
-    formData.append('category', data.category);
-    formData.append('price_per_serving', data.price_per_serving.toString());
-    // Booleans need to be sent as "true"/"false" strings for Django to parse
-    formData.append('delivery_available', data.delivery_available ? 'true' : 'false');
-    formData.append('pickup_available', data.pickup_available ? 'true' : 'false');
-    formData.append('preparation_time', '30');
-
-    if (data.image) {
-      formData.append('image', data.image);
-    }
-
-    const token = getAuthToken();
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000'}/api/bookings/menu-items/create/`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Token ${token}`,
-      },
-      body: formData,
-    });
-
-    if (!response.ok) {
-      const responseText = await response.text();
-      let errorMessage = 'Failed to create menu item';
-      try {
-        const errorData = JSON.parse(responseText);
-        errorMessage = errorData.error || JSON.stringify(errorData);
-      } catch {
-        errorMessage = responseText || `Error ${response.status}`;
-      }
-      console.error('[Create Menu Item Error]', errorMessage);
-      return {
-        error: errorMessage,
-        status: response.status,
-      };
-    }
-
-    const result = await response.json();
-    return {
-      data: result,
-      status: response.status,
-    };
-  } catch (error) {
-    console.error('[Create Menu Item Error]', error);
-    return {
-      error: error instanceof Error ? error.message : 'Failed to create menu item',
-      status: 500,
-    };
-  }
-}
-
-// Get all menu items
-export async function getMenuItems(): Promise<ApiResponse<MenuItem[]>> {
-  const response = await apiRequest<{ count: number; results: MenuItem[] } | MenuItem[]>({
-    url: '/bookings/menu-items/',
-    method: 'GET',
-  });
-
-  if (response.data && !Array.isArray(response.data) && 'results' in response.data) {
-    return {
-      data: response.data.results,
-      status: response.status,
-    };
-  }
-
-  return response as unknown as ApiResponse<MenuItem[]>;
-}
-
-// Update menu item
-export async function updateMenuItem(id: number, data: Partial<CreateMenuItemData>): Promise<ApiResponse<MenuItem>> {
-  try {
-    let imageUrl: string | null = null;
-    if (data.image) {
-      imageUrl = await uploadToCloudinary(data.image);
-    }
-
-    const payload: any = {};
-    if (data.name) payload.name = data.name;
-    if (data.description) payload.description = data.description;
-    if (data.category) payload.category = data.category;
-    if (data.price_per_serving) payload.price_per_serving = data.price_per_serving;
-    if (data.delivery_available !== undefined) payload.delivery_available = data.delivery_available;
-    if (data.pickup_available !== undefined) payload.pickup_available = data.pickup_available;
-    if (imageUrl) payload.image = imageUrl;
-
-    return apiRequest<MenuItem>({
-      url: `/bookings/menu-items/${id}/update/`,
-      method: 'PATCH',
-      data: payload,
-    }, true);
-  } catch (error) {
-    return {
-      error: error instanceof Error ? error.message : 'Failed to update menu item',
-      status: 500,
-    };
-  }
-}
-
-// Delete menu item
-export async function deleteMenuItem(id: number): Promise<ApiResponse<void>> {
-  return apiRequest({
-    url: `/bookings/menu-items/${id}/delete/`,
-    method: 'DELETE',
-  }, true);
-}
-
-// Get my chef profile
-export async function getMyChefProfile(): Promise<ApiResponse<Chef>> {
-  return apiRequest<Chef>({
-    url: '/chefs/profile/me/',
-    method: 'GET',
-  }, true);
-}
-
-// Update chef profile
-export async function updateChefProfile(data: FormData): Promise<ApiResponse<Chef>> {
-  return apiRequest<Chef>({
-    url: '/chefs/profile/me/',
-    method: 'PATCH',
-    data,
-  }, true);
-}
-
-// Update client profile
-export async function updateClientProfile(data: FormData): Promise<ApiResponse<User>> {
-  return apiRequest<User>({
-    url: '/users/profile/',
-    method: 'PATCH',
-    data,
-  }, true);
-}
-
+// Chef Profile APIs
+// Moved to services/chef.service.ts
 
 // Chef Analytics API
-export async function getChefAnalytics(): Promise<ApiResponse<{
-  revenue: {
-    total_revenue: number;
-    month_revenue: number;
-    week_revenue: number;
-    daily_revenue: Array<{ date: string; revenue: number }>;
-  };
-  bookings: {
-    total_bookings: number;
-    pending: number;
-    confirmed: number;
-    completed: number;
-    cancelled: number;
-    month_bookings: number;
-    upcoming_bookings: Array<{
-      id: number;
-      client_name: string;
-      booking_date: string;
-      service_type: string;
-      number_of_guests: number;
-      total_amount: number;
-      status: string;
-      confirmation_code: string;
-    }>;
-  };
-  reviews: {
-    average_rating: number;
-    average_food_quality: number;
-    average_professionalism: number;
-    average_punctuality: number;
-    total_reviews: number;
-    rating_distribution: Record<string, number>;
-    recent_reviews: Array<{
-      id: number;
-      client_name: string;
-      rating: number;
-      comment: string;
-      created_at: string;
-      food_quality: number;
-      professionalism: number;
-      punctuality: number;
-    }>;
-  };
-  chef: {
-    id: number;
-    name: string;
-    average_rating: number;
-    total_bookings: number;
-    is_verified: boolean;
-  };
-}>> {
-  return apiRequest({
-    url: '/chefs/analytics/',
-    method: 'GET',
-  }, true);
-}
+// Moved to services/chef.service.ts
 
-// Mock data for fallback (when API is unavailable)
+// Mock data
 export const mockChefs: Chef[] = [
   {
     id: 1,
@@ -935,3 +478,5 @@ export const mockMeals: Meal[] = [
     description: 'Grilled goat meat with kachumbari and ugali',
   },
 ];
+
+

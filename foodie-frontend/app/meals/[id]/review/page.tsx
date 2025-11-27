@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { createReview } from '@/lib/api';
+import { createReview } from '@/services/booking.service';
 import { useAuth } from '@/contexts/AuthContext';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import BackButton from '@/components/BackButton';

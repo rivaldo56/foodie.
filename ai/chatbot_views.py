@@ -49,36 +49,43 @@ class ChatbotMessageView(generics.CreateAPIView):
         context = {
             'user_id': request.user.id,
             'user_name': request.user.full_name,
+            'user_role': request.user.role,
             'previous_bookings': request.user.bookings.count() if hasattr(request.user, 'bookings') else 0,
         }
         
         # Get chatbot response
-        chatbot = FoodieChatbot()
-        result = chatbot.chat(user_message, context=context)
-        
-        if result['success']:
-            # Save AI response
-            ai_msg = ChatMessage.objects.create(
-                session=session,
-                sender='ai',
-                content=result['response'],
-                message_metadata={
-                    'intent': result.get('intent'),
-                    'booking_data': result.get('booking_data')
-                }
-            )
+        try:
+            chatbot = FoodieChatbot()
+            result = chatbot.chat(user_message, context=context)
             
-            return Response({
-                'session_id': session.id,
-                'message': result['response'],
-                'intent': result.get('intent'),
-                'booking_data': result.get('booking_data'),
-                'message_id': ai_msg.id
-            }, status=status.HTTP_200_OK)
-        else:
+            if result['success']:
+                # Save AI response
+                ai_msg = ChatMessage.objects.create(
+                    session=session,
+                    sender='ai',
+                    content=result['response'],
+                    message_metadata={
+                        'intent': result.get('intent'),
+                        'booking_data': result.get('booking_data')
+                    }
+                )
+                
+                return Response({
+                    'session_id': session.id,
+                    'message': result['response'],
+                    'intent': result.get('intent'),
+                    'booking_data': result.get('booking_data'),
+                    'message_id': ai_msg.id
+                }, status=status.HTTP_200_OK)
+            else:
+                return Response(
+                    {'error': result.get('error', 'Failed to get response')},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )
+        except Exception as e:
             return Response(
-                {'error': result.get('error', 'Failed to get response')},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                {'error': f'Chatbot service error: {str(e)}'},
+                status=status.HTTP_503_SERVICE_UNAVAILABLE
             )
 
 

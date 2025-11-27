@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import MealCard from '@/components/MealCard';
 import MealDetailsView from '@/components/MealDetailsView';
-import { Meal } from '@/lib/api';
+import { Meal } from '@/services/booking.service';
 
 // Mock data for testing
 const MOCK_MEALS: Meal[] = [

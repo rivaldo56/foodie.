@@ -1,4 +1,4 @@
-import { Review } from '@/lib/api';
+import { Review } from '@/services/booking.service';
 import { Star, ThumbsUp } from 'lucide-react';
 
 interface ReviewCardProps {

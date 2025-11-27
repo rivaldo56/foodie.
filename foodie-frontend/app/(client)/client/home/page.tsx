@@ -6,10 +6,10 @@ import { useAuth } from '@/contexts/AuthContext';
 import { getPersonalizedFeed, trackInteraction } from '@/lib/api/recommendations';
 import type { ChefRecommendation } from '@/lib/api/recommendations';
 import ChefCard from '@/components/ChefCard';
-import { getMenuItems, type MenuItem } from '@/lib/api';
+import { getMenuItems, type MenuItem } from '@/services/chef.service';
 import MenuItemCard from '@/components/MenuItemCard';
 import MealDetailsView from '@/components/MealDetailsView';
-import { Meal } from '@/lib/api';
+import { Meal } from '@/services/booking.service';
 import { Search, Sparkles, Loader2 } from 'lucide-react';
 
 export default function ClientHomePage() {

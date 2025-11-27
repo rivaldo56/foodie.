@@ -3,17 +3,17 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { getMenuItems, updateChefProfile, uploadToCloudinary, type Chef, type MenuItem } from '@/lib/api';
+import { getMenuItems, updateProfile as updateChefProfile, uploadToCloudinary, type Chef, type MenuItem } from '@/services/chef.service';
 import ChefBadge from '@/components/ChefBadge';
 import MenuItemCard from '@/components/MenuItemCard';
 import ProfileEditModal from '@/components/modals/ProfileEditModal';
 import Image from 'next/image';
-import { CheckCircle, Edit, Plus, Star, TrendingUp, Users, Utensils, User, Mail, Phone, MapPin, Camera, Save, Loader2, ChefHat } from 'lucide-react';
+import { CheckCircle, Edit, Plus, Star, TrendingUp, Users, Utensils, User, Mail, Phone, MapPin, Camera, Save, Loader2, ChefHat, LogOut } from 'lucide-react';
 import Link from 'next/link';
 
 export default function ChefProfilePage() {
   const router = useRouter();
-  const { isAuthenticated, loading, user } = useAuth();
+  const { isAuthenticated, loading, user, logout } = useAuth();
   const [chefProfile, setChefProfile] = useState<Chef | null>(null);
   const [myDishes, setMyDishes] = useState<MenuItem[]>([]);
   const [dishesLoading, setDishesLoading] = useState(true);
@@ -35,7 +35,7 @@ export default function ChefProfilePage() {
       setDishesLoading(true);
 
       // Fetch chef profile
-      const { getMyChefProfile } = await import('@/lib/api');
+      const { getMyProfile: getMyChefProfile } = await import('@/services/chef.service');
       const profileResponse = await getMyChefProfile();
 
       if (profileResponse.data) {
@@ -169,9 +169,21 @@ export default function ChefProfilePage() {
               </div>
               <p className="text-white/60">@{user?.username}</p>
             </div>
-            <button className="px-4 py-2 rounded-full bg-orange-500 hover:bg-orange-600 transition text-white font-medium">
-              Edit Profile
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={logout}
+                className="px-4 py-2 rounded-full bg-white/5 hover:bg-red-500/20 hover:text-red-400 border border-white/10 hover:border-red-500/50 transition text-white/70 font-medium flex items-center gap-2"
+              >
+                <LogOut className="h-4 w-4" />
+                <span className="hidden sm:inline">Log Out</span>
+              </button>
+              <button
+                onClick={() => setIsEditModalOpen(true)}
+                className="px-4 py-2 rounded-full bg-orange-500 hover:bg-orange-600 transition text-white font-medium"
+              >
+                Edit Profile
+              </button>
+            </div>
           </div>
 
           {/* Bio */}

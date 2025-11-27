@@ -1,9 +1,15 @@
-from rest_framework import generics, status, permissions
+from rest_framework import generics, status, permissions, viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
-from .models import ChefProfile, ChefCertification, ChefReview
-from .serializers import ChefProfileSerializer, ChefCertificationSerializer, ChefReviewSerializer
+from users.permissions import IsChef, IsClient
+from .models import ChefProfile, ChefCertification, ChefReview, FavoriteChef, ChefEvent
+from .serializers import (
+    ChefProfileSerializer, ChefCertificationSerializer, ChefReviewSerializer,
+    FavoriteChefSerializer, ChefEventSerializer
+)
+from bookings.models import MenuItem
+from bookings.serializers import MenuItemSerializer
 
 
 class ChefListView(generics.ListAPIView):
@@ -33,7 +39,7 @@ class ChefDetailView(generics.RetrieveAPIView):
 class ChefProfileView(generics.RetrieveUpdateAPIView):
     """Chef profile management"""
     serializer_class = ChefProfileSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsChef]
     
     def get_object(self):
         profile, created = ChefProfile.objects.get_or_create(user=self.request.user)
@@ -81,7 +87,7 @@ class ChefReviewListView(generics.ListAPIView):
 class ChefReviewCreateView(generics.CreateAPIView):
     """Create chef review"""
     serializer_class = ChefReviewSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsClient]
 
 
 class ChefReviewDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -94,7 +100,7 @@ class ChefReviewDetailView(generics.RetrieveUpdateDestroyAPIView):
 class ChefCertificationListView(generics.ListAPIView):
     """List chef certifications"""
     serializer_class = ChefCertificationSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsChef]
     
     def get_queryset(self):
         return ChefCertification.objects.filter(chef__user=self.request.user)
@@ -103,13 +109,13 @@ class ChefCertificationListView(generics.ListAPIView):
 class ChefCertificationCreateView(generics.CreateAPIView):
     """Create chef certification"""
     serializer_class = ChefCertificationSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsChef]
 
 
 class ChefCertificationDetailView(generics.RetrieveUpdateDestroyAPIView):
     """Chef certification detail"""
     serializer_class = ChefCertificationSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsChef]
     
     def get_queryset(self):
         return ChefCertification.objects.filter(chef__user=self.request.user)
@@ -118,45 +124,33 @@ class ChefCertificationDetailView(generics.RetrieveUpdateDestroyAPIView):
 class MenuItemListView(generics.ListAPIView):
     """List menu items"""
     permission_classes = [permissions.AllowAny]
+    serializer_class = MenuItemSerializer
     
     def get_queryset(self):
-        from bookings.models import MenuItem
         return MenuItem.objects.all()
-    
-    def get_serializer_class(self):
-        from bookings.serializers import MenuItemSerializer
-        return MenuItemSerializer
 
 
 class MenuItemCreateView(generics.CreateAPIView):
     """Create menu item"""
-    permission_classes = [permissions.IsAuthenticated]
-    
-    def get_serializer_class(self):
-        from bookings.serializers import MenuItemSerializer
-        return MenuItemSerializer
+    permission_classes = [permissions.IsAuthenticated, IsChef]
+    serializer_class = MenuItemSerializer
 
 
 class MenuItemDetailView(generics.RetrieveUpdateDestroyAPIView):
     """Menu item detail"""
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsChef]
+    serializer_class = MenuItemSerializer
     
     def get_queryset(self):
-        from bookings.models import MenuItem
         return MenuItem.objects.filter(chef__user=self.request.user)
-    
-    def get_serializer_class(self):
-        from bookings.serializers import MenuItemSerializer
-        return MenuItemSerializer
 
 
 class FavoriteChefToggleView(generics.GenericAPIView):
     """Toggle favorite status for a chef"""
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsClient]
     
     def post(self, request, chef_id):
         chef = get_object_or_404(ChefProfile, id=chef_id)
-        from .models import FavoriteChef
         
         favorite, created = FavoriteChef.objects.get_or_create(user=request.user, chef=chef)
         
@@ -169,20 +163,16 @@ class FavoriteChefToggleView(generics.GenericAPIView):
 
 class FavoriteChefListView(generics.ListAPIView):
     """List user's favorite chefs"""
-    permission_classes = [permissions.IsAuthenticated]
-    
-    def get_serializer_class(self):
-        from .serializers import FavoriteChefSerializer
-        return FavoriteChefSerializer
+    permission_classes = [permissions.IsAuthenticated, IsClient]
+    serializer_class = FavoriteChefSerializer
         
     def get_queryset(self):
-        from .models import FavoriteChef
         return FavoriteChef.objects.filter(user=self.request.user)
 
 
 class ChefAnalyticsView(generics.GenericAPIView):
     """Get chef dashboard analytics"""
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsChef]
     
     def get(self, request):
         # Get chef profile for authenticated user
@@ -204,14 +194,10 @@ class ChefAnalyticsView(generics.GenericAPIView):
         return Response(data, status=status.HTTP_200_OK)
 
 
-from rest_framework import viewsets
-from .models import ChefEvent
-from .serializers import ChefEventSerializer
-
 class ChefEventViewSet(viewsets.ModelViewSet):
     """Manage chef personal events"""
     serializer_class = ChefEventSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsChef]
     
     def get_queryset(self):
         return ChefEvent.objects.filter(chef__user=self.request.user)

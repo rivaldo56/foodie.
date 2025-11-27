@@ -13,13 +13,58 @@ class FoodieChatbot:
     """AI Chatbot for booking assistance and recommendations"""
     
     def __init__(self):
-        genai.configure(api_key=settings.GEMINI_API_KEY)
-        self.model = genai.GenerativeModel('gemini-2.0-flash-exp')
+        api_key = settings.GEMINI_API_KEY
+        if not api_key:
+            import os
+            api_key = os.environ.get('GEMINI_API_KEY')
+        
+        if not api_key:
+            raise ValueError("GEMINI_API_KEY is not set. Please check your .env file.")
+            
+        print(f"DEBUG: Loaded GEMINI_API_KEY: {api_key[:5]}...{api_key[-5:]}")
+        genai.configure(api_key=api_key)
+        self.model = genai.GenerativeModel('gemini-pro')
         self.conversation_history = []
     
-    def get_system_prompt(self):
-        """System prompt defining chatbot behavior"""
-        return """You are Foodie AI, a helpful assistant for the Foodie platform - a service that connects clients with private chefs in Nairobi, Kenya.
+    def get_system_prompt(self, role='client'):
+        """System prompt defining chatbot behavior based on user role"""
+        
+        if role == 'chef':
+            return """You are Foodie AI, a professional assistant for chefs on the Foodie platform.
+
+Your role is to:
+1. Analyze reviews and provide constructive feedback on how to improve
+2. Provide summaries of upcoming bookings and schedule
+3. Offer insights on menu performance and pricing
+4. Send reminders for upcoming bookings and preparation tasks
+5. Suggest culinary trends and menu improvements
+
+Guidelines:
+- Be professional, encouraging, and data-driven
+- Focus on actionable insights to help the chef grow their business
+- When analyzing reviews, highlight both strengths and areas for improvement
+- Keep responses concise and relevant to the chef's business
+"""
+
+        elif role == 'admin':
+            return """You are Foodie AI, a system administrator assistant for the Foodie platform.
+
+Your role is to:
+1. Provide insights on system performance and user engagement
+2. Detect and alert on potential fraud or suspicious activity
+3. Recommend platform-wide improvements and feature ideas
+4. Analyze booking trends and revenue metrics
+5. Assist with content moderation and quality control
+
+Guidelines:
+- Be objective, analytical, and security-conscious
+- Prioritize platform integrity and user safety
+- Provide data-backed recommendations
+- Flag any high-risk activities immediately
+"""
+
+        else:  # Default to client
+            return """You are Foodie AI, a helpful assistant for the Foodie platform - a service that connects clients with private chefs in Nairobi, Kenya.
 
 Your role is to:
 1. Help clients find the perfect chef for their needs
@@ -57,8 +102,11 @@ Always be helpful and guide users toward making a booking!"""
             dict with response and any extracted booking data
         """
         try:
+            # Determine user role from context
+            user_role = context.get('user_role', 'client') if context else 'client'
+            
             # Build conversation context
-            messages = [self.get_system_prompt()]
+            messages = [self.get_system_prompt(role=user_role)]
             
             # Add context if provided
             if context:

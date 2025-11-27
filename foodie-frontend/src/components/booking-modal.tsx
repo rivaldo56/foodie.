@@ -256,7 +256,7 @@ export function BookingModal({ chef, isOpen, onClose }: BookingModalProps) {
         ) : (
           <>
             <h2 className="text-2xl font-bold mb-6">Complete Payment</h2>
-            <p className="text-gray-400 mb-4">Total: KES {(booking?.total_amount ?? booking?.base_price ?? totalPrice).toFixed(2)}</p>
+            <p className="text-gray-400 mb-4">Total: KES {Number(booking?.total_amount ?? booking?.base_price ?? totalPrice).toFixed(2)}</p>
             {booking ? (
               <MpesaPaymentForm booking={booking} onSuccess={handlePaymentSuccess} />
             ) : (

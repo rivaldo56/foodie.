@@ -4,7 +4,7 @@ import { useEffect, useState, useRef, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import ChefCard from '@/components/ChefCard';
 import { TrendingUp, Sparkles, Flame } from 'lucide-react';
-import type { Chef } from '@/lib/api';
+import type { Chef } from '@/services/chef.service';
 
 interface RecommendedChef {
     chef: Chef;

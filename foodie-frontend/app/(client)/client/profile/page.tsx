@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { updateClientProfile, uploadToCloudinary } from '@/lib/api';
+import { updateProfile as updateClientProfile } from '@/services/auth.service';
+import { uploadToCloudinary } from '@/services/chef.service';
 import ProfileEditModal from '@/components/modals/ProfileEditModal';
 import Image from 'next/image';
 import { User as UserIcon, Mail, Phone, MapPin, CreditCard, Settings, LogOut, Edit } from 'lucide-react';

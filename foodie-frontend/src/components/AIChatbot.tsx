@@ -52,7 +52,9 @@ export default function AIChatbot() {
 
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch('http://127.0.0.1:8000/api/ai/chatbot/message/', {
+            const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8000/api';
+
+            const response = await fetch(`${baseUrl}/ai/chatbot/message/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -81,9 +83,15 @@ export default function AIChatbot() {
                     setSessionId(data.session_id);
                 }
             } else {
-                throw new Error(data.error || 'Failed to get response');
+                console.error('Chatbot API error:', {
+                    status: response.status,
+                    statusText: response.statusText,
+                    data
+                });
+                throw new Error(data.error || `Server error: ${response.status} ${response.statusText}`);
             }
         } catch (error) {
+            console.error('Chatbot request failed:', error);
             const errorMessage: Message = {
                 id: Date.now().toString(),
                 role: 'assistant',
@@ -102,7 +110,9 @@ export default function AIChatbot() {
         setIsLoading(true);
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch('http://127.0.0.1:8000/api/ai/chatbot/recommend-meals/', {
+            const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8000/api';
+
+            const response = await fetch(`${baseUrl}/ai/chatbot/recommend-meals/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -126,6 +136,8 @@ export default function AIChatbot() {
                 };
                 setMessages((prev) => [...prev, aiMessage]);
                 setMealRecommendations(data.menu_items || []);
+            } else {
+                console.error('Meal recommendations API error:', data);
             }
         } catch (error) {
             console.error('Failed to get meal recommendations:', error);

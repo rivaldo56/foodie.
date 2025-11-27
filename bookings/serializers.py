@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from decimal import Decimal
 from django.utils import timezone
 from .models import Booking, MenuItem, BookingMenuItem
 from users.serializers import UserSerializer
@@ -16,7 +17,7 @@ class MenuItemSerializer(serializers.ModelSerializer):
             'price_per_serving', 'preparation_time', 'is_vegetarian', 'is_vegan',
             'is_gluten_free', 'is_dairy_free', 'allergens', 'is_available',
             'seasonal_availability', 'image', 'ingredients', 'delivery_available',
-            'pickup_available', 'created_at', 'updated_at'
+            'pickup_available', 'meal_prep_available', 'created_at', 'updated_at'
         ]
         read_only_fields = ['id', 'created_at', 'updated_at']
     
@@ -57,8 +58,9 @@ class BookingSerializer(serializers.ModelSerializer):
             'id', 'client', 'chef', 'service_type', 'booking_date',
             'duration_hours', 'number_of_guests', 'service_address',
             'service_city', 'service_state', 'service_zip_code',
-            'menu_items', 'dietary_requirements', 'special_requests',
-            'base_price', 'additional_fees', 'total_amount', 'status',
+            'dietary_requirements', 'special_requests',
+            'base_price', 'additional_fees', 'total_amount', 
+            'is_priority', 'down_payment_amount', 'status',
             'confirmation_code', 'client_notes', 'chef_notes',
             'booking_menu_items', 'created_at', 'updated_at',
             'confirmed_at', 'completed_at', 'cancelled_at'
@@ -99,7 +101,8 @@ class BookingCreateSerializer(serializers.ModelSerializer):
             'chef_id', 'service_type', 'booking_date', 'duration_hours',
             'number_of_guests', 'service_address', 'service_city',
             'service_state', 'service_zip_code', 'dietary_requirements',
-            'special_requests', 'client_notes', 'menu_items'
+            'special_requests', 'client_notes', 'menu_items',
+            'is_priority', 'down_payment_amount'
         ]
     
     def validate_booking_date(self, value):
@@ -128,24 +131,36 @@ class BookingCreateSerializer(serializers.ModelSerializer):
         base_price = chef.hourly_rate * validated_data['duration_hours']
         total_amount = base_price
         
+        # Create menu items and calculate total cost
+        menu_items_cost = Decimal('0.00')
+        
+        # First save the booking to get an ID
         booking = Booking.objects.create(
             client=self.context['request'].user,
             chef=chef,
             base_price=base_price,
-            total_amount=total_amount,
+            total_amount=base_price, # Temporary, will update
             **validated_data
         )
         
-        # Create menu items
         for item_data in menu_items_data:
             menu_item = MenuItem.objects.get(id=item_data['menu_item_id'])
+            quantity = item_data['quantity']
+            unit_price = menu_item.price_per_serving
+            total_price = unit_price * quantity
+            
             BookingMenuItem.objects.create(
                 booking=booking,
                 menu_item=menu_item,
-                quantity=item_data['quantity'],
-                unit_price=menu_item.price_per_serving,
+                quantity=quantity,
+                unit_price=unit_price,
                 special_instructions=item_data.get('special_instructions', '')
             )
+            menu_items_cost += total_price
+            
+        # Update booking total amount
+        booking.total_amount = base_price + menu_items_cost + Decimal(str(booking.additional_fees))
+        booking.save()
         
         return booking
 

@@ -3,13 +3,20 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
+from django.db import transaction
 from django.shortcuts import get_object_or_404
 from .models import User, ClientProfile
+from .permissions import IsClient, IsChef
 from .serializers import (
     UserRegistrationSerializer, UserLoginSerializer, UserSerializer,
     ClientProfileSerializer, ClientProfileCreateUpdateSerializer,
     UserUpdateSerializer, PasswordChangeSerializer
 )
+
+# Import models at module level to avoid circular imports inside functions
+# We use string references where possible, but for dashboard we need to query
+from bookings.models import Booking
+from chefs.models import ChefProfile
 
 
 class UserRegistrationView(generics.CreateAPIView):
@@ -18,6 +25,7 @@ class UserRegistrationView(generics.CreateAPIView):
     serializer_class = UserRegistrationSerializer
     permission_classes = [permissions.AllowAny]
     
+    @transaction.atomic
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -72,7 +80,7 @@ class UserProfileView(generics.RetrieveUpdateAPIView):
 
 class ClientProfileView(generics.RetrieveUpdateAPIView):
     """Client profile view and update"""
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsClient]
     
     def get_object(self):
         profile, created = ClientProfile.objects.get_or_create(user=self.request.user)
@@ -126,7 +134,6 @@ def user_dashboard(request):
     
     if user.role == 'client':
         # Client dashboard data
-        from bookings.models import Booking
         bookings = Booking.objects.filter(client=user)
         
         dashboard_data = {
@@ -144,7 +151,6 @@ def user_dashboard(request):
         
     elif user.role == 'chef':
         # Chef dashboard data
-        from chefs.models import ChefProfile
         try:
             chef_profile = ChefProfile.objects.get(user=user)
             bookings = chef_profile.bookings.all()

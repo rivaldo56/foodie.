@@ -5,7 +5,8 @@ import { Sparkles, Flame, Leaf, Star, SlidersHorizontal, Wand2 } from 'lucide-re
 import SearchBar from '@/components/SearchBar';
 import MealCard from '@/components/MealCard';
 import BottomDock from '@/components/BottomDock';
-import { getDiscoverFeed, mockMeals, type Meal } from '@/lib/api';
+import { getDiscoverFeed, Meal } from '@/services/booking.service';
+import { mockMeals } from '@/lib/api';
 
 const CATEGORY_CHIPS: { label: string; value: string; icon: React.ComponentType<{ className?: string }> }[] = [
   { label: 'All', value: 'all', icon: Sparkles },

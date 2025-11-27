@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { getUserOrders, getMeals, Order, Meal } from '@/lib/api';
+import { getUserOrders, getMeals, Order, Meal } from '@/services/booking.service';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import OrderCard from '@/components/OrderCard';
 import LoadingSpinner from '@/components/LoadingSpinner';

@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { startTransition } from 'react';
-import { User, loginUser, registerUser, getCurrentUser, logoutUser, LoginCredentials, RegisterData } from '@/lib/api';
+import { authService, User, LoginCredentials, RegisterData } from '@/services/auth.service';
 import { useToast } from '@/contexts/ToastContext';
 
 interface AuthContextType {
@@ -90,7 +90,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const fetchProfile = async () => {
       try {
         setLoading(true);
-        const response = await getCurrentUser();
+        const response = await authService.getCurrentUser();
 
         if (cancelled) return;
 
@@ -129,7 +129,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (credentials: LoginCredentials) => {
     try {
-      const { token: newToken, user: newUser } = await loginUser(credentials);
+      const { token: newToken, user: newUser } = await authService.login(credentials);
 
       setToken(newToken);
       setUser(newUser);
@@ -138,7 +138,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setTokenCookie(newToken);
       console.log('[Foodie] Login success');
       showToast('Welcome back!', 'success');
-      
+
       // Use startTransition to handle the redirect
       startTransition(() => {
         if (newUser.role === 'chef') {
@@ -147,7 +147,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           router.push('/client/home');
         }
       });
-      
+
       return { success: true };
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Network error';
@@ -159,8 +159,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const register = async (data: RegisterData) => {
     try {
-      const response = await registerUser(data);
-      
+      const response = await authService.register(data);
+
       if (response.data) {
         const { token: newToken, user: newUser } = response.data;
         setToken(newToken);
@@ -198,7 +198,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = () => {
-    logoutUser();
+    authService.logout();
     clearAuthState();
     startTransition(() => {
       router.replace('/auth');

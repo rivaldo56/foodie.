@@ -3,10 +3,12 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { getChefAnalytics, getChefEvents, createChefEvent, type ChefEvent } from '@/lib/api';
+import { getAnalytics as getChefAnalytics, getEvents as getChefEvents, createEvent as createChefEvent, type ChefEvent } from '@/services/chef.service';
 import DashboardStats from '@/components/chef/DashboardStats';
 import RevenueChart from '@/components/chef/RevenueChart';
 import CalendarWidget, { type CalendarEvent } from '@/components/CalendarWidget';
+import BookingDetailModal from '@/components/modals/BookingDetailModal';
+import { Booking } from '@/services/booking.service';
 import {
   DollarSign,
   Calendar,
@@ -84,6 +86,10 @@ export default function ChefDashboardPage() {
   const [newEventTitle, setNewEventTitle] = useState('');
   const [newEventDescription, setNewEventDescription] = useState('');
   const [isSubmittingEvent, setIsSubmittingEvent] = useState(false);
+
+  // Booking Detail Modal State
+  const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
@@ -274,49 +280,63 @@ export default function ChefDashboardPage() {
             <p className="mt-4 text-sm text-white/50">No upcoming bookings</p>
           ) : (
             <div className="mt-4 space-y-3">
-              {analytics.bookings.upcoming_bookings.map((booking) => (
-                <div
-                  key={booking.id}
-                  className="flex flex-col sm:flex-row items-start sm:items-center justify-between rounded-xl sm:rounded-2xl border border-white/5 bg-white/5 p-3 sm:p-4 gap-3 sm:gap-0"
-                >
-                  <div className="flex-1 w-full">
-                    <div className="flex items-center gap-2 sm:gap-3">
-                      <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-accent/20 text-xs sm:text-sm font-semibold text-accent flex-shrink-0">
-                        {booking.client_name.split(' ').map(n => n[0]).join('')}
+              {analytics.bookings.upcoming_bookings.map((booking) => {
+                // Extract client_id from analytics data
+                const bookingClientId = (booking as any).client_id || booking.id;
+
+                return (
+                  <div
+                    key={booking.id}
+                    onClick={() => {
+                      // Create a booking object with client_id for the modal
+                      const bookingWithClientId = {
+                        ...booking,
+                        client_id: bookingClientId
+                      };
+                      setSelectedBooking(bookingWithClientId as unknown as Booking);
+                      setIsBookingModalOpen(true);
+                    }}
+                    className="flex flex-col sm:flex-row items-start sm:items-center justify-between rounded-xl sm:rounded-2xl border border-white/5 bg-white/5 p-3 sm:p-4 gap-3 sm:gap-0 cursor-pointer hover:bg-white/10 transition"
+                  >
+                    <div className="flex-1 w-full">
+                      <div className="flex items-center gap-2 sm:gap-3">
+                        <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-accent/20 text-xs sm:text-sm font-semibold text-accent flex-shrink-0">
+                          {booking.client_name.split(' ').map(n => n[0]).join('')}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm sm:text-base font-medium text-white truncate">{booking.client_name}</p>
+                          <p className="text-[10px] sm:text-xs text-white/50 truncate">
+                            {new Date(booking.booking_date).toLocaleDateString('en-US', {
+                              month: 'short',
+                              day: 'numeric',
+                              year: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </p>
+                        </div>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm sm:text-base font-medium text-white truncate">{booking.client_name}</p>
-                        <p className="text-[10px] sm:text-xs text-white/50 truncate">
-                          {new Date(booking.booking_date).toLocaleDateString('en-US', {
-                            month: 'short',
-                            day: 'numeric',
-                            year: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit'
-                          })}
+                    </div>
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
+                      <div className="text-left sm:text-right">
+                        <p className="text-xs sm:text-sm text-white/60">{booking.service_type.replace('_', ' ')}</p>
+                        <div className="flex items-center gap-2 text-xs text-white/50">
+                          <Users className="h-3 w-3" />
+                          {booking.number_of_guests} guests
+                        </div>
+                      </div>
+                      <div className="text-left sm:text-right">
+                        <p className="text-sm sm:text-base font-semibold text-white">
+                          KSh {Number(booking.total_amount).toLocaleString()}
                         </p>
+                        <span className={`inline-block rounded-full px-2 py-1 text-xs font-medium ${statusBadgeColor(booking.status)}`}>
+                          {booking.status}
+                        </span>
                       </div>
                     </div>
                   </div>
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
-                    <div className="text-left sm:text-right">
-                      <p className="text-xs sm:text-sm text-white/60">{booking.service_type.replace('_', ' ')}</p>
-                      <div className="flex items-center gap-2 text-xs text-white/50">
-                        <Users className="h-3 w-3" />
-                        {booking.number_of_guests} guests
-                      </div>
-                    </div>
-                    <div className="text-left sm:text-right">
-                      <p className="text-sm sm:text-base font-semibold text-white">
-                        KSh {booking.total_amount.toLocaleString()}
-                      </p>
-                      <span className={`inline-block rounded-full px-2 py-1 text-xs font-medium ${statusBadgeColor(booking.status)}`}>
-                        {booking.status}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
@@ -458,6 +478,24 @@ export default function ChefDashboardPage() {
           </div>
         </div>
       )}
+
+      {/* Booking Detail Modal */}
+      <BookingDetailModal
+        booking={selectedBooking}
+        isOpen={isBookingModalOpen}
+        onClose={() => {
+          setIsBookingModalOpen(false);
+          setSelectedBooking(null);
+        }}
+        onStatusUpdate={() => {
+          // Refresh analytics to get updated booking list
+          if (isAuthenticated) {
+            getChefAnalytics().then(res => {
+              if (res.data) setAnalytics(res.data);
+            });
+          }
+        }}
+      />
     </div>
   );
 }

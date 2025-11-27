@@ -16,7 +16,7 @@ import {
     Utensils,
     ArrowRight
 } from 'lucide-react';
-import { Meal } from '@/lib/api';
+import { Meal } from '@/services/booking.service';
 import { cn } from '@/lib/utils';
 
 interface MealDetailsViewProps {

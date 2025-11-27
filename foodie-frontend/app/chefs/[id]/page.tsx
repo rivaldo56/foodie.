@@ -3,7 +3,9 @@
 import { MapPin, Star, Calendar, MessageCircle, Utensils, Award, ArrowLeft, ChefHat, Clock } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { getChefById, getChefMeals, getChefReviews, Chef, Meal, ChefReview, mockChefs, mockMeals } from '@/lib/api';
+import { getChefById, getReviews as getChefReviews, Chef, ChefReview } from '@/services/chef.service';
+import { getChefMeals, Meal } from '@/services/booking.service';
+import { mockChefs, mockMeals } from '@/lib/api';
 import { startConversation } from '@/lib/api/messages';
 import MealCard from '@/components/MealCard';
 import LoadingSpinner from '@/components/LoadingSpinner';
@@ -205,8 +207,8 @@ export default function ChefDetailPage() {
               <button
                 onClick={() => setActiveTab('meals')}
                 className={`flex items-center gap-2 py-4 border-t-2 text-xs md:text-sm font-medium tracking-widest transition-colors ${activeTab === 'meals'
-                    ? 'border-white text-white'
-                    : 'border-transparent text-white/40 hover:text-white/70'
+                  ? 'border-white text-white'
+                  : 'border-transparent text-white/40 hover:text-white/70'
                   }`}
               >
                 MEALS
@@ -214,8 +216,8 @@ export default function ChefDetailPage() {
               <button
                 onClick={() => setActiveTab('reviews')}
                 className={`flex items-center gap-2 py-4 border-t-2 text-xs md:text-sm font-medium tracking-widest transition-colors ${activeTab === 'reviews'
-                    ? 'border-white text-white'
-                    : 'border-transparent text-white/40 hover:text-white/70'
+                  ? 'border-white text-white'
+                  : 'border-transparent text-white/40 hover:text-white/70'
                   }`}
               >
                 <Star className="h-3 w-3 md:h-4 md:w-4" />
