@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Compass, Calendar, User } from 'lucide-react';
+import { Home, Compass, ChefHat, User } from 'lucide-react';
 
 export default function BottomDock() {
     const pathname = usePathname();
@@ -12,7 +12,7 @@ export default function BottomDock() {
     const navItems = [
         { label: 'Home', path: '/client/home', icon: Home },
         { label: 'Discover', path: '/discover', icon: Compass },
-        { label: 'Bookings', path: '/client/bookings', icon: Calendar },
+        { label: 'Kitchen', path: '/kitchen', icon: ChefHat },
         { label: 'Profile', path: '/client/profile', icon: User },
     ];
 

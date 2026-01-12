@@ -91,6 +91,8 @@ INSTALLED_APPS = [
     'chat',
     'payments',
     'ai',
+    'recipes',
+    'kitchen',
 ]
 
 MIDDLEWARE = [

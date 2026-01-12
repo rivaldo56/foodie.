@@ -11,6 +11,7 @@ import MenuItemCard from '@/components/MenuItemCard';
 import MealDetailsView from '@/components/MealDetailsView';
 import { Meal } from '@/services/booking.service';
 import { Search, Sparkles, Loader2 } from 'lucide-react';
+import RecipeFeed from '@/components/recipes/RecipeFeed';
 
 export default function ClientHomePage() {
   const router = useRouter();
@@ -168,7 +169,7 @@ export default function ClientHomePage() {
       {/* Welcome Header */}
       <header className="space-y-2">
         <h1 className="text-4xl font-bold text-white">
-          Welcome back, {getFirstName()} 👋
+          Welcome back, {getFirstName()}
         </h1>
         <p className="text-white/70 text-lg">
           Discover personalized chef recommendations just for you
@@ -228,6 +229,17 @@ export default function ClientHomePage() {
             </div>
           </div>
         )}
+      </section>
+
+      {/* Recipe Inspiration Feed */}
+      <section>
+          <div className="flex items-center gap-2 mb-4">
+             <Sparkles className="h-6 w-6 text-orange-500" />
+             <h2 className="text-2xl font-semibold text-white">Daily Inspiration</h2>
+          </div>
+          <div className="-mx-4 sm:mx-0">
+             <RecipeFeed hideHeader={true} />
+          </div>
       </section>
 
       {/* Featured Dishes */}

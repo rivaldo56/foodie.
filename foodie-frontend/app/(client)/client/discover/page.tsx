@@ -11,7 +11,10 @@ import MenuItemCard from '@/components/MenuItemCard';
 import MealDetailsView from '@/components/MealDetailsView';
 import { Meal } from '@/services/booking.service';
 import CategoryButton from '@/components/CategoryButton';
-import { Search, SlidersHorizontal, TrendingUp, Flame, ChefHat, Award, Wand2, Sparkles, Utensils, Loader2 } from 'lucide-react';
+import { Recipe } from '@/types/recipe';
+import RecipeCard from '@/components/recipes/RecipeCard';
+import { recipeService } from '@/services/recipe.service';
+import { Search, SlidersHorizontal, TrendingUp, Flame, ChefHat, Award, Wand2, Sparkles, Utensils, BookOpen, Loader2 } from 'lucide-react';
 
 const CATEGORIES = [
   { id: 'trending', label: 'Trending', icon: TrendingUp },
@@ -30,7 +33,7 @@ const DISH_CATEGORIES = [
   { value: 'side_dish', label: 'Side Dishes' },
 ];
 
-type TabType = 'chefs' | 'dishes';
+type TabType = 'chefs' | 'dishes' | 'recipes';
 
 export default function ClientDiscoverPage() {
   const router = useRouter();
@@ -46,7 +49,12 @@ export default function ClientDiscoverPage() {
 
   // Menu items state
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+
   const [filteredMenuItems, setFilteredMenuItems] = useState<MenuItem[]>([]);
+
+  // Recipes state
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [filteredRecipes, setFilteredRecipes] = useState<Recipe[]>([]);
 
   // UI state
   const [dataLoading, setDataLoading] = useState(true);
@@ -61,8 +69,10 @@ export default function ClientDiscoverPage() {
   // Infinite scroll states
   const [displayedChefs, setDisplayedChefs] = useState<Chef[]>([]);
   const [displayedMenuItems, setDisplayedMenuItems] = useState<MenuItem[]>([]);
+  const [displayedRecipes, setDisplayedRecipes] = useState<Recipe[]>([]);
   const [chefPage, setChefPage] = useState(1);
   const [dishPage, setDishPage] = useState(1);
+  const [recipePage, setRecipePage] = useState(1);
   const [loadingMore, setLoadingMore] = useState(false);
   const observerTarget = useRef<HTMLDivElement>(null);
 
@@ -81,13 +91,15 @@ export default function ClientDiscoverPage() {
   useEffect(() => {
     if (activeTab === 'chefs') {
       filterChefs();
+    } else if (activeTab === 'recipes') {
+      filterRecipes();
     } else {
       filterMenuItems();
     }
     // Reset pagination when filters change
     setChefPage(1);
     setDishPage(1);
-  }, [activeTab, chefs, menuItems, searchQuery, activeCategory, selectedDishCategory, selectedChef, priceRange]);
+  }, [activeTab, chefs, menuItems, recipes, searchQuery, activeCategory, selectedDishCategory, selectedChef, priceRange]);
 
   // Infinite scroll observer
   useEffect(() => {
@@ -110,9 +122,10 @@ export default function ClientDiscoverPage() {
   const loadData = async () => {
     try {
       setDataLoading(true);
-      const [chefsResponse, menuItemsResponse] = await Promise.all([
+      const [chefsResponse, menuItemsResponse, recipesData] = await Promise.all([
         getChefs(),
         getMenuItems(),
+        recipeService.getRecipes(),
       ]);
 
       if (chefsResponse.data) {
@@ -130,6 +143,10 @@ export default function ClientDiscoverPage() {
         }
         console.log('📦 Menu Items Loaded:', menuItemsData.length, menuItemsData);
         setMenuItems(menuItemsData);
+      }
+
+      if (recipesData) {
+        setRecipes(recipesData);
       }
 
       if (chefsResponse.error || menuItemsResponse.error) {
@@ -183,6 +200,25 @@ export default function ClientDiscoverPage() {
     // Initial display - show first page
     const pageSize = 12;
     setDisplayedChefs(filtered.slice(0, pageSize));
+  };
+
+  const filterRecipes = () => {
+    if (!Array.isArray(recipes)) return;
+    
+    let filtered = [...recipes];
+    
+    // Apply search filter
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(recipe => {
+         return recipe.title.toLowerCase().includes(query) || 
+                recipe.description.toLowerCase().includes(query);
+      });
+    }
+     
+    setFilteredRecipes(filtered);
+    const pageSize = 12;
+    setDisplayedRecipes(filtered.slice(0, pageSize));
   };
 
   const filterMenuItems = () => {
@@ -242,6 +278,16 @@ export default function ClientDiscoverPage() {
         if (moreChefs.length > 0) {
           setDisplayedChefs(prev => [...prev, ...moreChefs]);
           setChefPage(nextPage);
+        }
+      } else if (activeTab === 'recipes') { // Corrected logic flow
+        const nextPage = recipePage + 1;
+        const start = nextPage * pageSize;
+        const end = start + pageSize;
+        const moreRecipes = filteredRecipes.slice(start, end);
+
+        if (moreRecipes.length > 0) {
+          setDisplayedRecipes(prev => [...prev, ...moreRecipes]);
+          setRecipePage(nextPage);
         }
       } else {
         const nextPage = dishPage + 1;
@@ -317,6 +363,18 @@ export default function ClientDiscoverPage() {
 
       {/* Tabs */}
       <div className="flex gap-2 p-1 bg-white/5 rounded-xl sm:rounded-2xl border border-white/10 w-full sm:w-fit overflow-x-auto">
+        <button
+          onClick={() => setActiveTab('recipes')}
+          className={`flex-1 sm:flex-initial px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg sm:rounded-xl font-medium transition-all whitespace-nowrap ${activeTab === 'recipes'
+            ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/20'
+            : 'text-white/70 hover:text-white hover:bg-white/5'
+            }`}
+        >
+          <div className="flex items-center justify-center gap-2">
+            <BookOpen className="h-4 w-4" />
+            <span>Recipes</span>
+          </div>
+        </button>
         <button
           onClick={() => setActiveTab('dishes')}
           className={`flex-1 sm:flex-initial px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg sm:rounded-xl font-medium transition-all whitespace-nowrap ${activeTab === 'dishes'
@@ -451,7 +509,7 @@ export default function ClientDiscoverPage() {
 
       {/* Results Count */}
       <div className="text-xs sm:text-sm text-white/60">
-        Showing {activeTab === 'chefs' ? filteredChefs.length : filteredMenuItems.length} of {activeTab === 'chefs' ? chefs.length : menuItems.length} results
+        Showing {activeTab === 'chefs' ? filteredChefs.length : activeTab === 'recipes' ? filteredRecipes.length : filteredMenuItems.length} results
       </div>
 
       {/* Grid */}
@@ -469,6 +527,21 @@ export default function ClientDiscoverPage() {
               <ChefCard key={chef.id} chef={chef} />
             ))}
           </div>
+        )
+      ) : activeTab === 'recipes' ? (
+        filteredRecipes.length === 0 && !error ? (
+             <div className="rounded-2xl border border-white/10 bg-white/5 p-8 sm:p-12 text-center">
+                <p className="text-white/70 mb-2">No recipes found</p>
+                <p className="text-sm text-white/50">
+                  Try adjusting your search
+                </p>
+              </div>
+        ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
+                {displayedRecipes.map(recipe => (
+                   <RecipeCard key={recipe.id} recipe={recipe} />
+                ))}
+            </div>
         )
       ) : (
         filteredMenuItems.length === 0 && !error ? (

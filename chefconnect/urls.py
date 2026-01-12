@@ -80,6 +80,8 @@ urlpatterns = [
     path('api/chat/', include('chat.urls')),
     path('api/payments/', include('payments.urls')),
     path('api/ai/', include('ai.urls')),
+    path('api/kitchen/', include('kitchen.urls')),
+    path('api/recipes/', include('recipes.urls')),
 ]
 
 # Serve media files in development

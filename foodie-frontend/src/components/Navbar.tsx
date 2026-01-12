@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import StatusLight from './StatusLight';
-import { Bell, LogOut, MessageCircle, User, Home, Compass, Calendar, UtensilsCrossed, Menu, X, Utensils, type LucideIcon } from 'lucide-react';
+import { Bell, LogOut, MessageCircle, User, Home, Compass, ChefHat, UtensilsCrossed, Menu, X, Utensils, type LucideIcon } from 'lucide-react';
 
 type NavItem = {
   href: string;
@@ -31,7 +31,7 @@ export default function Navbar() {
     : [
       { href: '/client/home', label: 'Home', icon: Home },
       { href: '/client/discover', label: 'Discover', icon: Compass },
-      { href: '/client/bookings', label: 'Bookings', icon: Calendar },
+      { href: '/kitchen', label: 'Kitchen', icon: ChefHat },
       { href: '/client/messages', label: 'Messages', icon: MessageCircle },
       { href: '/client/profile', label: 'Profile', icon: User },
     ];
