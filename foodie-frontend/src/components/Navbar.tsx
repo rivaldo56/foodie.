@@ -31,7 +31,7 @@ export default function Navbar() {
     : [
       { href: '/client/home', label: 'Home', icon: Home },
       { href: '/client/discover', label: 'Discover', icon: Compass },
-      { href: '/kitchen', label: 'Kitchen', icon: ChefHat },
+      { href: '/client/kitchen', label: 'Kitchen', icon: ChefHat },
       { href: '/client/messages', label: 'Messages', icon: MessageCircle },
       { href: '/client/profile', label: 'Profile', icon: User },
     ];

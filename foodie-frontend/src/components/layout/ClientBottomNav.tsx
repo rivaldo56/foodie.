@@ -2,12 +2,12 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Compass, Calendar, MessageCircle, User } from 'lucide-react';
+import { Home, Compass, MessageCircle, User, ChefHat } from 'lucide-react';
 
 const CLIENT_LINKS = [
   { href: '/client/home', label: 'Home', icon: Home },
   { href: '/client/discover', label: 'Discover', icon: Compass },
-  { href: '/client/bookings', label: 'Bookings', icon: Calendar },
+  { href: '/client/kitchen', label: 'Kitchen', icon: ChefHat },
   { href: '/client/messages', label: 'Messages', icon: MessageCircle },
   { href: '/client/profile', label: 'Profile', icon: User },
 ];
