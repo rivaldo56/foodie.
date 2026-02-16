@@ -1,6 +1,20 @@
+'use client';
+
 import ChefBottomNav from '@/components/layout/ChefBottomNav';
+import { usePathname } from 'next/navigation';
 
 export default function ChefShell({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const isOnboarding = pathname?.includes('/onboarding');
+
+  if (isOnboarding) {
+    return (
+      <div className="min-h-screen bg-background text-white">
+        <main className="w-full h-full">{children}</main>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background text-white pb-20 sm:pb-24">
       <header className="border-b border-white/10 bg-black/40 backdrop-blur sticky top-0 z-30">

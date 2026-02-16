@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { getMenuItems, updateProfile as updateChefProfile, uploadToCloudinary, type Chef, type MenuItem } from '@/services/chef.service';
@@ -8,8 +8,9 @@ import ChefBadge from '@/components/ChefBadge';
 import MenuItemCard from '@/components/MenuItemCard';
 import ProfileEditModal from '@/components/modals/ProfileEditModal';
 import Image from 'next/image';
-import { CheckCircle, Edit, Plus, Star, TrendingUp, Users, Utensils, User, Mail, Phone, MapPin, Camera, Save, Loader2, ChefHat, LogOut } from 'lucide-react';
+import { CheckCircle, Edit, Plus, Star, TrendingUp, Users, Utensils, User, Mail, Phone, MapPin, Camera, Save, Loader2, ChefHat, LogOut, ShieldCheck } from 'lucide-react';
 import Link from 'next/link';
+import { createBrowserClient } from '@supabase/ssr';
 
 export default function ChefProfilePage() {
   const router = useRouter();
@@ -18,6 +19,8 @@ export default function ChefProfilePage() {
   const [myDishes, setMyDishes] = useState<MenuItem[]>([]);
   const [dishesLoading, setDishesLoading] = useState(true);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  // Admin check is now derived directly from the trusted user object
+  const isAdmin = user?.role === 'admin';
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
@@ -177,6 +180,15 @@ export default function ChefProfilePage() {
                 <LogOut className="h-4 w-4" />
                 <span className="hidden sm:inline">Log Out</span>
               </button>
+              {isAdmin && (
+                <Link
+                    href="/admin"
+                    className="px-4 py-2 rounded-full bg-orange-500/20 hover:bg-orange-500/30 border border-orange-500/50 transition text-orange-300 font-medium flex items-center gap-2"
+                >
+                    <ShieldCheck className="h-4 w-4" />
+                    <span className="hidden sm:inline">Admin</span>
+                </Link>
+              )}
               <button
                 onClick={() => setIsEditModalOpen(true)}
                 className="px-4 py-2 rounded-full bg-orange-500 hover:bg-orange-600 transition text-white font-medium"

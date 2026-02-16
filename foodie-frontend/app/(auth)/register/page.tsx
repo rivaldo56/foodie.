@@ -1,17 +1,28 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { useState, useEffect, Suspense } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 
-export default function RegisterPage() {
+function RegisterForm() {
   const { register } = useAuth();
+  const searchParams = useSearchParams();
+  const initialRole = searchParams.get('role') === 'chef' ? 'chef' : 'client';
+
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [fullName, setFullName] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState<'client' | 'chef'>('client');
+  const [role, setRole] = useState<'client' | 'chef'>(initialRole);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const roleParam = searchParams.get('role');
+    if (roleParam === 'chef' || roleParam === 'client') {
+      setRole(roleParam as 'client' | 'chef');
+    }
+  }, [searchParams]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -134,3 +145,16 @@ export default function RegisterPage() {
     </div>
   );
 }
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="h-12 w-12 animate-spin rounded-full border-4 border-orange-500 border-t-transparent"></div>
+      </div>
+    }>
+      <RegisterForm />
+    </Suspense>
+  );
+}
+

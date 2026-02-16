@@ -28,7 +28,7 @@ function OrdersPageContent() {
             mealsResponse.data.reduce((acc, meal) => {
               acc[meal.id] = meal;
               return acc;
-            }, {} as Record<number, Meal>)
+            }, {} as Record<string | number, Meal>)
           );
         }
       }
@@ -103,7 +103,7 @@ function OrdersPageContent() {
         ) : (
           <div className="space-y-4">
             {orders.map((order) => (
-              <OrderCard key={order.id} order={order} mealName={meals[order.meal]?.name} />
+              <OrderCard key={order.id} order={order} mealName={meals[order.meal as any]?.name} />
             ))}
           </div>
         )}

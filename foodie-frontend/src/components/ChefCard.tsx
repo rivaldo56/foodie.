@@ -60,6 +60,7 @@ export default function ChefCard({ chef, matchScore }: ChefCardProps) {
     try {
       setIsProfileModalOpen(false);
       // Assuming chef.user.id is the correct ID for the user to chat with
+      if (!chef.user?.id) return;
       const response = await startConversation(chef.user.id);
       if (response.data) {
         router.push(`/client/messages?conversationId=${response.data.id}`);

@@ -7,7 +7,7 @@ import { useState } from 'react';
 
 interface MenuItemCardProps {
     item: MenuItem;
-    onFavorite?: (id: number) => void;
+    onFavorite?: (id: string | number) => void;
     isFavorited?: boolean;
 }
 

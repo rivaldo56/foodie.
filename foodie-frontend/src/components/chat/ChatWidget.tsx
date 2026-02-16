@@ -7,14 +7,14 @@ import { useWebSocket } from '@/hooks/useWebSocket';
 import MessageList from './MessageList';
 
 interface ChatWidgetProps {
-    recipientId?: number;
+    recipientId?: string | number;
     recipientName?: string;
 }
 
 interface Message {
-    id: number;
+    id: string | number;
     sender: {
-        id: number;
+        id: string | number;
         full_name: string;
     };
     content: string;
@@ -101,7 +101,7 @@ export default function ChatWidget({ recipientId, recipientName }: ChatWidgetPro
         }
     };
 
-    const handleMarkAsRead = (messageId: number) => {
+    const handleMarkAsRead = (messageId: string | number) => {
         sendMessage({
             type: 'mark_as_read',
             message_id: messageId,

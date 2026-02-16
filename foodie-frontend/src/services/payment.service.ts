@@ -2,8 +2,8 @@ import { apiRequest, ApiResponse } from '../lib/api';
 
 export interface PaymentResponse {
     success: boolean;
-    payment_id?: number;
-    mpesa_payment_id?: number;
+    payment_id?: string | number;
+    mpesa_payment_id?: string | number;
     checkout_request_id?: string;
     message?: string;
     error?: string;
@@ -18,7 +18,7 @@ export interface PaymentStatusResponse {
 }
 
 export const paymentService = {
-    async initiateMpesaPayment(bookingId: number, phoneNumber: string): Promise<ApiResponse<PaymentResponse>> {
+    async initiateMpesaPayment(bookingId: string | number, phoneNumber: string): Promise<ApiResponse<PaymentResponse>> {
         return apiRequest({
             url: '/payments/mpesa/pay/',
             method: 'POST',
@@ -29,7 +29,7 @@ export const paymentService = {
         }, true);
     },
 
-    async checkPaymentStatus(mpesaPaymentId: number): Promise<ApiResponse<PaymentStatusResponse>> {
+    async checkPaymentStatus(mpesaPaymentId: string | number): Promise<ApiResponse<PaymentStatusResponse>> {
         return apiRequest({
             url: `/payments/mpesa/status/${mpesaPaymentId}/`,
             method: 'GET',

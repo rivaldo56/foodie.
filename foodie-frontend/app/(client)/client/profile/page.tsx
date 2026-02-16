@@ -1,18 +1,23 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { updateProfile as updateClientProfile } from '@/services/auth.service';
 import { uploadToCloudinary } from '@/services/chef.service';
 import ProfileEditModal from '@/components/modals/ProfileEditModal';
 import Image from 'next/image';
-import { User as UserIcon, Mail, Phone, MapPin, CreditCard, Settings, LogOut, Edit } from 'lucide-react';
+import { User as UserIcon, Mail, Phone, MapPin, CreditCard, Settings, LogOut, Edit, ShieldCheck } from 'lucide-react';
+import { createBrowserClient } from '@supabase/ssr';
+
 
 export default function ClientProfilePage() {
   const router = useRouter();
   const { isAuthenticated, loading, user, logout } = useAuth();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  // Admin check is now derived directly from the trusted user object
+  const isAdmin = user?.role === 'admin';
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
@@ -195,13 +200,25 @@ export default function ClientProfilePage() {
       </div>
 
       {/* Logout */}
-      <button
-        onClick={handleLogout}
-        className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-red-500/20 border border-red-500/50 rounded-2xl text-red-300 hover:bg-red-500/30 transition font-semibold"
-      >
-        <LogOut className="h-5 w-5" />
-        Logout
-      </button>
+      {/* Actions */}
+      <div className="flex flex-col sm:flex-row gap-4">
+        {isAdmin && (
+          <button
+            onClick={() => router.push('/admin')}
+            className="flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-orange-500/20 border border-orange-500/50 rounded-2xl text-orange-300 hover:bg-orange-500/30 transition font-semibold"
+          >
+            <ShieldCheck className="h-5 w-5" />
+            Admin Panel
+          </button>
+        )}
+        <button
+          onClick={handleLogout}
+          className="flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-red-500/20 border border-red-500/50 rounded-2xl text-red-300 hover:bg-red-500/30 transition font-semibold"
+        >
+          <LogOut className="h-5 w-5" />
+          Logout
+        </button>
+      </div>
 
       <ProfileEditModal
         isOpen={isEditModalOpen}

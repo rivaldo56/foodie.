@@ -170,9 +170,9 @@ export default function ClientDiscoverPage() {
         case 'hot':
           filtered = filtered.filter(chef => (chef.average_rating || 0) >= 4.5);
           break;
-        case 'new':
-          filtered = filtered.sort((a, b) => a.id - b.id).slice(0, 10);
-          break;
+          case 'new':
+            filtered = filtered.sort((a, b) => String(a.id).localeCompare(String(b.id))).slice(0, 10);
+            break;
         case 'special':
           filtered = filtered.filter(chef => chef.is_verified);
           break;

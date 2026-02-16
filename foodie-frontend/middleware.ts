@@ -1,82 +1,85 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { createServerClient, type CookieOptions } from '@supabase/ssr';
+import { NextResponse, type NextRequest } from 'next/server';
 
-// Helper to decode JWT token (simple base64 decode for user role)
-function getUserRoleFromToken(token: string | undefined): string | null {
-  if (!token) return null;
-  
-  try {
-    // Token auth stores user_id, not JWT, so we need to check localStorage on client
-    // For middleware, we'll check cookie and let client-side handle role validation
-    // This is a limitation - ideally we'd decode the token or make an API call
-    return null; // Will be handled client-side
-  } catch {
-    return null;
-  }
-}
+export async function middleware(request: NextRequest) {
+  let response = NextResponse.next({
+    request: {
+      headers: request.headers,
+    },
+  });
 
-export function middleware(req: NextRequest) {
-  const token = req.cookies.get('token')?.value;
-  const pathname = req.nextUrl.pathname;
-
-  // Public routes that don't require authentication
-  const publicRoutes = ['/', '/chefs', '/discover', '/meals'];
-  const isPublicRoute = publicRoutes.some(route => pathname === route || pathname.startsWith(`${route}/`));
-  
-  // Check if this is an auth route (login, register, or /auth)
-  const isAuthRoute = 
-    pathname === '/auth' || 
-    pathname === '/login' || 
-    pathname === '/register' ||
-    pathname.startsWith('/auth/') ||
-    pathname.startsWith('/login/') ||
-    pathname.startsWith('/register/');
-
-  // Allow public routes and static files
-  if (isPublicRoute || pathname.startsWith('/_next/') || pathname.startsWith('/api/')) {
-    return NextResponse.next();
-  }
-
-  // If no token and trying to access protected routes, redirect to auth
-  if (!token && !isAuthRoute && !isPublicRoute) {
-    const redirectUrl = new URL('/auth', req.url);
-    redirectUrl.searchParams.set('redirect', pathname);
-    return NextResponse.redirect(redirectUrl);
-  }
-
-  // If token exists and trying to access auth routes, redirect based on role
-  // Note: Role check happens client-side, middleware just redirects to default
-  if (token && isAuthRoute) {
-    return NextResponse.redirect(new URL('/client/home', req.url));
-  }
-
-  // Role-based route protection (basic check - full validation client-side)
-  if (token) {
-    // Client routes - allow if token exists (role check in component)
-    if (pathname.startsWith('/client/')) {
-      return NextResponse.next();
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return request.cookies.get(name)?.value;
+        },
+        set(name: string, value: string, options: CookieOptions) {
+          request.cookies.set({
+            name,
+            value,
+            ...options,
+          });
+          response = NextResponse.next({
+            request: {
+              headers: request.headers,
+            },
+          });
+          response.cookies.set({
+            name,
+            value,
+            ...options,
+          });
+        },
+        remove(name: string, options: CookieOptions) {
+          request.cookies.set({
+            name,
+            value: '',
+            ...options,
+          });
+          response = NextResponse.next({
+            request: {
+              headers: request.headers,
+            },
+          });
+          response.cookies.set({
+            name,
+            value: '',
+            ...options,
+          });
+        },
+      },
     }
-    
-    // Chef routes - allow if token exists (role check in component)
-    if (pathname.startsWith('/chef/')) {
-      return NextResponse.next();
+  );
+
+  const { data: { user } } = await supabase.auth.getUser();
+  const pathname = request.nextUrl.pathname;
+
+  // 1. Authentication Guard: Redirect to / if not logged in
+  // Excluding the landing page itself if needed, but matcher handles exclusions
+  if (!user && (pathname.startsWith('/admin') || pathname.startsWith('/client') || pathname.startsWith('/chef') || pathname.startsWith('/profile'))) {
+    return NextResponse.redirect(new URL('/', request.url));
+  }
+
+  // 2. Admin Authorization Guard: JWT-only authority
+  if (pathname.startsWith('/admin')) {
+    // Check JWT metadata for admin role
+    const userRole = user?.app_metadata?.role;
+    if (userRole !== 'admin') {
+      return NextResponse.redirect(new URL('/', request.url));
     }
   }
 
-  return NextResponse.next();
+  return response;
 }
 
 export const config = {
   matcher: [
+    '/admin/:path*',
     '/client/:path*',
     '/chef/:path*',
-    '/auth/:path*',
-    '/login/:path*',
-    '/register/:path*',
-    '/login',
-    '/register',
     '/profile/:path*',
-    '/orders/:path*',
-    '/bookings/:path*',
   ],
 };

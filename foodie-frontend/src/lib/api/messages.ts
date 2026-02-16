@@ -1,7 +1,7 @@
 import { apiRequest, type ApiResponse, type User } from '@/lib/api';
 
 export interface Message {
-    id: number;
+    id: string | number;
     sender: User;
     content: string;
     message_type: 'text' | 'image' | 'file' | 'system';
@@ -12,7 +12,7 @@ export interface Message {
 }
 
 export interface Conversation {
-    id: number;
+    id: string | number;
     client: User;
     chef: User;
     other_user?: User; // Computed on frontend
@@ -29,14 +29,14 @@ export async function getConversations(): Promise<ApiResponse<Conversation[]>> {
     }, true);
 }
 
-export async function getConversationMessages(conversationId: number): Promise<ApiResponse<Message[]>> {
+export async function getConversationMessages(conversationId: string | number): Promise<ApiResponse<Message[]>> {
     return apiRequest<Message[]>({
         url: `/chat/rooms/${conversationId}/messages/`,
         method: 'GET',
     }, true);
 }
 
-export async function startConversation(userId: number): Promise<ApiResponse<Conversation>> {
+export async function startConversation(userId: string | number): Promise<ApiResponse<Conversation>> {
     return apiRequest<Conversation>({
         url: '/chat/rooms/create/',
         method: 'POST',
@@ -44,7 +44,7 @@ export async function startConversation(userId: number): Promise<ApiResponse<Con
     }, true);
 }
 
-export async function sendMessage(conversationId: number, content: string, attachment?: File): Promise<ApiResponse<Message>> {
+export async function sendMessage(conversationId: string | number, content: string, attachment?: File): Promise<ApiResponse<Message>> {
     const formData = new FormData();
     formData.append('chat_room', String(conversationId));
     formData.append('content', content);

@@ -27,7 +27,7 @@ export default function MpesaPaymentForm({ booking, onSuccess }: MpesaPaymentFor
     setLoading(true)
 
     try {
-      const result = await initiateMpesaPayment(booking.id, phoneNumber)
+      const result = await initiateMpesaPayment(booking.id as any, phoneNumber)
       if (result.error || !result.data) {
         throw new Error(result.error || "Failed to initiate payment")
       }

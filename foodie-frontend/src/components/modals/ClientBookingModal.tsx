@@ -38,7 +38,7 @@ export default function ClientBookingModal({
         ? booking.chef.user.full_name
         : 'Chef';
 
-    const chefId = typeof booking.chef === 'object' ? booking.chef.user.id : null;
+    const chefId = typeof booking.chef === 'object' ? booking.chef?.user?.id : null;
 
     const handleMessage = () => {
         if (chefId) {

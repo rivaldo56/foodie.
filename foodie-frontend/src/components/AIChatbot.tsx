@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { MessageCircle, X, Send, Sparkles, UtensilsCrossed, Calendar, Loader2, Minimize2, Maximize2, Utensils } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -21,6 +22,8 @@ interface MealRecommendation {
 }
 
 export default function AIChatbot() {
+    const pathname = usePathname();
+    const isOnboarding = pathname?.includes('/onboarding');
     const { user, isAuthenticated } = useAuth();
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState<Message[]>([
@@ -35,6 +38,8 @@ export default function AIChatbot() {
     const [isLoading, setIsLoading] = useState(false);
     const [sessionId, setSessionId] = useState<number | null>(null);
     const [mealRecommendations, setMealRecommendations] = useState<MealRecommendation[]>([]);
+
+    if (isOnboarding || !isAuthenticated) return null;
 
     const sendMessage = async () => {
         if (!inputMessage.trim() || !isAuthenticated) return;
@@ -153,9 +158,7 @@ export default function AIChatbot() {
         }
     };
 
-    if (!isAuthenticated) {
-        return null;
-    }
+
 
     return (
         <>
