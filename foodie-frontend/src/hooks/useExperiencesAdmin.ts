@@ -43,19 +43,33 @@ export function useExperiencesAdmin() {
 
   const createExperience = useCallback(
     async (input: CreateExperienceInput): Promise<{ id: string } | null> => {
+      console.log('[useExperiencesAdmin] Creating experience...', { name: input.name });
       setError(null);
-      const { data, error: e } = await supabase
-        .from('experiences')
-        .insert([{ ...input, status: input.status ?? 'draft' }])
-        .select('id')
-        .single();
+      
+      try {
+        const { data, error: e } = await supabase
+          .from('experiences')
+          .insert([{ ...input, status: input.status ?? 'draft' }])
+          .select('id')
+          .single();
 
-      if (e) {
-        setError(e.message ?? 'Failed to create experience');
+        if (e) {
+          console.error('[useExperiencesAdmin] Supabase error:', e);
+          setError(e.message ?? 'Failed to create experience');
+          return null;
+        }
+
+        console.log('[useExperiencesAdmin] Experience created successfully:', data?.id);
+        
+        // Trigger refetch in background, don't await it to avoid blocking the return
+        fetchExperiences().catch(err => console.error('[useExperiencesAdmin] Background refetch failed:', err));
+        
+        return data ? { id: String(data.id) } : null;
+      } catch (err) {
+        console.error('[useExperiencesAdmin] Unexpected error during creation:', err);
+        setError('An unexpected error occurred');
         return null;
       }
-      await fetchExperiences();
-      return data ? { id: String(data.id) } : null;
     },
     [fetchExperiences]
   );

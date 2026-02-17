@@ -50,14 +50,25 @@ export default function CreateExperiencePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    const result = await createExperience(formData);
-    setLoading(false);
-    if (result) {
-      showToast('Experience created successfully', 'success');
-      router.push('/admin/experiences');
-    } else {
-      showToast('Failed to create experience', 'error');
+    console.log('[CreateExperience] Submitting form...', formData);
+    
+    try {
+      setLoading(true);
+      const result = await createExperience(formData);
+      
+      if (result) {
+        console.log('[CreateExperience] Success:', result);
+        showToast('Experience created successfully', 'success');
+        router.push('/admin/experiences');
+      } else {
+        console.error('[CreateExperience] Failed to create experience: result was null');
+        showToast('Failed to create experience. Please check your admin permissions.', 'error');
+      }
+    } catch (err) {
+      console.error('[CreateExperience] Unexpected error:', err);
+      showToast('An unexpected error occurred. Please try again.', 'error');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -161,9 +172,22 @@ export default function CreateExperiencePage() {
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={loading || !formData.image_url} className="bg-[#ff7642] hover:bg-[#ff8b5f] text-white shadow-lg shadow-[#ff7642]/20 border-none px-8">
-              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Create Experience
+            <Button 
+              type="submit" 
+              disabled={loading || !formData.image_url} 
+              className="bg-[#ff7642] hover:bg-[#ff8b5f] text-white shadow-lg shadow-[#ff7642]/20 border-none px-8 relative"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <span>Creating...</span>
+                  <span className="absolute -bottom-6 left-0 right-0 text-[10px] text-gray-500 font-normal normal-case animate-pulse text-center">
+                    Large files may take longer on slow connections
+                  </span>
+                </>
+              ) : (
+                'Create Experience'
+              )}
             </Button>
           </CardFooter>
         </form>
