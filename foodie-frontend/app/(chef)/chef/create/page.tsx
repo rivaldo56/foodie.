@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+
+import { uploadImage } from '@/lib/storage';
 import {
   Upload,
   X,
@@ -96,15 +98,24 @@ export default function ChefCreatePage() {
 
     try {
       const { createMenuItem } = await import('@/services/chef.service');
+      
+      let imageUrl = '';
+      if (mediaFiles.length > 0) {
+          const uploadedUrl = await uploadImage(mediaFiles[0], 'menus'); // Upload to 'menus' bucket
+          if (uploadedUrl) {
+              imageUrl = uploadedUrl;
+          } else {
+             console.error('Failed to upload image');
+             // Optionally handle error or proceed without image
+          }
+      }
 
       const response = await createMenuItem({
         name: formData.name,
         description: formData.description,
         category: formData.category,
         price_per_serving: parseFloat(formData.price),
-        delivery_available: formData.delivery,
-        pickup_available: formData.pickup,
-        image: mediaFiles[0], // Use first uploaded image
+        image: imageUrl, // Pass URL string
       });
 
       if (response.error) {

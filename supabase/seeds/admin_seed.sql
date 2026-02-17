@@ -1,0 +1,35 @@
+-- Admin User Seed Script
+-- This script adds users to the admin_users table for accessing the admin panel
+-- 
+-- INSTRUCTIONS:
+-- 1. First, create a user account through the normal signup flow
+-- 2. Get the user's UUID from Supabase Dashboard > Authentication > Users
+-- 3. Replace the placeholder values below with your actual user details
+-- 4. Run this script in Supabase SQL Editor or via migration
+
+-- Example: Add yourself as an admin
+-- Replace these values with your actual user details:
+-- 
+-- INSERT INTO admin_users (user_id, email, role)
+-- VALUES (
+--   'your-user-uuid-here',  -- Get this from Supabase Dashboard > Authentication > Users
+--   'your-email@example.com',
+--   'admin'
+-- )
+-- ON CONFLICT (user_id) DO NOTHING;
+
+-- Example for multiple admins:
+-- INSERT INTO admin_users (user_id, email, role)
+-- VALUES 
+--   ('uuid-1', 'admin1@foodie.com', 'admin'),
+--   ('uuid-2', 'admin2@foodie.com', 'admin')
+-- ON CONFLICT (user_id) DO NOTHING;
+
+-- UNCOMMENT AND MODIFY THE FOLLOWING AFTER GETTING YOUR USER UUID:
+-- INSERT INTO admin_users (user_id, email, role)
+-- VALUES (
+--   'REPLACE_WITH_YOUR_UUID',
+--   'REPLACE_WITH_YOUR_EMAIL',
+--   'admin'
+-- )
+-- ON CONFLICT (user_id) DO NOTHING;

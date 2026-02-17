@@ -1,4 +1,5 @@
-import { apiClient, apiRequest, ApiResponse } from '../lib/api';
+import { supabase } from '../lib/supabase';
+import { ApiResponse } from '../lib/api';
 
 export interface LoginCredentials {
     email: string;
@@ -11,90 +12,149 @@ export interface RegisterData {
     password: string;
     password2: string;
     full_name: string;
-    role?: 'client' | 'chef';
+    role?: 'client' | 'chef' | 'admin';
     phone_number?: string;
 }
 
 export interface User {
-    id: number;
+    id: string;
     email: string;
     username: string;
     full_name: string;
-    role: string;
+    role: 'client' | 'chef' | 'admin';
     phone_number?: string;
-    profile_image?: string;
     profile_picture?: string;
 }
 
+// Helper to reliably extract user role
+const getUserRole = (user: any): 'client' | 'chef' | 'admin' => {
+    const appMetadata = user.app_metadata || {};
+    const userMetadata = user.user_metadata || {};
+    
+    // Security: app_metadata.role (admin) always takes precedence
+    if (appMetadata.role === 'admin') return 'admin';
+    
+    // Fallback to user_metadata for other roles, defaulting to client
+    const role = userMetadata.role;
+    return (role === 'chef' || role === 'client') ? role : 'client';
+};
+
+// Helper to map Supabase user to our User interface
+const mapUser = (user: any): User => {
+    const metadata = user.user_metadata || {};
+    return {
+        id: user.id,
+        email: user.email || '',
+        username: metadata.username || user.email?.split('@')[0] || 'user',
+        full_name: metadata.full_name || 'Foodie User',
+        role: getUserRole(user),
+        phone_number: metadata.phone_number,
+        profile_picture: metadata.profile_picture
+    };
+};
+
 export const authService = {
     async login(credentials: LoginCredentials): Promise<{ token: string; user: User }> {
-        try {
-            const response = await apiClient.post('/users/login/', {
-                email: credentials.email,
-                password: credentials.password,
-            });
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email: credentials.email,
+            password: credentials.password,
+        });
 
-            const data = response.data;
+        if (error) throw new Error(error.message);
+        if (!data.session || !data.user) throw new Error('Login failed: No session returned');
 
-            if (!data?.token || !data?.user) {
-                throw new Error('Login response missing token or user');
-            }
-
-            return data;
-        } catch (error: any) {
-            // Extract meaningful error message from backend response
-            const errorMessage = error.response?.data?.non_field_errors?.[0]
-                || error.response?.data?.email?.[0]
-                || error.response?.data?.password?.[0]
-                || error.response?.data?.detail
-                || error.message
-                || 'Invalid email or password';
-
-            throw new Error(errorMessage);
-        }
+        return {
+            token: data.session.access_token,
+            user: mapUser(data.user)
+        };
     },
 
     async register(data: RegisterData): Promise<ApiResponse<{ token: string; user: User }>> {
-        const [firstName = '', ...rest] = data.full_name.trim().split(/\s+/);
-        const lastName = rest.join(' ');
+        // Security: Prevent users from registering as admin directly
+        const roleToRegister = data.role === 'admin' ? 'client' : (data.role || 'client');
 
-        return apiRequest({
-            url: '/users/register/',
-            method: 'POST',
-            data: {
-                email: data.email,
-                username: data.username,
-                first_name: firstName || data.username,
-                last_name: lastName,
-                phone_number: data.phone_number ?? '',
-                role: data.role ?? 'client',
-                password: data.password,
-                password_confirm: data.password2,
-            },
+        const { data: authData, error: authError } = await supabase.auth.signUp({
+            email: data.email,
+            password: data.password,
+            options: {
+                data: {
+                    username: data.username,
+                    full_name: data.full_name,
+                    role: roleToRegister,
+                    phone_number: data.phone_number ?? '',
+                }
+            }
         });
+
+        if (authError) {
+            return {
+                error: authError.message,
+                status: 400
+            };
+        }
+
+        if (!authData.user) {
+             // Should not happen for sign up, but handle safely
+            return { error: 'Registration failed', status: 500 };
+        }
+
+        // Handle email confirmation case (session is null)
+        if (!authData.session) {
+            return {
+                error: 'Registration successful. Please check your email for verification.',
+                status: 201
+            };
+        }
+
+        return {
+            data: {
+                token: authData.session.access_token,
+                user: mapUser(authData.user)
+            },
+            status: 201
+        };
     },
 
     async getCurrentUser(): Promise<ApiResponse<User>> {
-        return apiRequest({
-            url: '/users/profile/',
-            method: 'GET',
-        }, true);
+        const { data: { user }, error } = await supabase.auth.getUser();
+
+        if (error || !user) {
+            return {
+                error: error?.message || 'Not authenticated',
+                status: 401
+            };
+        }
+
+        return {
+            data: mapUser(user),
+            status: 200
+        };
     },
 
     async logout(): Promise<void> {
-        if (typeof window !== 'undefined') {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            document.cookie = 'token=; path=/; max-age=0; SameSite=Lax';
-        }
+        await supabase.auth.signOut();
+        // Local storage clearing is now handled by onAuthStateChange in context
     },
 
-    async updateProfile(data: FormData): Promise<ApiResponse<User>> {
-        return apiRequest<User>({
-            url: '/users/profile/',
-            method: 'PATCH',
-            data,
-        }, true);
+    async updateProfile(formData: FormData): Promise<ApiResponse<User>> {
+        const updates: any = {};
+        formData.forEach((value, key) => {
+             // Filter out empty strings if necessary or validate
+            if (typeof value === 'string') updates[key] = value;
+        });
+
+        const { data: { user }, error } = await supabase.auth.updateUser({
+            data: updates
+        });
+
+        if (error || !user) {
+            return { error: error?.message || 'Update failed', status: 400 };
+        }
+
+        return {
+            data: mapUser(user),
+            status: 200
+        };
     }
 };
 
@@ -105,3 +165,4 @@ export const {
     logout,
     updateProfile
 } = authService;
+

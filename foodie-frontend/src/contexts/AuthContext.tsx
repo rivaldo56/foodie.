@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { startTransition } from 'react';
 import { authService, User, LoginCredentials, RegisterData } from '@/services/auth.service';
 import { useToast } from '@/contexts/ToastContext';
+import { supabase } from '@/lib/supabase';
 
 interface AuthContextType {
   user: User | null;
@@ -20,8 +21,6 @@ interface AuthContextType {
   isAuthenticated: boolean;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
 const TOKEN_COOKIE_NAME = 'token';
 const COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24 * 7; // 7 days
 
@@ -36,112 +35,92 @@ const setTokenCookie = (value: string | null) => {
   document.cookie = `${TOKEN_COOKIE_NAME}=${value}; path=/; max-age=${COOKIE_MAX_AGE_SECONDS}; SameSite=Lax`;
 };
 
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [hydrated, setHydrated] = useState(false);
   const router = useRouter();
   const { showToast } = useToast();
 
-  const clearAuthState = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    setTokenCookie(null);
-    setToken(null);
-    setUser(null);
-  };
-
-  // Load user from localStorage on mount
+  // Initialize auth state and listen for changes
   useEffect(() => {
-    const loadUser = () => {
-      if (typeof window === 'undefined') return;
+    let mounted = true;
 
-      const storedToken = localStorage.getItem('token');
-      const storedUser = localStorage.getItem('user');
-
-      if (storedToken && storedUser) {
-        setToken(storedToken);
-        setUser(JSON.parse(storedUser));
-        setTokenCookie(storedToken);
-      } else {
-        setLoading(false);
-        setTokenCookie(null);
-      }
-
-      setHydrated(true);
-    };
-
-    loadUser();
-  }, []);
-
-  useEffect(() => {
-    if (!hydrated) {
-      return;
-    }
-
-    if (!token) {
-      setLoading(false);
-      return;
-    }
-
-    let cancelled = false;
-
-    const fetchProfile = async () => {
+    // 1. Get initial session
+    const initializeAuth = async () => {
       try {
-        setLoading(true);
-        const response = await authService.getCurrentUser();
-
-        if (cancelled) return;
-
-        if (response.data) {
-          setUser(response.data);
-          localStorage.setItem('user', JSON.stringify(response.data));
-          return;
-        }
-
-        if (response.status === 401) {
-          console.warn('[Foodie] Auth token invalid, clearing session');
-          clearAuthState();
-          return;
-        }
-
-        if (response.error) {
-          console.error('[Foodie] Failed to refresh profile:', response.error);
-        }
-      } catch (error) {
-        if (!cancelled) {
-          console.error('[Foodie] Unexpected error fetching profile:', error);
-        }
-      } finally {
-        if (!cancelled) {
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (mounted) {
+          if (session) {
+            setToken(session.access_token);
+            // Fetch full user profile to ensure we have the latest metadata/roles
+            const { data: userProfile } = await authService.getCurrentUser();
+            if (userProfile && mounted) {
+                setUser(userProfile);
+            }
+          } else {
+            setToken(null);
+            setUser(null);
+          }
           setLoading(false);
         }
+      } catch (error) {
+        console.error('[Foodie] Auth initialization error:', error);
+        if (mounted) setLoading(false);
       }
     };
 
-    fetchProfile();
+    initializeAuth();
+
+    // 2. Listen for auth changes (login, logout, token refresh)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('[Foodie] Auth event:', event);
+      
+      if (!mounted) return;
+
+      if (session) {
+        setToken(session.access_token);
+        setTokenCookie(session.access_token); // Sync cookie
+        
+        // On SIGNED_IN or TOKEN_REFRESHED, we might want to refresh user data
+        // For efficiency, we can usually trust the session, but to be strictly safe with roles
+        // and our custom mapping, we re-fetch or map from session.user
+        if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+            const { data: userProfile } = await authService.getCurrentUser();
+            if (userProfile) setUser(userProfile);
+        }
+      } else {
+        setToken(null);
+        setTokenCookie(null); // Clear cookie
+        setUser(null);
+        setLoading(false);
+      }
+    });
 
     return () => {
-      cancelled = true;
+      mounted = false;
+      subscription.unsubscribe();
     };
-  }, [token, hydrated]);
+  }, []);
 
   const login = async (credentials: LoginCredentials) => {
     try {
-      const { token: newToken, user: newUser } = await authService.login(credentials);
-
-      setToken(newToken);
-      setUser(newUser);
-      localStorage.setItem('token', newToken);
-      localStorage.setItem('user', JSON.stringify(newUser));
-      setTokenCookie(newToken);
+      const { user: newUser } = await authService.login(credentials);
+      
+      // State updates handled by onAuthStateChange, but we can optimistically set for speed
+      // or just wait for the event. Waiting is safer for consistency.
+      
       console.log('[Foodie] Login success');
       showToast('Welcome back!', 'success');
 
-      // Use startTransition to handle the redirect
+      // Handle Redirects based on role
       startTransition(() => {
-        if (newUser.role === 'chef') {
+        if (newUser.role === 'admin') {
+          router.push('/admin');
+        } else if (newUser.role === 'chef') {
           router.push('/chef/dashboard');
         } else {
           router.push('/client/home');
@@ -162,16 +141,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const response = await authService.register(data);
 
       if (response.data) {
-        const { token: newToken, user: newUser } = response.data;
-        setToken(newToken);
-        setUser(newUser);
-        localStorage.setItem('token', newToken);
-        localStorage.setItem('user', JSON.stringify(newUser));
-        setTokenCookie(newToken);
+        const { user: newUser } = response.data;
+        
         showToast('Account created! Karibu.', 'success');
+        
+        // Handle Redirects
         startTransition(() => {
           if (newUser.role === 'chef') {
-            router.replace('/chef/dashboard');
+            router.replace('/chef/onboarding');
           } else {
             router.replace('/client/home');
           }
@@ -180,6 +157,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       if (response.error) {
+        // If it's the email verification case
+        if (response.status === 201) {
+             showToast(response.error, 'success');
+             return { success: true };
+        }
+
         console.error('[Foodie] Registration API error:', response.error);
         showToast(response.error, 'error');
       }
@@ -187,7 +170,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return {
         success: false,
         error: response.error || 'Registration failed',
-        fieldErrors: response.errors,
+        fieldErrors: response.errors, // Assuming ApiResponse might have this from backend, mostly simpler now
       };
     } catch (error) {
       console.error('[Foodie] Registration request failed:', error);
@@ -199,15 +182,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = () => {
     authService.logout();
-    clearAuthState();
+    // State clearing handled by onAuthStateChange
     startTransition(() => {
       router.replace('/auth');
     });
   };
-
-  if (!hydrated) {
-    return null;
-  }
 
   return (
     <AuthContext.Provider

@@ -170,7 +170,7 @@ export default function ClientDiscoverPage() {
           filtered = filtered.filter(chef => (chef.average_rating || 0) >= 4.5);
           break;
         case 'new':
-          filtered = filtered.sort((a, b) => a.id - b.id).slice(0, 10);
+          filtered = filtered.sort((a, b) => String(a.id).localeCompare(String(b.id))).slice(0, 10);
           break;
         case 'special':
           filtered = filtered.filter(chef => chef.is_verified);
@@ -211,7 +211,7 @@ export default function ClientDiscoverPage() {
 
     // Apply chef filter
     if (selectedChef) {
-      filtered = filtered.filter(item => item.chef === selectedChef);
+      filtered = filtered.filter(item => (item.chef || Number(item.chef_id)) === selectedChef);
     }
 
     // Apply price range filter

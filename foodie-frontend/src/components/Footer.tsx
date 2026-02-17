@@ -1,8 +1,15 @@
+'use client';
+
 import Link from 'next/link';
 import { useMemo } from 'react';
+import { usePathname } from 'next/navigation';
 
 export default function Footer() {
+  const pathname = usePathname();
+  const isOnboarding = pathname?.includes('/onboarding');
   const currentYear = useMemo(() => new Date().getFullYear(), []);
+
+  if (isOnboarding) return null;
 
   return (
     <footer className="border-t border-white/10 bg-black/40 backdrop-blur mt-auto">

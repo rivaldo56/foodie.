@@ -4,10 +4,10 @@ import { User } from './auth.service';
 import { Chef } from './chef.service';
 
 export interface Meal {
-    id: number;
+    id: string | number;
     name: string;
     price: number | string;
-    chef?: number;
+    chef?: string | number;
     chef_name?: string;
     category: string;
     rating?: number;
@@ -17,9 +17,9 @@ export interface Meal {
 }
 
 export interface Order {
-    id: number;
-    meal: number;
-    user: number;
+    id: string | number;
+    meal: string | number;
+    user: string | number;
     status: string;
     created_at: string;
     total_amount?: number;
@@ -30,8 +30,8 @@ export interface Order {
 }
 
 export interface Review {
-    id: number;
-    meal: number;
+    id: string | number;
+    meal: string | number;
     user: string;
     rating: number;
     comment: string;
@@ -39,7 +39,7 @@ export interface Review {
 }
 
 export interface Booking {
-    id: number;
+    id: string | number;
     client: User;
     chef: Chef;
     service_type: string;
@@ -68,7 +68,7 @@ export interface Booking {
 }
 
 export interface CreateBookingPayload {
-    chefId: number;
+    chefId: string | number;
     eventDate: string;
     eventTime: string;
     guestCount: number;
@@ -80,7 +80,7 @@ export interface CreateBookingPayload {
     serviceType?: string;
     specialRequests?: string;
     dietaryRequirements?: string[];
-    menuItems?: Array<{ menu_item_id: number; quantity: number; special_instructions?: string }>;
+    menuItems?: Array<{ menu_item_id: string | number; quantity: number; special_instructions?: string }>;
     isPriority?: boolean;
     downPaymentAmount?: number;
 }
@@ -128,11 +128,11 @@ export const bookingService = {
         return apiRequest({ url: endpoint });
     },
 
-    async getMealById(id: number): Promise<ApiResponse<Meal>> {
+    async getMealById(id: string | number): Promise<ApiResponse<Meal>> {
         return apiRequest({ url: `/meals/${id}/` });
     },
 
-    async getChefMeals(chefId: number): Promise<ApiResponse<Meal[]>> {
+    async getChefMeals(chefId: string | number): Promise<ApiResponse<Meal[]>> {
         const response = await apiRequest<{ count: number; results: MenuItem[] } | MenuItem[]>({
             url: `/bookings/chef/${chefId}/menu-items/`
         });
@@ -167,7 +167,7 @@ export const bookingService = {
         };
     },
 
-    async createOrder(mealId: number, quantity: number = 1): Promise<ApiResponse<Order>> {
+    async createOrder(mealId: string | number, quantity: number = 1): Promise<ApiResponse<Order>> {
         return apiRequest({
             url: '/orders/',
             method: 'POST',
@@ -182,12 +182,12 @@ export const bookingService = {
         }, true);
     },
 
-    async getReviews(mealId?: number): Promise<ApiResponse<Review[]>> {
+    async getReviews(mealId?: string | number): Promise<ApiResponse<Review[]>> {
         const endpoint = mealId ? `/reviews/?meal=${mealId}` : '/reviews/';
         return apiRequest({ url: endpoint });
     },
 
-    async createReview(mealId: number, rating: number, comment: string): Promise<ApiResponse<Review>> {
+    async createReview(mealId: string | number, rating: number, comment: string): Promise<ApiResponse<Review>> {
         return apiRequest({
             url: '/reviews/',
             method: 'POST',
@@ -220,14 +220,14 @@ export const bookingService = {
         }, true);
     },
 
-    async cancelBooking(id: number): Promise<ApiResponse<any>> {
+    async cancelBooking(id: string | number): Promise<ApiResponse<any>> {
         return apiRequest({
             url: `/bookings/${id}/cancel/`,
             method: 'POST',
         }, true);
     },
 
-    async updateBookingStatus(id: number, status: string): Promise<ApiResponse<any>> {
+    async updateBookingStatus(id: string | number, status: string): Promise<ApiResponse<any>> {
         return apiRequest({
             url: `/bookings/${id}/status/`,
             method: 'PATCH',

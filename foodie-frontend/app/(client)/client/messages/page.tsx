@@ -19,7 +19,7 @@ export default function ClientMessagesPage() {
   const { user, isAuthenticated, loading: authLoading } = useAuth();
 
   const [conversations, setConversations] = useState<Conversation[]>([]);
-  const [activeConversationId, setActiveConversationId] = useState<number | null>(null);
+  const [activeConversationId, setActiveConversationId] = useState<string | number | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoadingConversations, setIsLoadingConversations] = useState(true);
@@ -30,7 +30,7 @@ export default function ClientMessagesPage() {
   useEffect(() => {
     const conversationIdParam = searchParams.get('conversationId');
     if (conversationIdParam) {
-      setActiveConversationId(Number(conversationIdParam));
+      setActiveConversationId(conversationIdParam);
     }
   }, [searchParams]);
 
@@ -128,7 +128,7 @@ export default function ClientMessagesPage() {
     }
   };
 
-  const handleSelectConversation = (id: number) => {
+  const handleSelectConversation = (id: string | number) => {
     setActiveConversationId(id);
     router.push(`/client/messages?conversationId=${id}`);
   };

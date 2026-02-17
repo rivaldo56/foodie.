@@ -5,9 +5,9 @@ import { format, isToday, isYesterday } from 'date-fns';
 import { Check, CheckCheck } from 'lucide-react';
 
 interface Message {
-    id: number;
+    id: string | number;
     sender: {
-        id: number;
+        id: string | number;
         full_name: string;
     };
     content: string;
@@ -20,8 +20,8 @@ interface Message {
 
 interface MessageListProps {
     messages: Message[];
-    currentUserId: number;
-    onMarkAsRead?: (messageId: number) => void;
+    currentUserId: string | number;
+    onMarkAsRead?: (messageId: string | number) => void;
 }
 
 export default function MessageList({ messages, currentUserId, onMarkAsRead }: MessageListProps) {

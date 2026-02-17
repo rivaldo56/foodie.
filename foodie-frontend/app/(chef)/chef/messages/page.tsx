@@ -19,7 +19,7 @@ export default function ChefMessagesPage() {
   const { user, isAuthenticated, loading: authLoading } = useAuth();
 
   const [conversations, setConversations] = useState<Conversation[]>([]);
-  const [activeConversationId, setActiveConversationId] = useState<number | null>(null);
+  const [activeConversationId, setActiveConversationId] = useState<string | number | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoadingConversations, setIsLoadingConversations] = useState(true);
@@ -31,7 +31,7 @@ export default function ChefMessagesPage() {
   useEffect(() => {
     const conversationIdParam = searchParams.get('conversationId');
     if (conversationIdParam) {
-      setActiveConversationId(Number(conversationIdParam));
+      setActiveConversationId(conversationIdParam);
     }
   }, [searchParams]);
 
@@ -39,14 +39,14 @@ export default function ChefMessagesPage() {
   useEffect(() => {
     const userIdParam = searchParams.get('user');
     if (userIdParam && conversations.length > 0 && !activeConversationId) {
-      const userId = Number(userIdParam);
+      const userId = userIdParam;
 
       // Try to find existing conversation with this user
       const existingConversation = conversations.find(conv => {
         const otherUserId = conv.other_user?.id ||
           conv.client?.id ||
           (conv as any).chef?.id;
-        return otherUserId === userId;
+        return String(otherUserId) === String(userId);
       });
 
       if (existingConversation) {
@@ -150,7 +150,7 @@ export default function ChefMessagesPage() {
     }
   };
 
-  const handleSelectConversation = (id: number) => {
+  const handleSelectConversation = (id: string | number) => {
     setActiveConversationId(id);
     router.push(`/chef/messages?conversationId=${id}`);
   };

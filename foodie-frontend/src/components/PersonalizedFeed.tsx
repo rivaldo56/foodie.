@@ -36,12 +36,13 @@ export default function PersonalizedFeed() {
     const [hasMore, setHasMore] = useState(true);
     const observerTarget = useRef<HTMLDivElement>(null);
 
-    const trackView = async (chefId: number) => {
+    const trackView = async (chefId: string | number) => {
         if (!isAuthenticated) return;
 
         try {
             const token = localStorage.getItem('token');
-            await fetch('http://127.0.0.1:8000/api/ai/recommendations/track/', {
+            const response = await fetch(
+                `/api/ai/recommendations/track/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -66,7 +67,7 @@ export default function PersonalizedFeed() {
         try {
             const token = localStorage.getItem('token');
             const response = await fetch(
-                `http://127.0.0.1:8000/api/ai/recommendations/feed/?type=chef&limit=10`,
+                `/api/ai/recommendations/feed/?type=chef&limit=10`,
                 {
                     headers: {
                         Authorization: `Token ${token}`,
@@ -95,7 +96,7 @@ export default function PersonalizedFeed() {
         setIsLoading(true);
         try {
             const response = await fetch(
-                'http://127.0.0.1:8000/api/ai/recommendations/trending/?type=chef&limit=10'
+                '/api/ai/recommendations/trending/?type=chef&limit=10'
             );
 
             const data = await response.json();

@@ -6,16 +6,80 @@
 
 ---
 
+## ⚠️ Migration Status
+
+> [!CAUTION]
+> **Django Backend Removed - Migration in Progress**
+> 
+> This repository is undergoing a **serverless architecture migration** from Django monolith to Supabase.
+> 
+> **Phase 1: ✅ COMPLETE** - Django backend removed (2026-02-08)  
+> **Phase 2: 🚧 PENDING** - Supabase integration (Auth + Database + Edge Functions)
+
+### Current Architecture
+
+| Component | Status | Details |
+|-----------|--------|---------|
+| **Frontend** | ✅ Operational | Next.js 15.0.3 (TypeScript + Tailwind CSS) |
+| **Backend** | ❌ Removed | Django backend deleted |
+| **Database** | ❌ Removed | SQLite/PostgreSQL removed |
+| **APIs** | ⚠️ Non-functional | Endpoints will return 404 until Phase 2 |
+
+### What Happens Now?
+
+**✅ You CAN:**
+- Browse the codebase
+- Build the frontend (`cd foodie-frontend && npm run build`)
+- Run the frontend dev server (`npm run dev`)
+- View UI components and pages
+
+**❌ You CANNOT:**
+- Make API calls (all Django endpoints removed)
+- Register/login users (backend auth removed)
+- Create bookings or chat messages
+- Process payments
+
+**All functionality will be restored in Phase 2 using Supabase.**
+
+### Phase 2 Migration Plan
+
+| Django Component | Supabase Replacement |
+|-----------------|---------------------|
+| PostgreSQL + Django ORM | Supabase PostgreSQL + Row Level Security |
+| Django REST Framework | Supabase Edge Functions (Deno) |
+| Django Channels (WebSockets) | Supabase Realtime |
+| django-allauth | Supabase Auth |
+| Celery + Redis | Edge Functions + Cron Jobs |
+| Cloudinary | Supabase Storage |
+| Stripe/M-Pesa Integration | Edge Functions + Payment SDKs |
+| Gemini AI | Edge Functions + Gemini API |
+
+📄 **Full Audit Report:** [docs/audit_report.md](docs/audit_report.md)
+
+---
+
 ## 🚀 Overview
 
-ChefConnect is a production-ready platform that bridges food enthusiasts with professional chefs through an intuitive, feature-rich web application. Built with modern technologies, it offers real-time communication, AI-powered recommendations, and seamless payment processing.
+ChefConnect is a production-ready platform that bridges food enthusiasts with professional chefs through an intuitive, feature-rich web application.
 
-### Key Highlights
-- ✅ **Full-Stack Application**: Django REST API + Next.js Frontend
-- ✅ **Real-time Features**: WebSocket-based chat with Django Channels
-- ✅ **AI Integration**: Google Gemini for personalized recommendations
-- ✅ **Multi-Payment Support**: M-Pesa (mobile money) + Stripe (cards)
-- ✅ **Production Ready**: Docker deployment with comprehensive testing
+> **Note:** This project is currently being migrated from a Django monolith to a serverless Supabase architecture. The frontend is fully functional, but backend APIs are temporarily unavailable.
+
+### Project History
+
+**Original Stack (Removed in Phase 1):**
+- ~~Full-Stack Application: Django REST API + Next.js Frontend~~
+- ~~Real-time Features: WebSocket-based chat with Django Channels~~
+- ~~AI Integration: Google Gemini for personalized recommendations~~
+- ~~Multi-Payment Support: M-Pesa (mobile money) + Stripe (cards)~~
+- ~~Production Ready: Docker deployment with comprehensive testing~~
+
+**Target Stack (Phase 2):**
+- ✅ **Frontend**: Next.js 15.0.3 (TypeScript + Tailwind CSS) - **Already Built**
+- 🚧 **Backend**: Supabase PostgreSQL + Edge Functions - **In Planning**
+- 🚧 **Real-time**: Supabase Realtime - **In Planning**
+- 🚧 **Auth**: Supabase Auth - **Partially Integrated**
+- 🚧 **Storage**: Supabase Storage - **In Planning**
+- 🚧 **AI**: Edge Functions + Gemini API - **In Planning**
 
 ---
 

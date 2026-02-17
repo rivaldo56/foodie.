@@ -7,7 +7,8 @@ import axios, { AxiosError, type AxiosRequestConfig, type AxiosRequestHeaders } 
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL ||
-  process.env.NEXT_PUBLIC_API_URL;
+  process.env.NEXT_PUBLIC_API_URL ||
+  '';
 
 const initialToken =
   typeof window !== 'undefined' ? localStorage.getItem('token') : null;
@@ -388,95 +389,9 @@ export async function checkHealth(): Promise<ApiResponse<{ status: string }>> {
 // Chef Analytics API
 // Moved to services/chef.service.ts
 
-// Mock data
-export const mockChefs: Chef[] = [
-  {
-    id: 1,
-    user: {
-      id: 1,
-      email: 'kamau@example.com',
-      full_name: 'Chef Kamau',
-      phone: '+254712345678'
-    },
-    bio: 'Passionate about coastal flavors with 15 years of experience.',
-    specialties: ['Swahili Cuisine', 'Seafood', 'Spices'],
-    experience_years: 15,
-    cuisine_types: ['Swahili'],
-    average_rating: 4.8,
-    total_bookings: 120,
-    total_reviews: 45,
-    is_verified: true,
-    profile_picture: null,
-    cover_photo: null,
-  },
-  {
-    id: 2,
-    user: {
-      id: 2,
-      email: 'aisha@example.com',
-      full_name: 'Chef Aisha',
-      phone: '+254723456789'
-    },
-    bio: 'Blending traditional recipes with modern techniques.',
-    specialties: ['Contemporary African', 'Fusion', 'Fine Dining'],
-    experience_years: 10,
-    cuisine_types: ['Contemporary African'],
-    average_rating: 4.9,
-    total_bookings: 85,
-    total_reviews: 32,
-    is_verified: true,
-    profile_picture: null,
-    cover_photo: null,
-  },
-  {
-    id: 3,
-    user: {
-      id: 3,
-      email: 'omondi@example.com',
-      full_name: 'Chef Omondi',
-      phone: '+254734567890'
-    },
-    bio: 'Master of the grill, specializing in nyama choma.',
-    specialties: ['BBQ & Grills', 'Nyama Choma', 'Marinades'],
-    experience_years: 12,
-    cuisine_types: ['BBQ'],
-    average_rating: 4.7,
-    total_bookings: 95,
-    total_reviews: 38,
-    is_verified: true,
-    profile_picture: null,
-    cover_photo: null,
-  },
-];
+// Stub exports for legacy pages (chefs, discover, meals) until wired to Supabase
+export const mockChefs: Chef[] = [];
+export const mockMeals: Meal[] = [];
 
-export const mockMeals: Meal[] = [
-  {
-    id: 1,
-    name: 'Ugali & Tilapia',
-    price: 850,
-    chef: 1,
-    category: 'Traditional',
-    rating: 4.7,
-    description: 'Fresh tilapia served with ugali and sukuma wiki',
-  },
-  {
-    id: 2,
-    name: 'Pilau Rice',
-    price: 650,
-    chef: 1,
-    category: 'Traditional',
-    rating: 4.6,
-    description: 'Aromatic spiced rice with tender beef',
-  },
-  {
-    id: 3,
-    name: 'Nyama Choma Platter',
-    price: 1200,
-    chef: 3,
-    category: 'BBQ',
-    rating: 4.9,
-    description: 'Grilled goat meat with kachumbari and ugali',
-  },
-];
 
 

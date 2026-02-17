@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import StatusLight from './StatusLight';
-import { Bell, LogOut, MessageCircle, User, Home, Compass, ChefHat, UtensilsCrossed, Menu, X, Utensils, type LucideIcon } from 'lucide-react';
+import { Bell, LogOut, MessageCircle, User, Home, Compass, ChefHat, UtensilsCrossed, Menu, X, Utensils, Calendar, type LucideIcon } from 'lucide-react';
 
 type NavItem = {
   href: string;
@@ -109,6 +109,7 @@ export default function Navbar() {
           })}
         </nav>
       </div>
+
     </header>
   );
 }
