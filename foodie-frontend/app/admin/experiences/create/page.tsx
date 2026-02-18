@@ -28,14 +28,15 @@ export default function CreateExperiencePage() {
   });
 
   const categories = [
+    { value: 'corporate_party', label: 'Corporate Party' },
+    { value: 'chama', label: 'Chama' },
     { value: 'private_dinner', label: 'Private Dinner' },
+    { value: 'anniversary', label: 'Anniversary' },
+    { value: 'birthday', label: 'Birthday' },
     { value: 'meal_prep', label: 'Meal Prep' },
     { value: 'event_catering', label: 'Event Catering' },
     { value: 'cooking_class', label: 'Cooking Class' },
-    { value: 'chama_party', label: 'Chama Party' },
-    { value: 'anniversary', label: 'Anniversary' },
     { value: 'baby_shower', label: 'Baby Shower' },
-    { value: 'corporate_event', label: 'Corporate Event' },
     { value: 'other', label: 'Other' },
   ];
 
@@ -50,11 +51,23 @@ export default function CreateExperiencePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('[CreateExperience] Submitting form...', formData);
+    console.log('[CreateExperience] Submitting form...', { 
+      name: formData.name, 
+      imageSize: formData.image_url.length,
+      category: formData.category 
+    });
     
     try {
       setLoading(true);
+      
+      // Set a diagnostic timer to warn if it's taking too long
+      const diagnosticTimer = setTimeout(() => {
+        console.warn('[CreateExperience] Request is taking unusually long (> 30s)...');
+        showToast('Still uploading... this may take a few minutes for large images.', 'info');
+      }, 30000);
+
       const result = await createExperience(formData);
+      clearTimeout(diagnosticTimer);
       
       if (result) {
         console.log('[CreateExperience] Success:', result);
@@ -62,10 +75,10 @@ export default function CreateExperiencePage() {
         router.push('/admin/experiences');
       } else {
         console.error('[CreateExperience] Failed to create experience: result was null');
-        showToast('Failed to create experience. Please check your admin permissions.', 'error');
+        showToast('Submission failed. Check Console for errors.', 'error');
       }
     } catch (err) {
-      console.error('[CreateExperience] Unexpected error:', err);
+      console.error('[CreateExperience] Unexpected error in handleSubmit:', err);
       showToast('An unexpected error occurred. Please try again.', 'error');
     } finally {
       setLoading(false);

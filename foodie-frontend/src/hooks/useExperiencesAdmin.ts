@@ -43,31 +43,51 @@ export function useExperiencesAdmin() {
 
   const createExperience = useCallback(
     async (input: CreateExperienceInput): Promise<{ id: string } | null> => {
-      console.log('[useExperiencesAdmin] Creating experience...', { name: input.name });
+      console.log('[useExperiencesAdmin] Starting creation flow for:', input.name);
       setError(null);
       
       try {
-        const { data, error: e } = await supabase
+        // Use a simpler insert without .select().single() first to see if it bypasses the hang
+        // We can reconstruct the ID or search for it if needed, but for now let's see if the insert finishes
+        console.log('[useExperiencesAdmin] Sending insert request to Supabase...');
+        
+        // Add a manual timeout to the request to avoid infinite hang
+        const insertPromise = supabase
           .from('experiences')
-          .insert([{ ...input, status: input.status ?? 'draft' }])
-          .select('id')
-          .single();
+          .insert([{ 
+            ...input, 
+            status: input.status ?? 'draft',
+            slug: input.slug || input.name.toLowerCase().replace(/ /g, '-')
+          }])
+          .select('id');
+
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Request timed out after 45 seconds')), 45000)
+        );
+
+        const { data, error: e } = await Promise.race([insertPromise, timeoutPromise]) as any;
 
         if (e) {
-          console.error('[useExperiencesAdmin] Supabase error:', e);
+          console.error('[useExperiencesAdmin] Supabase insert error:', e);
           setError(e.message ?? 'Failed to create experience');
           return null;
         }
 
-        console.log('[useExperiencesAdmin] Experience created successfully:', data?.id);
+        if (!data || data.length === 0) {
+          console.warn('[useExperiencesAdmin] Insert returned no data, but no error reported.');
+          return null;
+        }
+
+        const createdId = String(data[0].id);
+        console.log('[useExperiencesAdmin] Experience created successfully with ID:', createdId);
         
-        // Trigger refetch in background, don't await it to avoid blocking the return
+        // Background refresh
         fetchExperiences().catch(err => console.error('[useExperiencesAdmin] Background refetch failed:', err));
         
-        return data ? { id: String(data.id) } : null;
+        return { id: createdId };
       } catch (err) {
-        console.error('[useExperiencesAdmin] Unexpected error during creation:', err);
-        setError('An unexpected error occurred');
+        console.error('[useExperiencesAdmin] Catch-all error during creation:', err);
+        setError(err instanceof Error ? err.message : 'An unexpected error occurred');
         return null;
       }
     },

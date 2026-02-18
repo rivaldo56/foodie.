@@ -6,7 +6,9 @@ import {
   CalendarDays, 
   Users, 
   Settings,
-  LogOut
+  LogOut,
+  Home,
+  ChefHat
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AdminGuard } from "@/components/AdminGuard";
@@ -37,6 +39,12 @@ export default function AdminLayout({
             <NavItem href="/admin/chefs" icon={<Users size={20} />} label="Chefs" />
             <NavItem href="/admin/users" icon={<Users size={20} />} label="Users" />
             <NavItem href="/admin/settings" icon={<Settings size={20} />} label="Settings" />
+            
+            <div className="pt-4 mt-4 border-t border-white/5 space-y-1">
+              <p className="px-3 text-[10px] uppercase font-bold tracking-widest text-gray-500 mb-2">Debug Views</p>
+              <NavItem href="/" icon={<Home size={20} />} label="View Site" />
+              <NavItem href="/chef/dashboard" icon={<ChefHat size={20} />} label="Chef View" />
+            </div>
           </nav>
 
           <div className="p-4 border-t border-white/5">
