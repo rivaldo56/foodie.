@@ -77,6 +77,25 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Failed to create booking' }, { status: 500 });
     }
 
+    // Increment meal bookings for popularity tracking
+    try {
+      const { data: menuMeals } = await supabase
+        .from('menu_meals')
+        .select('meal_id')
+        .eq('menu_id', menu_id);
+
+      if (menuMeals && menuMeals.length > 0) {
+        const mealIds = menuMeals.map(mm => mm.meal_id);
+        const incrementPromises = mealIds.map(id => 
+          supabase.rpc('increment_meal_bookings', { meal_id_input: id })
+        );
+        await Promise.allSettled(incrementPromises);
+      }
+    } catch (mealError) {
+      // Don't fail the booking if tracking fails
+      console.error('Failed to increment meal bookings:', mealError);
+    }
+
     return NextResponse.json({ success: true, booking }, { status: 201 });
 
   } catch (error: any) {

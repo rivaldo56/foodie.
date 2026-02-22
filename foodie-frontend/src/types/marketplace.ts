@@ -27,6 +27,8 @@ export interface Menu {
   dietary_tags: string[];
   image_url: string | null;
   status: MenuStatus;
+  featured: boolean;
+  is_instant_book?: boolean;
   created_at: string;
   updated_at: string;
 }

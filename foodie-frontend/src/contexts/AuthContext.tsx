@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { startTransition } from 'react';
-import { authService, User, LoginCredentials, RegisterData } from '@/services/auth.service';
+import { authService, User, LoginCredentials, RegisterData, mapUser } from '@/services/auth.service';
 import { useToast } from '@/contexts/ToastContext';
 import { supabase } from '@/lib/supabase';
 
@@ -51,25 +51,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // 1. Get initial session
     const initializeAuth = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        const { data: { session }, error } = await supabase.auth.getSession();
         
+        if (error) throw error;
+
         if (mounted) {
-          if (session) {
+          if (session?.user) {
             setToken(session.access_token);
-            // Fetch full user profile to ensure we have the latest metadata/roles
-            const { data: userProfile } = await authService.getCurrentUser();
-            if (userProfile && mounted) {
-                setUser(userProfile);
-            }
+            // Optimistically map user from session to avoid redundant network call
+            const mappedUser = mapUser(session.user);
+            setUser(mappedUser);
+            
+            // Sync cookie
+            setTokenCookie(session.access_token);
           } else {
             setToken(null);
             setUser(null);
+            setTokenCookie(null);
           }
           setLoading(false);
         }
       } catch (error) {
-        console.error('[Foodie] Auth initialization error:', error);
-        if (mounted) setLoading(false);
+        // Log but don't crash; session might just be missing
+        console.warn('[Foodie] Auth initialization notice:', error instanceof Error ? error.message : error);
+        if (mounted) {
+          setLoading(false);
+          setUser(null);
+          setToken(null);
+        }
       }
     };
 
@@ -81,22 +90,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       if (!mounted) return;
 
-      if (session) {
-        setToken(session.access_token);
-        setTokenCookie(session.access_token); // Sync cookie
-        
-        // On SIGNED_IN or TOKEN_REFRESHED, we might want to refresh user data
-        // For efficiency, we can usually trust the session, but to be strictly safe with roles
-        // and our custom mapping, we re-fetch or map from session.user
-        if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-            const { data: userProfile } = await authService.getCurrentUser();
-            if (userProfile) setUser(userProfile);
+      try {
+        if (session?.user) {
+          setToken(session.access_token);
+          setTokenCookie(session.access_token); // Sync cookie
+          
+          // Use session user directly to avoid race conditions with navigation
+          const mappedUser = mapUser(session.user);
+          setUser(mappedUser);
+          
+          if (event === 'SIGNED_IN') {
+             console.log('[Foodie] User signed in:', mappedUser.email);
+          }
+        } else {
+          setToken(null);
+          setTokenCookie(null); // Clear cookie
+          setUser(null);
         }
-      } else {
-        setToken(null);
-        setTokenCookie(null); // Clear cookie
-        setUser(null);
         setLoading(false);
+      } catch (error) {
+        console.error('[Foodie] Auth state change error:', error);
       }
     });
 

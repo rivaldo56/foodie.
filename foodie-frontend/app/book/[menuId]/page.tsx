@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Loader2, ArrowLeft, Calendar, MapPin, Users } from 'lucide-react';
+import { mealService } from '@/services/meal.service';
 
 type Menu = {
   id: string;
@@ -31,6 +32,7 @@ export default function BookingPage() {
   const menuId = params.menuId as string;
   
   const [menu, setMenu] = useState<Menu | null>(null);
+  const [meals, setMeals] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [user, setUser] = useState<any>(null);
@@ -44,30 +46,38 @@ export default function BookingPage() {
 
   useEffect(() => {
     async function fetchData() {
-       const { data: { user } } = await supabase.auth.getUser();
-       setUser(user);
+       const { data: { user: authUser } } = await supabase.auth.getUser();
+       setUser(authUser);
 
-      const { data, error } = await supabase
-        .from('menus')
-        .select(`
-            *,
-            experience:experiences (
-                name,
-                image_url
-            )
-        `)
-        .eq('id', menuId)
-        .single();
+      try {
+        const [menuRes, mealsRes] = await Promise.all([
+          supabase
+            .from('menus')
+            .select(`
+                *,
+                experience:experiences (
+                    name,
+                    image_url
+                )
+            `)
+            .eq('id', menuId)
+            .single(),
+          mealService.getMenuMeals(menuId)
+        ]);
 
-      if (error) {
-        console.error('Error fetching menu:', error);
-      } else {
-        setMenu(data as any);
-        if (data) {
-             setFormData(prev => ({ ...prev, guests_count: data.guest_min || 2 }));
+        if (menuRes.error) throw menuRes.error;
+        
+        setMenu(menuRes.data as any);
+        setMeals(mealsRes.data || []);
+        
+        if (menuRes.data) {
+          setFormData(prev => ({ ...prev, guests_count: menuRes.data.guest_min || 2 }));
         }
+      } catch (err) {
+        console.error('Error fetching booking data:', err);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     }
 
     if (menuId) fetchData();
@@ -142,7 +152,7 @@ export default function BookingPage() {
     <div className="min-h-screen bg-[#0f0c0a] text-white pb-20 pt-24 px-4">
       <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12">
         <div className="space-y-8">
-            <Link href="/" className="inline-flex items-center text-white/60 hover:text-white transition-colors mb-4">
+            <Link href={`/menus/${menuId}`} className="inline-flex items-center text-white/60 hover:text-white transition-colors mb-4">
                 <ArrowLeft className="mr-2 h-4 w-4" /> Cancel Booking
             </Link>
             
@@ -160,11 +170,44 @@ export default function BookingPage() {
                          <h1 className="text-3xl font-bold">{menu.name}</h1>
                      </div>
                 </div>
-                <div className="p-8 space-y-6">
+                <div className="p-8 space-y-8">
                     <div>
                         <h3 className="text-lg font-semibold mb-2">Menu Description</h3>
-                        <p className="text-white/70 leading-relaxed">{menu.description}</p>
+                        <p className="text-white/70 leading-relaxed italic">"{menu.description}"</p>
                     </div>
+
+                    {meals.length > 0 && (
+                        <div className="space-y-6 pt-4">
+                            <h3 className="text-xl font-bold text-white flex items-center">
+                                <span className="w-8 h-[2px] bg-accent mr-3"></span>
+                                What You'll Enjoy
+                            </h3>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                {meals.map((m) => (
+                                    <div key={m.id} className="group relative overflow-hidden rounded-2xl bg-white/5 border border-white/10 aspect-[4/5] transition-all hover:scale-[1.02] shadow-lg">
+                                        <Image 
+                                            src={m.meal?.image_url || 'https://images.unsplash.com/photo-1546069901-eacef0df6022?auto=format&fit=crop&w=400&q=80'} 
+                                            alt={m.meal?.name || m.course_type} 
+                                            fill 
+                                            className="object-cover transition-transform duration-500 group-hover:scale-110"
+                                            unoptimized
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60" />
+                                        <div className="absolute top-3 left-3">
+                                            <span className="bg-accent/90 text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider backdrop-blur-sm">
+                                                {m.course_type}
+                                            </span>
+                                        </div>
+                                        <div className="absolute bottom-3 left-3 right-3">
+                                            <p className="text-white font-semibold text-sm drop-shadow-md">
+                                                {m.meal?.name}
+                                            </p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                     
                     <div className="flex items-center justify-between pt-6 border-t border-white/10">
                          <div>
@@ -172,8 +215,8 @@ export default function BookingPage() {
                             <p className="text-xl font-bold">KES {menu.price_per_person.toLocaleString()}</p>
                          </div>
                          <div className="text-right">
-                             <p className="text-sm text-white/50">Details</p>
-                             <p className="text-white font-medium">{menu.guest_min}-{menu.guest_max} Guests</p>
+                             <p className="text-sm text-white/50">Nutrition (Est.)</p>
+                             <p className="text-white font-medium">{(menu as any).total_kcal || 0} kcal</p>
                          </div>
                     </div>
                 </div>

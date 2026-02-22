@@ -144,6 +144,12 @@ export default function AdminDashboardPage() {
                 Experiences
               </Link>
               <Link
+                href="/admin/meals"
+                className="block w-full rounded-lg border border-white/10 bg-[#1f2228] px-4 py-3 text-sm font-medium text-[#f9fafb] hover:bg-[#2a2f37] transition-colors"
+              >
+                Meals
+              </Link>
+              <Link
                 href="/admin/bookings"
                 className="block w-full rounded-lg border border-white/10 bg-[#1f2228] px-4 py-3 text-sm font-medium text-[#f9fafb] hover:bg-[#2a2f37] transition-colors"
               >

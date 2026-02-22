@@ -27,7 +27,7 @@ export interface User {
 }
 
 // Helper to reliably extract user role
-const getUserRole = (user: any): 'client' | 'chef' | 'admin' => {
+export const getUserRole = (user: any): 'client' | 'chef' | 'admin' => {
     const appMetadata = user.app_metadata || {};
     const userMetadata = user.user_metadata || {};
     
@@ -40,7 +40,7 @@ const getUserRole = (user: any): 'client' | 'chef' | 'admin' => {
 };
 
 // Helper to map Supabase user to our User interface
-const mapUser = (user: any): User => {
+export const mapUser = (user: any): User => {
     const metadata = user.user_metadata || {};
     return {
         id: user.id,

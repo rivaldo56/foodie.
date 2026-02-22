@@ -1,64 +1,49 @@
 'use client';
 
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
-import { getPersonalizedFeed, trackInteraction } from '@/lib/api/recommendations';
+import { getPersonalizedFeed } from '@/lib/api/recommendations';
 import type { ChefRecommendation } from '@/lib/api/recommendations';
 import ChefCard from '@/components/ChefCard';
-import { getMenuItems, type MenuItem } from '@/services/chef.service';
-import MenuItemCard from '@/components/MenuItemCard';
-import MealDetailsView from '@/components/MealDetailsView';
-import { Meal } from '@/services/booking.service';
-import { Search, Sparkles, Loader2 } from 'lucide-react';
+import { Search, Sparkles, Loader2, ArrowRight } from 'lucide-react';
 import RecipeFeed from '@/components/recipes/RecipeFeed';
+import { usePublishedExperiences } from '@/hooks/usePublishedExperiences';
+import { useFeaturedExperiences } from '@/hooks/useFeaturedExperiences';
+import { useExploreMenus } from '@/hooks/useExploreMenus';
+import { useFeaturedMenus } from '@/hooks/useFeaturedMenus';
+import { useExploreMeals } from '@/hooks/useExploreMeals';
+import { useFeaturedMeals } from '@/hooks/useFeaturedMeals';
+import { SectionHeader, ExperienceCard, MenuCard, MealCard } from '@/components/discovery/DiscoveryComponents';
 
 export default function ClientHomePage() {
   const router = useRouter();
-  const { isAuthenticated, loading, user } = useAuth();
+  const { isAuthenticated, loading: authLoading, user } = useAuth();
   const [recommendations, setRecommendations] = useState<ChefRecommendation[]>([]);
   const [recommendationsLoading, setRecommendationsLoading] = useState(true);
-  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
-  const [menuItemsLoading, setMenuItemsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedMeal, setSelectedMeal] = useState<Meal | null>(null);
 
-  // Infinite scroll states
-  const [menuPage, setMenuPage] = useState(1);
-  const [hasMoreMenuItems, setHasMoreMenuItems] = useState(true);
-  const [loadingMoreMenuItems, setLoadingMoreMenuItems] = useState(false);
-  const observerTarget = useRef<HTMLDivElement>(null);
+  // Discovery Hooks
+  const { experiences, loading: expLoading } = usePublishedExperiences();
+  const { experiences: featuredExp, loading: featExpLoading } = useFeaturedExperiences();
+  const { menus, loading: menusLoading } = useExploreMenus(10);
+  const { menus: featuredMenus, loading: featMenusLoading } = useFeaturedMenus(4);
+  const { meals: exploreMeals, loading: mealsLoading } = useExploreMeals(10);
+  const { meals: featuredMeals, loading: featMealsLoading } = useFeaturedMeals(10);
 
   useEffect(() => {
-    if (!loading && !isAuthenticated) {
+    if (!authLoading && !isAuthenticated) {
       router.replace('/auth');
       return;
     }
 
     if (isAuthenticated) {
       loadRecommendations();
-      loadMenuItems(1, true);
     }
-  }, [loading, isAuthenticated, router]);
-
-  // Infinite scroll observer
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && hasMoreMenuItems && !loadingMoreMenuItems) {
-          loadMenuItems(menuPage + 1, false);
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    if (observerTarget.current) {
-      observer.observe(observerTarget.current);
-    }
-
-    return () => observer.disconnect();
-  }, [hasMoreMenuItems, loadingMoreMenuItems, menuPage]);
+  }, [authLoading, isAuthenticated, router]);
 
   const loadRecommendations = async () => {
     try {
@@ -77,51 +62,6 @@ export default function ClientHomePage() {
     }
   };
 
-  const loadMenuItems = async (page: number, isInitial: boolean) => {
-    try {
-      if (isInitial) {
-        setMenuItemsLoading(true);
-      } else {
-        setLoadingMoreMenuItems(true);
-      }
-
-      const response = await getMenuItems();
-
-      if (response.data) {
-        // Handle paginated response
-        let items: MenuItem[] = [];
-        if (Array.isArray(response.data)) {
-          items = response.data;
-        } else if (response.data && 'results' in response.data) {
-          items = (response.data as any).results;
-        }
-
-        // Simulate pagination by slicing the array
-        const pageSize = 8;
-        const start = (page - 1) * pageSize;
-        const end = start + pageSize;
-        const paginatedItems = items.slice(start, end);
-
-        if (isInitial) {
-          setMenuItems(paginatedItems);
-        } else {
-          setMenuItems(prev => [...prev, ...paginatedItems]);
-        }
-
-        setMenuPage(page);
-        setHasMoreMenuItems(end < items.length);
-      }
-    } catch (err) {
-      console.error('[Load Menu Items Error]', err);
-    } finally {
-      if (isInitial) {
-        setMenuItemsLoading(false);
-      } else {
-        setLoadingMoreMenuItems(false);
-      }
-    }
-  };
-
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
@@ -135,175 +75,217 @@ export default function ClientHomePage() {
     return fullName.split(' ')[0];
   };
 
-  const handleMealClick = (item: MenuItem) => {
-    // Map MenuItem to Meal
-    const meal: Meal = {
-      id: item.id,
-      name: item.name,
-      description: item.description,
-      price: item.price_per_serving,
-      image: item.image,
-      chef: item.chef,
-      chef_name: item.chef_name,
-      category: item.category,
-      rating: 4.8, // Mock rating as it's not in MenuItem
-      location: 'Nairobi', // Mock location
-    };
-    setSelectedMeal(meal);
-  };
-
-  if (loading || recommendationsLoading) {
+  if (authLoading) {
     return (
-      <div className="space-y-6">
-        <div className="animate-pulse space-y-4">
-          <div className="h-12 bg-white/5 rounded-lg w-3/4" />
-          <div className="h-10 bg-white/5 rounded-lg w-1/2" />
-          <div className="h-12 bg-white/5 rounded-full" />
-        </div>
+      <div className="flex h-[60vh] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-accent" />
       </div>
     );
   }
 
   return (
-    <div className="space-y-8">
-      {/* Welcome Header */}
-      <header className="space-y-2">
-        <h1 className="text-4xl font-bold text-white">
-          Welcome back, {getFirstName()}
-        </h1>
-        <p className="text-white/70 text-lg">
-          Discover personalized chef recommendations just for you
-        </p>
+    <div className="space-y-12 pb-20 pt-4">
+      {/* Top Brand Bar */}
+      <div className="flex items-center justify-between px-1">
+        <div className="flex items-center gap-3">
+          <div className="relative w-8 h-8">
+            <Image 
+              src="/foodie_logo.png" 
+              alt="Foodie Logo" 
+              fill 
+              className="object-contain"
+            />
+          </div>
+          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">
+            FOODIE CLIENT
+          </span>
+        </div>
+        <div className="text-[10px] font-medium text-white/30 italic">
+          Personalised For Food lovers
+        </div>
+      </div>
+
+      {/* Welcome Header / Hero */}
+      <header className="space-y-4">
+        <div className="space-y-3">
+          <h1 className="text-4xl md:text-6xl font-black text-white tracking-tight leading-tight">
+            Discover experiences
+          </h1>
+          <p className="text-white/40 text-sm md:text-base font-medium max-w-2xl">
+            Concierge-curated journeys just for you
+          </p>
+        </div>
       </header>
 
-      {/* Search Bar */}
-      <form onSubmit={handleSearch} className="relative">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-white/50" />
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Search by cuisine, location, or chef name..."
-          className="w-full pl-12 pr-4 py-4 bg-white/5 border border-white/10 rounded-2xl text-white placeholder:text-white/50 focus:outline-none focus:border-orange-500/50 focus:ring-2 focus:ring-orange-500/20 transition-all"
-        />
-      </form>
-
-      {/* Error State */}
-      {error && (
-        <div className="rounded-2xl bg-red-900/40 border border-red-500/50 px-4 py-3 text-red-200">
-          {error}
+      {/* Explore Experiences */}
+      <section className="space-y-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
+          {!expLoading ? (
+            experiences.slice(0, 4).map((exp) => (
+              <ExperienceCard key={exp.id} experience={exp} />
+            ))
+          ) : (
+            Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="aspect-[4/5] rounded-3xl bg-white/5 animate-pulse border border-white/10" />
+            ))
+          )}
         </div>
-      )}
-
-      {/* AI-Powered Recommendations */}
-      <section className="space-y-4">
-        <div className="flex items-center gap-2">
-          <Sparkles className="h-6 w-6 text-orange-500" />
-          <h2 className="text-2xl font-semibold text-white">AI-Powered Recommendations</h2>
-        </div>
-
-        {recommendations.length === 0 && !error ? (
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-12 text-center">
-            <p className="text-white/70 mb-4">No recommendations yet</p>
-            <p className="text-sm text-white/50">
-              Start exploring chefs to get personalized recommendations
-            </p>
-            <button
-              onClick={() => router.push('/client/discover')}
-              className="mt-4 inline-flex items-center gap-2 rounded-full bg-orange-500 px-6 py-3 text-white font-semibold hover:bg-orange-600 transition"
-            >
-              Discover Chefs
-            </button>
-          </div>
-        ) : (
-          <div className="relative">
-            <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide snap-x snap-mandatory">
-              {recommendations.map((rec) => (
-                <div key={rec.chef.id} className="w-[300px] flex-shrink-0">
-                  <ChefCard
-                    chef={rec.chef}
-                    matchScore={rec.recommendation_score}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
       </section>
 
-      {/* Recipe Inspiration Feed */}
+      {/* Availability Banner - Simplified Fire Emoji Style */}
+      <section className="py-8 border-y border-white/5">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-4">
+            <div className="text-3xl">🔥</div>
+            <div className="space-y-1">
+              <h3 className="text-xl font-bold text-white">Chefs available today in Nairobi</h3>
+              <div className="flex items-center gap-4 text-white/40 text-sm font-medium">
+                <span>12 available for dinner</span>
+                <span className="h-1 w-1 rounded-full bg-white/20" />
+                <span>8 for meal prep</span>
+              </div>
+            </div>
+          </div>
+          <Link 
+            href="/client/discover"
+            className="px-8 py-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-white text-sm font-bold transition-all transform active:scale-95"
+          >
+            See available chefs
+          </Link>
+        </div>
+      </section>
+
+      {/* Featured Experiences */}
       <section>
-          <div className="flex items-center gap-2 mb-4">
-             <Sparkles className="h-6 w-6 text-orange-500" />
-             <h2 className="text-2xl font-semibold text-white">Daily Inspiration</h2>
+        <SectionHeader 
+          title="Featured Experiences" 
+        />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {!featExpLoading ? (
+            featuredExp.slice(0, 3).map((exp) => (
+              <ExperienceCard key={exp.id} experience={exp} />
+            ))
+          ) : (
+            Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="aspect-[4/5] rounded-3xl bg-white/5 animate-pulse" />
+            ))
+          )}
+        </div>
+      </section>
+
+      {/* AI-Powered Recommendations - Moved Below Primary Grid */}
+      {recommendations.length > 0 && (
+        <section className="space-y-6 pt-8">
+          <div className="flex items-center gap-2 px-1">
+            <Sparkles className="h-6 w-6 text-accent" />
+            <h2 className="text-2xl font-semibold text-white tracking-tight">AI-Powered Recommendations</h2>
+          </div>
+
+          <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide -mx-6 px-6 snap-x">
+            {recommendations.map((rec) => (
+              <div key={rec.chef.id} className="w-[300px] flex-shrink-0 snap-start">
+                <ChefCard
+                  chef={rec.chef}
+                  matchScore={rec.recommendation_score}
+                />
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Explore Menus */}
+      <section>
+        <SectionHeader 
+          title="Explore Menus" 
+          href="/client/discover"
+        />
+        <div className="flex gap-6 overflow-x-auto pb-8 -mx-6 px-6 scrollbar-hide snap-x">
+          {!menusLoading ? (
+            menus.map((menu) => (
+              <div key={menu.id} className="snap-start flex-shrink-0 w-[240px] md:w-[280px]">
+                <MenuCard menu={menu} />
+              </div>
+            ))
+          ) : (
+            Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="w-[240px] aspect-video rounded-3xl bg-white/5 animate-pulse" />
+            ))
+          )}
+        </div>
+      </section>
+
+      {/* Recipe Inspiration Feed - Preserved */}
+      <section className="space-y-6">
+          <div className="flex items-center gap-2 px-1">
+             <Sparkles className="h-6 w-6 text-accent" />
+             <h2 className="text-2xl font-semibold text-white tracking-tight">Daily Inspiration</h2>
           </div>
           <div className="-mx-4 sm:mx-0">
              <RecipeFeed hideHeader={true} />
           </div>
       </section>
 
-      {/* Featured Dishes */}
-      <section className="space-y-4 sm:space-y-5">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <svg className="h-5 w-5 sm:h-6 sm:w-6 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-            </svg>
-            <h2 className="text-xl sm:text-2xl font-semibold text-white">Featured Dishes</h2>
-          </div>
-          <button
-            onClick={() => router.push('/client/discover')}
-            className="text-sm sm:text-base text-orange-500 hover:text-orange-400 transition font-medium"
-          >
-            View All →
-          </button>
+      {/* Featured Menus */}
+      <section>
+        <SectionHeader 
+          title="Featured Menus" 
+        />
+        <div className="flex gap-6 overflow-x-auto pb-8 -mx-6 px-6 scrollbar-hide snap-x">
+          {!featMenusLoading ? (
+            featuredMenus.map((menu) => (
+              <div key={menu.id} className="snap-center">
+                <MenuCard menu={menu} premium />
+              </div>
+            ))
+          ) : (
+            Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="w-[300px] aspect-[4/5] rounded-3xl bg-white/5 animate-pulse" />
+            ))
+          )}
         </div>
-
-        {menuItemsLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5 lg:gap-6 animate-pulse">
-            {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-              <div key={i} className="h-80 bg-white/5 rounded-2xl sm:rounded-3xl" />
-            ))}
-          </div>
-        ) : menuItems.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
-            {menuItems.map((item) => (
-              <MenuItemCard
-                key={item.id}
-                item={item}
-                onClick={() => handleMealClick(item)}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-8 sm:p-12 text-center">
-            <p className="text-white/70 mb-4">No dishes available yet</p>
-            <p className="text-sm text-white/50">
-              Check back soon for amazing culinary creations
-            </p>
-          </div>
-        )}
-
-        {/* Infinite Scroll Loading Indicator */}
-        {loadingMoreMenuItems && (
-          <div className="flex justify-center items-center py-8">
-            <Loader2 className="h-8 w-8 text-orange-500 animate-spin" />
-            <span className="ml-3 text-white/70">Loading more dishes...</span>
-          </div>
-        )}
-
-        {/* Infinite Scroll Observer Target */}
-        <div ref={observerTarget} className="h-4" />
       </section>
 
-      {/* Meal Details Modal */}
-      {selectedMeal && (
-        <MealDetailsView
-          meal={selectedMeal}
-          isOpen={!!selectedMeal}
-          onClose={() => setSelectedMeal(null)}
+      {/* Explore Meals */}
+      <section>
+        <SectionHeader 
+          title="Explore Meals" 
+          href="/client/discover"
         />
-      )}
+        <div className="flex gap-6 overflow-x-auto pb-8 -mx-6 px-6 scrollbar-hide snap-x">
+          {!mealsLoading ? (
+            exploreMeals.map((meal) => (
+              <div key={meal.id} className="snap-start flex-shrink-0 w-[200px] md:w-[240px]">
+                <MealCard meal={meal} />
+              </div>
+            ))
+          ) : (
+            Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="w-[200px] aspect-[4/5] rounded-3xl bg-white/5 animate-pulse" />
+            ))
+          )}
+        </div>
+      </section>
+
+      {/* Featured Meals */}
+      <section>
+        <SectionHeader 
+          title="Featured Meals" 
+        />
+        <div className="flex gap-6 overflow-x-auto pb-8 -mx-6 px-6 scrollbar-hide snap-x">
+          {!featMealsLoading ? (
+            featuredMeals.map((meal) => (
+              <div key={meal.id} className="snap-center flex-shrink-0 w-[220px] md:w-[260px]">
+                <MealCard meal={meal} />
+              </div>
+            ))
+          ) : (
+            Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="w-[220px] aspect-[4/5] rounded-3xl bg-white/5 animate-pulse" />
+            ))
+          )}
+        </div>
+      </section>
     </div>
   );
 }

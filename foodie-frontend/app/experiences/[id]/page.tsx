@@ -114,10 +114,10 @@ export default function ExperienceDetailsPage() {
                     </div>
 
                     <Link
-                      href={`/experiences/${experience.id}/book?menuId=${menu.id}`}
+                      href={`/menus/${menu.id}`}
                       className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-white text-black py-3.5 font-bold hover:bg-accent hover:text-white transition-colors"
                     >
-                      Book This Menu <ChevronRight className="h-4 w-4" />
+                      View Menu <ChevronRight className="h-4 w-4" />
                     </Link>
                   </div>
                 </div>

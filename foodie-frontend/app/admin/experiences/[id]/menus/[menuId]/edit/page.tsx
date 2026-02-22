@@ -15,6 +15,8 @@ import { ImageUpload } from '@/components/ui/image-upload';
 import { useToast } from '@/contexts/ToastContext';
 import type { UpdateMenuInput } from '@/types/marketplace';
 
+import { mealService, Meal } from '@/services/meal.service';
+
 export default function EditMenuPage() {
   const params = useParams();
   const experienceId = params.id as string;
@@ -35,7 +37,59 @@ export default function EditMenuPage() {
     status: 'active',
   });
 
+  const [availableMeals, setAvailableMeals] = useState<{
+    starters: Meal[];
+    mains: Meal[];
+    desserts: Meal[];
+  }>({ starters: [], mains: [], desserts: [] });
+
+  const [selectedMeals, setSelectedMeals] = useState<{
+    starter_id: string;
+    main_id: string;
+    dessert_id: string;
+  }>({ starter_id: '', main_id: '', dessert_id: '' });
+
   const menu = menus.find((m) => m.id === menuId);
+
+  useEffect(() => {
+    const loadMeals = async () => {
+      try {
+        const [starters, mains, desserts] = await Promise.all([
+          mealService.getMealsByCategory('starter'),
+          mealService.getMealsByCategory('main'),
+          mealService.getMealsByCategory('dessert'),
+        ]);
+        setAvailableMeals({
+          starters: starters.data || [],
+          mains: mains.data || [],
+          desserts: desserts.data || [],
+        });
+      } catch (err) {
+        console.error('Failed to load meals', err);
+      }
+    };
+
+    const loadMenuMeals = async () => {
+      try {
+        const { data } = await mealService.getMenuMeals(menuId);
+        if (data) {
+          const starter = (data as any[]).find(m => m.course_type === 'starter');
+          const main = (data as any[]).find(m => m.course_type === 'main');
+          const dessert = (data as any[]).find(m => m.course_type === 'dessert');
+          setSelectedMeals({
+            starter_id: starter?.meal_id || '',
+            main_id: main?.meal_id || '',
+            dessert_id: dessert?.meal_id || '',
+          });
+        }
+      } catch (err) {
+        console.error('Failed to load menu meals', err);
+      }
+    };
+
+    loadMeals();
+    loadMenuMeals();
+  }, [menuId]);
 
   useEffect(() => {
     if (menu) {
@@ -68,13 +122,27 @@ export default function EditMenuPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const ok = await updateMenu(menuId, formData);
-    setLoading(false);
-    if (ok) {
-      showToast('Menu updated', 'success');
-      router.push(`/admin/experiences/${experienceId}/menus`);
-    } else {
-      showToast('Failed to update menu', 'error');
+    
+    try {
+      const ok = await updateMenu(menuId, formData);
+      if (ok) {
+        // Save meal assignments
+        const assignments = [];
+        if (selectedMeals.starter_id) assignments.push({ meal_id: selectedMeals.starter_id, course_type: 'starter', order_index: 0 });
+        if (selectedMeals.main_id) assignments.push({ meal_id: selectedMeals.main_id, course_type: 'main', order_index: 1 });
+        if (selectedMeals.dessert_id) assignments.push({ meal_id: selectedMeals.dessert_id, course_type: 'dessert', order_index: 2 });
+        
+        await mealService.assignMealsToMenu(menuId, assignments);
+        
+        showToast('Menu updated', 'success');
+        router.push(`/admin/experiences/${experienceId}/menus`);
+      } else {
+        showToast('Failed to update menu', 'error');
+      }
+    } catch (err) {
+      showToast('Error saving changes', 'error');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -100,7 +168,7 @@ export default function EditMenuPage() {
   if (!menu) return null;
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
+    <div className="max-w-2xl mx-auto space-y-6 pb-20">
       <div>
         <Button variant="ghost" asChild className="mb-4 pl-0 hover:bg-transparent hover:text-[#ff7642]">
           <Link href={`/admin/experiences/${experienceId}/menus`}>
@@ -109,7 +177,7 @@ export default function EditMenuPage() {
           </Link>
         </Button>
         <h1 className="text-3xl font-bold tracking-tight text-[#f9fafb]">Edit Menu</h1>
-        <p className="text-[#cbd5f5] mt-1">Update menu details.</p>
+        <p className="text-[#cbd5f5] mt-1">Update menu details and composed meals.</p>
       </div>
 
       <Card className="bg-[#16181d] border-white/5 shadow-2xl">
@@ -128,7 +196,7 @@ export default function EditMenuPage() {
                 value={formData.name}
                 onChange={handleChange}
                 required
-                className="bg-[#1f2228] border-white/10 text-[#f9fafb] placeholder:text-gray-500 focus:border-[#ff7642]/50 focus:ring-[#ff7642]/20"
+                className="bg-[#1f2228] border-white/10 text-[#f9fafb] placeholder:text-gray-500"
               />
             </div>
 
@@ -137,12 +205,12 @@ export default function EditMenuPage() {
               <Textarea
                 id="description"
                 name="description"
-                placeholder="List the courses or items included..."
-                rows={4}
+                placeholder="Brief summary of the menu style..."
+                rows={3}
                 value={formData.description ?? ''}
                 onChange={handleChange}
                 required
-                className="bg-[#1f2228] border-white/10 text-[#f9fafb] placeholder:text-gray-500 focus:border-[#ff7642]/50 focus:ring-[#ff7642]/20"
+                className="bg-[#1f2228] border-white/10 text-[#f9fafb]"
               />
             </div>
 
@@ -154,13 +222,11 @@ export default function EditMenuPage() {
                   name="base_price"
                   type="number"
                   step="0.01"
-                  placeholder="0"
                   value={formData.base_price ?? 0}
                   onChange={(e) => setFormData((prev) => ({ ...prev, base_price: Number(e.target.value) || 0 }))}
                   required
-                  className="bg-[#1f2228] border-white/10 text-[#f9fafb] placeholder:text-gray-500 focus:border-[#ff7642]/50 focus:ring-[#ff7642]/20"
+                  className="bg-[#1f2228] border-white/10 text-[#f9fafb]"
                 />
-                <p className="text-xs text-[#94a3b8]">Fixed cost regardless of guests</p>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="price_per_person" className="text-[#f9fafb] font-medium">Price per Guest (KES)</Label>
@@ -169,62 +235,92 @@ export default function EditMenuPage() {
                   name="price_per_person"
                   type="number"
                   step="0.01"
-                  placeholder="2500"
-                  value={formData.price_per_person ?? ''}
+                  value={formData.price_per_person ?? 0}
                   onChange={(e) => setFormData((prev) => ({ ...prev, price_per_person: Number(e.target.value) || 0 }))}
                   required
-                  className="bg-[#1f2228] border-white/10 text-[#f9fafb] placeholder:text-gray-500 focus:border-[#ff7642]/50 focus:ring-[#ff7642]/20"
+                  className="bg-[#1f2228] border-white/10 text-[#f9fafb]"
                 />
-                <p className="text-xs text-[#94a3b8]">Additional cost per guest</p>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="guest_min" className="text-[#f9fafb] font-medium">Min Guests</Label>
-                <Input
-                  id="guest_min"
-                  name="guest_min"
-                  type="number"
-                  value={formData.guest_min ?? 2}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, guest_min: Number(e.target.value) || 0 }))}
-                  required
-                  className="bg-[#1f2228] border-white/10 text-[#f9fafb] focus:border-[#ff7642]/50 focus:ring-[#ff7642]/20"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="guest_max" className="text-[#f9fafb] font-medium">Max Guests</Label>
-                <Input
-                  id="guest_max"
-                  name="guest_max"
-                  type="number"
-                  value={formData.guest_max ?? 20}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, guest_max: Number(e.target.value) || 0 }))}
-                  required
-                  className="bg-[#1f2228] border-white/10 text-[#f9fafb] focus:border-[#ff7642]/50 focus:ring-[#ff7642]/20"
-                />
+            <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <Label className="text-[#f9fafb] font-semibold text-lg">Composed Meals</Label>
+                  <div className="flex items-center gap-2 bg-accent/10 px-3 py-1 rounded-full border border-accent/20">
+                    <span className="text-xs text-accent/80 font-medium">Auto-Calculated Nutrition:</span>
+                    <span className="text-sm font-bold text-accent">
+                      {(
+                        (availableMeals.starters.find(m => m.id === selectedMeals.starter_id)?.kcal || 0) +
+                        (availableMeals.mains.find(m => m.id === selectedMeals.main_id)?.kcal || 0) +
+                        (availableMeals.desserts.find(m => m.id === selectedMeals.dessert_id)?.kcal || 0)
+                      )} kcal
+                    </span>
+                  </div>
+                </div>
+              <div className="grid gap-4">
+                <div className="space-y-2">
+                  <Label className="text-[#cbd5f5] text-sm">Starter</Label>
+                  <Select 
+                    value={selectedMeals.starter_id} 
+                    onValueChange={(v) => setSelectedMeals(prev => ({ ...prev, starter_id: v }))}
+                  >
+                    <SelectTrigger className="bg-[#1f2228] border-white/10 text-[#f9fafb]">
+                      <SelectValue placeholder="Select a starter..." />
+                    </SelectTrigger>
+                    <SelectContent className="bg-[#1f2228] border-white/10 text-[#f9fafb]">
+                      <SelectItem value="none">None</SelectItem>
+                      {availableMeals.starters.map((m) => (
+                        <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-[#cbd5f5] text-sm">Main Course</Label>
+                  <Select 
+                    value={selectedMeals.main_id} 
+                    onValueChange={(v) => setSelectedMeals(prev => ({ ...prev, main_id: v }))}
+                  >
+                    <SelectTrigger className="bg-[#1f2228] border-white/10 text-[#f9fafb]">
+                      <SelectValue placeholder="Select a main..." />
+                    </SelectTrigger>
+                    <SelectContent className="bg-[#1f2228] border-white/10 text-[#f9fafb]">
+                      <SelectItem value="none">None</SelectItem>
+                      {availableMeals.mains.map((m) => (
+                        <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-[#cbd5f5] text-sm">Dessert</Label>
+                  <Select 
+                    value={selectedMeals.dessert_id} 
+                    onValueChange={(v) => setSelectedMeals(prev => ({ ...prev, dessert_id: v }))}
+                  >
+                    <SelectTrigger className="bg-[#1f2228] border-white/10 text-[#f9fafb]">
+                      <SelectValue placeholder="Select a dessert..." />
+                    </SelectTrigger>
+                    <SelectContent className="bg-[#1f2228] border-white/10 text-[#f9fafb]">
+                      <SelectItem value="none">None</SelectItem>
+                      {availableMeals.desserts.map((m) => (
+                        <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="dietary_tags" className="text-[#f9fafb] font-medium">Dietary Tags (comma separated)</Label>
-              <Input
-                id="dietary_tags"
-                name="dietary_tags"
-                placeholder="e.g. Halal, Vegan, Gluten-Free"
-                value={Array.isArray(formData.dietary_tags) ? formData.dietary_tags.join(', ') : ''}
-                onChange={handleChange}
-                className="bg-[#1f2228] border-white/10 text-[#f9fafb] placeholder:text-gray-500 focus:border-[#ff7642]/50 focus:ring-[#ff7642]/20"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label className="text-[#f9fafb] font-medium">Menu Image</Label>
+              <Label className="text-[#f9fafb] font-medium">Cover Image</Label>
               <div className="rounded-xl border border-dashed border-white/10 bg-[#1f2228]/50 p-1">
                 <ImageUpload
                   value={formData.image_url ?? ''}
                   onChange={(url) => setFormData((prev) => ({ ...prev, image_url: url }))}
-                  label="Upload Menu Image"
+                  label="Upload Cover Image"
                   bucket="menus"
                 />
               </div>
@@ -240,8 +336,8 @@ export default function EditMenuPage() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-[#1f2228] border-white/10 text-[#f9fafb]">
-                  <SelectItem value="active" className="hover:bg-[#ff7642]/10">Active</SelectItem>
-                  <SelectItem value="inactive" className="hover:bg-[#ff7642]/10">Inactive</SelectItem>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="inactive">Inactive</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -251,11 +347,11 @@ export default function EditMenuPage() {
               type="button"
               variant="outline"
               onClick={() => router.back()}
-              className="border-white/10 text-[#cbd5f5] hover:bg-white/5 hover:text-[#f9fafb]"
+              className="border-white/10 text-[#cbd5f5] hover:bg-white/5"
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={loading} className="bg-[#ff7642] hover:bg-[#ff8b5f] text-white shadow-lg shadow-[#ff7642]/20 border-none px-8">
+            <Button type="submit" disabled={loading} className="bg-[#ff7642] hover:bg-[#ff8b5f] text-white px-8">
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Save Changes
             </Button>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter, useParams } from 'next/navigation';
 import { useMenusAdmin } from '@/hooks/useMenusAdmin';
@@ -12,6 +12,8 @@ import { Label } from '@/components/ui/label';
 import { Loader2, ArrowLeft } from 'lucide-react';
 import { ImageUpload } from '@/components/ui/image-upload';
 import { useToast } from '@/contexts/ToastContext';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { mealService, Meal } from '@/services/meal.service';
 
 export default function CreateMenuPage() {
   const router = useRouter();
@@ -32,6 +34,38 @@ export default function CreateMenuPage() {
     dietary_tags: '',
   });
 
+  const [availableMeals, setAvailableMeals] = useState<{
+    starters: Meal[];
+    mains: Meal[];
+    desserts: Meal[];
+  }>({ starters: [], mains: [], desserts: [] });
+
+  const [selectedMeals, setSelectedMeals] = useState<{
+    starter_id: string;
+    main_id: string;
+    dessert_id: string;
+  }>({ starter_id: '', main_id: '', dessert_id: '' });
+
+  useEffect(() => {
+    const loadMeals = async () => {
+      try {
+        const [starters, mains, desserts] = await Promise.all([
+          mealService.getMealsByCategory('starter'),
+          mealService.getMealsByCategory('main'),
+          mealService.getMealsByCategory('dessert'),
+        ]);
+        setAvailableMeals({
+          starters: starters.data || [],
+          mains: mains.data || [],
+          desserts: desserts.data || [],
+        });
+      } catch (err) {
+        console.error('Failed to load meals', err);
+      }
+    };
+    loadMeals();
+  }, []);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -48,38 +82,54 @@ export default function CreateMenuPage() {
       .map((tag) => tag.trim())
       .filter((tag) => tag.length > 0);
 
-    const result = await createMenu({
-      experience_id: experienceId,
-      name: formData.name,
-      description: formData.description,
-      base_price: parseFloat(formData.base_price),
-      price_per_person: parseFloat(formData.price_per_person),
-      guest_min: Number(formData.guest_min),
-      guest_max: Number(formData.guest_max),
-      image_url: formData.image_url,
-      dietary_tags: dietaryTagsArray,
-    });
+    try {
+      const result = await createMenu({
+        experience_id: experienceId,
+        name: formData.name,
+        description: formData.description,
+        base_price: parseFloat(formData.base_price),
+        price_per_person: parseFloat(formData.price_per_person),
+        guest_min: Number(formData.guest_min),
+        guest_max: Number(formData.guest_max),
+        image_url: formData.image_url,
+        dietary_tags: dietaryTagsArray,
+      });
 
-    setLoading(false);
-    if (result) {
-      showToast('Menu created successfully', 'success');
-      router.push(`/admin/experiences/${experienceId}/menus`);
-    } else {
-      showToast('Failed to create menu', 'error');
+      if (result && result.id) {
+        // Save meal assignments
+        const assignments = [];
+        if (selectedMeals.starter_id && selectedMeals.starter_id !== 'none') 
+            assignments.push({ meal_id: selectedMeals.starter_id, course_type: 'starter', order_index: 0 });
+        if (selectedMeals.main_id && selectedMeals.main_id !== 'none') 
+            assignments.push({ meal_id: selectedMeals.main_id, course_type: 'main', order_index: 1 });
+        if (selectedMeals.dessert_id && selectedMeals.dessert_id !== 'none') 
+            assignments.push({ meal_id: selectedMeals.dessert_id, course_type: 'dessert', order_index: 2 });
+        
+        await mealService.assignMealsToMenu(result.id, assignments);
+        
+        showToast('Menu created successfully', 'success');
+        router.push(`/admin/experiences/${experienceId}/menus`);
+      } else {
+        showToast('Failed to create menu', 'error');
+      }
+    } catch (err) {
+      showToast('Error saving changes', 'error');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
+    <div className="max-w-2xl mx-auto space-y-6 pb-20">
       <div>
-        <Button variant="ghost" asChild className="mb-4 pl-0 hover:bg-transparent hover:text-orange-600">
+        <Button variant="ghost" asChild className="mb-4 pl-0 hover:bg-transparent hover:text-[#ff7642]">
           <Link href={`/admin/experiences/${experienceId}/menus`}>
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Menus
           </Link>
         </Button>
-        <h1 className="text-3xl font-bold tracking-tight">Create Menu</h1>
-        <p className="text-muted-foreground">Add a new menu option for this experience.</p>
+        <h1 className="text-3xl font-bold tracking-tight text-[#f9fafb]">Create Menu</h1>
+        <p className="text-[#cbd5f5] mt-1">Add a new menu option for this experience.</p>
       </div>
 
       <Card className="bg-[#16181d] border-white/5 shadow-2xl">
@@ -100,7 +150,7 @@ export default function CreateMenuPage() {
                 value={formData.name}
                 onChange={handleChange}
                 required
-                className="bg-[#1f2228] border-white/10 text-[#f9fafb] placeholder:text-gray-500 focus:border-[#ff7642]/50 focus:ring-[#ff7642]/20"
+                className="bg-[#1f2228] border-white/10 text-[#f9fafb] placeholder:text-gray-500"
               />
             </div>
 
@@ -109,12 +159,12 @@ export default function CreateMenuPage() {
               <Textarea
                 id="description"
                 name="description"
-                placeholder="List the courses or items included..."
-                rows={4}
+                placeholder="Brief summary of the menu style..."
+                rows={3}
                 value={formData.description}
                 onChange={handleChange}
                 required
-                className="bg-[#1f2228] border-white/10 text-[#f9fafb] placeholder:text-gray-500 focus:border-[#ff7642]/50 focus:ring-[#ff7642]/20"
+                className="bg-[#1f2228] border-white/10 text-[#f9fafb]"
               />
             </div>
 
@@ -130,9 +180,8 @@ export default function CreateMenuPage() {
                         value={formData.base_price}
                         onChange={handleChange}
                         required
-                        className="bg-[#1f2228] border-white/10 text-[#f9fafb] placeholder:text-gray-500 focus:border-[#ff7642]/50 focus:ring-[#ff7642]/20"
+                        className="bg-[#1f2228] border-white/10 text-[#f9fafb]"
                     />
-                    <p className="text-xs text-[#94a3b8]">Fixed cost regardless of guests</p>
                 </div>
                 <div className="space-y-2">
                     <Label htmlFor="price_per_person" className="text-[#f9fafb] font-medium">Price per Guest (KES)</Label>
@@ -145,9 +194,8 @@ export default function CreateMenuPage() {
                         value={formData.price_per_person}
                         onChange={handleChange}
                         required
-                        className="bg-[#1f2228] border-white/10 text-[#f9fafb] placeholder:text-gray-500 focus:border-[#ff7642]/50 focus:ring-[#ff7642]/20"
+                        className="bg-[#1f2228] border-white/10 text-[#f9fafb]"
                     />
-                    <p className="text-xs text-[#94a3b8]">Additional cost per guest</p>
                 </div>
             </div>
 
@@ -161,7 +209,7 @@ export default function CreateMenuPage() {
                         value={formData.guest_min}
                         onChange={handleChange}
                         required
-                        className="bg-[#1f2228] border-white/10 text-[#f9fafb] focus:border-[#ff7642]/50 focus:ring-[#ff7642]/20"
+                        className="bg-[#1f2228] border-white/10 text-[#f9fafb]"
                     />
                 </div>
                 <div className="space-y-2">
@@ -173,7 +221,7 @@ export default function CreateMenuPage() {
                         value={formData.guest_max}
                         onChange={handleChange}
                         required
-                        className="bg-[#1f2228] border-white/10 text-[#f9fafb] focus:border-[#ff7642]/50 focus:ring-[#ff7642]/20"
+                        className="bg-[#1f2228] border-white/10 text-[#f9fafb]"
                     />
                 </div>
             </div>
@@ -186,17 +234,88 @@ export default function CreateMenuPage() {
                 placeholder="e.g. Halal, Vegan, Gluten-Free"
                 value={formData.dietary_tags}
                 onChange={handleChange}
-                className="bg-[#1f2228] border-white/10 text-[#f9fafb] placeholder:text-gray-500 focus:border-[#ff7642]/50 focus:ring-[#ff7642]/20"
+                className="bg-[#1f2228] border-white/10 text-[#f9fafb] placeholder:text-gray-500"
               />
             </div>
 
+            <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <Label className="text-[#f9fafb] font-semibold text-lg">Composed Meals</Label>
+                  <div className="flex items-center gap-2 bg-accent/10 px-3 py-1 rounded-full border border-accent/20">
+                    <span className="text-xs text-accent/80 font-medium">Auto-Calculated Nutrition:</span>
+                    <span className="text-sm font-bold text-accent">
+                      {(
+                        (availableMeals.starters.find(m => m.id === selectedMeals.starter_id)?.kcal || 0) +
+                        (availableMeals.mains.find(m => m.id === selectedMeals.main_id)?.kcal || 0) +
+                        (availableMeals.desserts.find(m => m.id === selectedMeals.dessert_id)?.kcal || 0)
+                      )} kcal
+                    </span>
+                  </div>
+                </div>
+              <div className="grid gap-4">
+                <div className="space-y-2">
+                  <Label className="text-[#cbd5f5] text-sm">Starter</Label>
+                  <Select 
+                    value={selectedMeals.starter_id} 
+                    onValueChange={(v) => setSelectedMeals(prev => ({ ...prev, starter_id: v }))}
+                  >
+                    <SelectTrigger className="bg-[#1f2228] border-white/10 text-[#f9fafb]">
+                      <SelectValue placeholder="Select a starter..." />
+                    </SelectTrigger>
+                    <SelectContent className="bg-[#1f2228] border-white/10 text-[#f9fafb]">
+                      <SelectItem value="none">None</SelectItem>
+                      {availableMeals.starters.map((m) => (
+                        <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-[#cbd5f5] text-sm">Main Course</Label>
+                  <Select 
+                    value={selectedMeals.main_id} 
+                    onValueChange={(v) => setSelectedMeals(prev => ({ ...prev, main_id: v }))}
+                  >
+                    <SelectTrigger className="bg-[#1f2228] border-white/10 text-[#f9fafb]">
+                      <SelectValue placeholder="Select a main..." />
+                    </SelectTrigger>
+                    <SelectContent className="bg-[#1f2228] border-white/10 text-[#f9fafb]">
+                      <SelectItem value="none">None</SelectItem>
+                      {availableMeals.mains.map((m) => (
+                        <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-[#cbd5f5] text-sm">Dessert</Label>
+                  <Select 
+                    value={selectedMeals.dessert_id} 
+                    onValueChange={(v) => setSelectedMeals(prev => ({ ...prev, dessert_id: v }))}
+                  >
+                    <SelectTrigger className="bg-[#1f2228] border-white/10 text-[#f9fafb]">
+                      <SelectValue placeholder="Select a dessert..." />
+                    </SelectTrigger>
+                    <SelectContent className="bg-[#1f2228] border-white/10 text-[#f9fafb]">
+                      <SelectItem value="none">None</SelectItem>
+                      {availableMeals.desserts.map((m) => (
+                        <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
+
             <div className="space-y-2">
-              <Label className="text-[#f9fafb] font-medium">Menu Image (required)</Label>
+              <Label className="text-[#f9fafb] font-medium">Cover Image (required for listing)</Label>
               <div className="rounded-xl border border-dashed border-white/10 bg-[#1f2228]/50 p-1">
                 <ImageUpload
                   value={formData.image_url}
                   onChange={(url) => setFormData(prev => ({ ...prev, image_url: url }))}
-                  label="Upload Menu Image"
+                  label="Upload Cover Image"
                   bucket="menus"
                   required
                   onUploadError={(msg) => showToast(msg, 'error')}
@@ -210,11 +329,11 @@ export default function CreateMenuPage() {
                 variant="outline" 
                 type="button" 
                 onClick={() => router.back()}
-                className="border-white/10 text-[#cbd5f5] hover:bg-white/5 hover:text-[#f9fafb]"
+                className="border-white/10 text-[#cbd5f5] hover:bg-white/5"
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={loading || !formData.image_url} className="bg-[#ff7642] hover:bg-[#ff8b5f] text-white shadow-lg shadow-[#ff7642]/20 border-none px-8">
+            <Button type="submit" disabled={loading || !formData.image_url} className="bg-[#ff7642] hover:bg-[#ff8b5f] text-white px-8">
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Create Menu
             </Button>

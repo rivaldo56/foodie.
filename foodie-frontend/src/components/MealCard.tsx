@@ -126,7 +126,7 @@ export default function MealCard({
   }
 
   return (
-    <Link href={customHref || `/meals/${meal.id}`} className="group block h-full">
+    <Link href={customHref || `/menus/${meal.id}`} className="group block h-full">
       {CardContent}
     </Link>
   );
