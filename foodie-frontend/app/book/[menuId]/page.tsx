@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Loader2, ArrowLeft, Calendar, MapPin, Users } from 'lucide-react';
+import { Loader2, ArrowLeft, Calendar, MapPin, Users, Navigation } from 'lucide-react';
 import { mealService } from '@/services/meal.service';
 
 type Menu = {
@@ -43,6 +43,7 @@ export default function BookingPage() {
     guests_count: 2,
     special_requests: '',
   });
+  const [locating, setLocating] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
@@ -86,6 +87,42 @@ export default function BookingPage() {
   const calculateTotal = () => {
     if (!menu) return 0;
     return menu.price_per_person * formData.guests_count;
+  };
+
+  const handleShareLocation = () => {
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported by your browser");
+      return;
+    }
+
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        try {
+          // Use Nominatim (OSM) for free reverse geocoding
+          const res = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+          );
+          const data = await res.json();
+          if (data.display_name) {
+            setFormData(prev => ({ ...prev, address: data.display_name }));
+          } else {
+            setFormData(prev => ({ ...prev, address: `${latitude}, ${longitude}` }));
+          }
+        } catch (error) {
+          console.error("Reverse geocoding failed:", error);
+          setFormData(prev => ({ ...prev, address: `${latitude}, ${longitude}` }));
+        } finally {
+          setLocating(false);
+        }
+      },
+      (error) => {
+        console.error("Geolocation error:", error);
+        alert("Unable to retrieve your location");
+        setLocating(false);
+      }
+    );
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -263,7 +300,22 @@ export default function BookingPage() {
                 </div>
 
                  <div className="space-y-2">
-                    <Label htmlFor="address" className="text-white">Location Address</Label>
+                    <div className="flex justify-between items-center">
+                        <Label htmlFor="address" className="text-white">Location Address</Label>
+                        <button
+                            type="button"
+                            onClick={handleShareLocation}
+                            disabled={locating}
+                            className="text-xs text-accent hover:text-accent-strong flex items-center gap-1 transition-colors disabled:opacity-50"
+                        >
+                            {locating ? (
+                                <Loader2 className="h-3 w-3 animate-spin" />
+                            ) : (
+                                <Navigation className="h-3 w-3" />
+                            )}
+                            Share my location
+                        </button>
+                    </div>
                     <div className="relative">
                         <MapPin className="absolute left-3 top-3 h-5 w-5 text-white/40" />
                         <Textarea
