@@ -20,7 +20,10 @@ export async function uploadImage(file: File, bucket: string = 'experiences'): P
       .upload(filePath, file);
 
     if (uploadError) {
-      console.error(`Storage upload error [Bucket: ${bucket}]:`, uploadError);
+      console.error(`[Storage] Upload failed for bucket "${bucket}":`, {
+        message: uploadError.message,
+        path: filePath
+      });
       return null;
     }
 
