@@ -70,7 +70,7 @@ export function ExperienceCard({ experience }: { experience: any }) {
 }
 
 export function MenuCard({ menu, premium = false }: { menu: any; premium?: boolean }) {
-  const targetHref = premium ? `/book?menu_id=${menu.id}` : `/menus/${menu.id}`;
+  const targetHref = premium ? `/book/${menu.id}` : `/menus/${menu.id}`;
   
   return (
     <Link 
