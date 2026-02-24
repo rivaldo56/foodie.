@@ -122,7 +122,10 @@ export function MenuCard({ menu, premium = false }: { menu: any; premium?: boole
 }
 export function MealCard({ meal }: { meal: any }) {
   return (
-    <div className="group relative flex flex-col gap-3">
+    <Link 
+      href={`/book/meal/${meal.id}`}
+      className="group relative flex flex-col gap-3"
+    >
       <div className="relative aspect-[4/5] overflow-hidden rounded-3xl border border-white/10 bg-white/5 transition-all duration-300 group-hover:border-accent/40 group-hover:shadow-glow-sm">
         <Image
           src={meal.image_url || 'https://images.unsplash.com/photo-1546069901-eacef0df6022?auto=format&fit=crop&w=900&q=80'}
@@ -149,10 +152,10 @@ export function MealCard({ meal }: { meal: any }) {
           <div className="flex items-center gap-2 mt-0.5 text-[10px] text-white/60 font-medium">
             <span>{meal.kcal || '---'} kcal</span>
             <span className="h-0.5 w-0.5 rounded-full bg-white/30" />
-            <span>{meal.total_bookings || 0} bookings</span>
+            <span>KES {meal.price?.toLocaleString() || '---'}</span>
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
