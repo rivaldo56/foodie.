@@ -4,7 +4,7 @@ import { createServerSupabaseClient } from '@/lib/supabase-server';
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const cookieStore = await cookies();
   const supabase = createServerSupabaseClient(cookieStore);
@@ -14,7 +14,7 @@ export async function POST(
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const bookingId = params.id;
+  const { id: bookingId } = await params;
   const body = await request.json().catch(() => ({}));
   const responseTimeSeconds = body.response_time_seconds ?? 0;
 

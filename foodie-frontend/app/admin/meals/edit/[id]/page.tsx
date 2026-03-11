@@ -1,11 +1,12 @@
 import { MealForm } from '@/components/admin/MealForm';
 
 interface EditMealPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
-export default function EditMealPage({ params }: EditMealPageProps) {
-  return <MealForm mealId={params.id} />;
+export default async function EditMealPage({ params }: EditMealPageProps) {
+  const { id } = await params;
+  return <MealForm mealId={id} />;
 }
