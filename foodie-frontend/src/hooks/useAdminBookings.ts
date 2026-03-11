@@ -14,6 +14,11 @@ export interface AdminBookingRow {
   status: string;
   address: string;
   created_at: string;
+  payment_model: string;
+  deposit_amount: number | null;
+  escrow_status: string;
+  rotation_count: number;
+  sla_expires_at: string | null;
   menu?: { name: string; experience?: { name: string } } | null;
 }
 
@@ -37,6 +42,11 @@ export function useAdminBookings() {
         status,
         address,
         created_at,
+        payment_model,
+        deposit_amount,
+        escrow_status,
+        rotation_count,
+        sla_expires_at,
         menu:menus (
           name,
           experience:experiences (
@@ -50,7 +60,7 @@ export function useAdminBookings() {
       setError(e.message ?? 'Failed to fetch bookings');
       setBookings([]);
     } else {
-      setBookings((data ?? []).map((r: Record<string, unknown>) => ({
+      setBookings((data ?? []).map((r: Record<string, any>) => ({
         id: String(r.id),
         client_id: r.client_id != null ? String(r.client_id) : null,
         menu_id: r.menu_id != null ? String(r.menu_id) : null,
@@ -60,6 +70,11 @@ export function useAdminBookings() {
         status: String(r.status),
         address: String(r.address),
         created_at: String(r.created_at),
+        payment_model: String(r.payment_model || 'full_digital'),
+        deposit_amount: r.deposit_amount != null ? Number(r.deposit_amount) : null,
+        escrow_status: String(r.escrow_status || 'none'),
+        rotation_count: Number(r.rotation_count || 0),
+        sla_expires_at: r.sla_expires_at != null ? String(r.sla_expires_at) : null,
         menu: r.menu as AdminBookingRow['menu'],
       })));
     }

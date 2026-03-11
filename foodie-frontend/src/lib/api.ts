@@ -337,7 +337,11 @@ export async function apiRequest<T>(
         }
       }
     } else if (typeof responseData === 'string') {
-      detail = responseData;
+      if (responseData.includes('<!DOCTYPE') || responseData.includes('<html')) {
+        detail = status === 404 ? 'API Endpoint not found (404)' : `Server Error (${status})`;
+      } else {
+        detail = responseData;
+      }
     }
 
     const message =

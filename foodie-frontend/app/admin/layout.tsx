@@ -36,6 +36,7 @@ export default function AdminLayout({
             <NavItem href="/admin/experiences" icon={<UtensilsCrossed size={20} />} label="Experiences" />
             <NavItem href="/admin/menus" icon={<MenuIcon size={20} />} label="Menus" />
             <NavItem href="/admin/bookings" icon={<CalendarDays size={20} />} label="Bookings" />
+            <NavItem href="/admin/payments" icon={<Settings size={20} />} label="Payments" />
             <NavItem href="/admin/chefs" icon={<Users size={20} />} label="Chefs" />
             <NavItem href="/admin/users" icon={<Users size={20} />} label="Users" />
             <NavItem href="/admin/settings" icon={<Settings size={20} />} label="Settings" />

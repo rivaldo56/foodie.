@@ -20,14 +20,15 @@ export default function RecipeFeed({ hideHeader = false }: RecipeFeedProps) {
   useEffect(() => {
     async function loadData() {
       try {
-        const [feedData, catData] = await Promise.all([
+        const [feedData, catData] = await Promise.allSettled([
           recipeService.getFeed(),
           recipeService.getCategories()
         ]);
-        setFeed(feedData);
-        setCategories(catData);
+        
+        if (feedData.status === 'fulfilled') setFeed(feedData.value);
+        if (catData.status === 'fulfilled') setCategories(catData.value);
       } catch (error) {
-        console.error("Failed to load recipe feed", error);
+        // Silently fail as recipes are not yet implemented
       } finally {
         setLoading(false);
       }

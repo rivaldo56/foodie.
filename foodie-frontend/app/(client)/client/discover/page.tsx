@@ -122,35 +122,38 @@ export default function ClientDiscoverPage() {
   const loadData = async () => {
     try {
       setDataLoading(true);
-      const [chefsResponse, menuItemsResponse, recipesData] = await Promise.all([
+      const [chefsResponse, menuItemsResponse, recipesResult] = await Promise.allSettled([
         getChefs(),
         getMenuItems(),
         recipeService.getRecipes(),
       ]);
 
-      if (chefsResponse.data) {
-        const chefsData = Array.isArray(chefsResponse.data) ? chefsResponse.data : [];
+      if (chefsResponse.status === 'fulfilled' && chefsResponse.value.data) {
+        const chefsData = Array.isArray(chefsResponse.value.data) ? chefsResponse.value.data : [];
         setChefs(chefsData);
       }
 
-      if (menuItemsResponse.data) {
-        // Handle paginated response
+      if (menuItemsResponse.status === 'fulfilled' && menuItemsResponse.value.data) {
         let menuItemsData: MenuItem[] = [];
-        if (Array.isArray(menuItemsResponse.data)) {
-          menuItemsData = menuItemsResponse.data;
-        } else if (menuItemsResponse.data && 'results' in menuItemsResponse.data) {
-          menuItemsData = (menuItemsResponse.data as any).results;
+        const data = menuItemsResponse.value.data;
+        if (Array.isArray(data)) {
+          menuItemsData = data;
+        } else if (data && typeof data === 'object' && 'results' in data) {
+          menuItemsData = (data as any).results;
         }
-        console.log('📦 Menu Items Loaded:', menuItemsData.length, menuItemsData);
         setMenuItems(menuItemsData);
       }
 
-      if (recipesData) {
-        setRecipes(recipesData);
+      if (recipesResult.status === 'fulfilled' && recipesResult.value) {
+        setRecipes(recipesResult.value);
       }
 
-      if (chefsResponse.error || menuItemsResponse.error) {
-        setError(chefsResponse.error || menuItemsResponse.error || 'Failed to load data');
+      // Handle major component errors
+      const chefError = chefsResponse.status === 'fulfilled' ? chefsResponse.value.error : null;
+      const menuError = menuItemsResponse.status === 'fulfilled' ? menuItemsResponse.value.error : null;
+      
+      if (chefError || menuError) {
+        setError(chefError || menuError || 'Failed to load primary data');
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load data');

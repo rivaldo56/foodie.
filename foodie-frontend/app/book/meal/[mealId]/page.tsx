@@ -135,7 +135,13 @@ export default function MealBookingPage() {
         }
 
         const bookingId = result.booking?.id;
-        router.push(bookingId ? `/bookings/confirmation?booking_id=${bookingId}` : '/bookings');
+        const depositAmount = result.deposit_amount || (meal ? meal.price * formData.guests_count * 0.3 : 0);
+        
+        if (bookingId) {
+            router.push(`/book/meal/${mealId}/payment?booking_id=${bookingId}&amount=${depositAmount}`);
+        } else {
+            router.push('/bookings');
+        }
     } catch (error: any) {
         console.error("Booking failed:", error);
         alert("Booking failed: " + error.message);

@@ -6,119 +6,164 @@ export async function POST(request: Request) {
   const cookieStore = await cookies();
   const supabase = createServerSupabaseClient(cookieStore);
 
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
-  if (authError || !user) {
+  const allCookies = cookieStore.getAll();
+  const tokenCookie = cookieStore.get('token')?.value;
+
+  console.log('[api/bookings POST] Processing booking request...');
+
+  let authUser: any = null;
+  let authToken: string | null = null;
+
+  // 1. Try standard supabase.auth.getUser()
+  const { data: { user: standardUser } } = await supabase.auth.getUser();
+  if (standardUser) {
+    authUser = standardUser;
+    const { data: { session } } = await supabase.auth.getSession();
+    authToken = session?.access_token || null;
+  }
+
+  // 2. Fallback to manual 'token' cookie if standard auth failed
+  if (!authUser && tokenCookie) {
+    const { data: { user: manualUser } } = await supabase.auth.getUser(tokenCookie);
+    if (manualUser) {
+      authUser = manualUser;
+      authToken = tokenCookie;
+    }
+  }
+
+  if (!authUser) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
     const body = await request.json();
-    const { menu_id, meal_id, date_time, guests_count, address, special_requests } = body;
+    const { menu_id, meal_id, date_time, guests_count, address, special_requests, payment_model } = body;
 
-    if ((!menu_id && !meal_id) || !date_time || !guests_count || !address) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    if (!menu_id && meal_id) {
+      return await handleMealBooking(supabase, authUser, body);
     }
 
-    let total_price = 0;
-    let experience_id = null;
-
-    if (menu_id) {
-        const { data: menu, error: menuError } = await supabase
-          .from('menus')
-          .select('id, experience_id, base_price, price_per_person, guest_min, guest_max, status')
-          .eq('id', menu_id)
-          .single();
-
-        if (menuError || !menu) {
-          return NextResponse.json({ error: 'Menu not found' }, { status: 404 });
-        }
-
-        if (menu.status !== 'active') {
-          return NextResponse.json({ error: 'Menu is not available for booking' }, { status: 400 });
-        }
-
-        const guestCount = Number(guests_count);
-        if (guestCount < menu.guest_min || guestCount > menu.guest_max) {
-          return NextResponse.json({
-            error: `Guest count must be between ${menu.guest_min} and ${menu.guest_max}`,
-          }, { status: 400 });
-        }
-
-        const basePrice = Number(menu.base_price ?? 0);
-        const pricePerPerson = Number(menu.price_per_person);
-        total_price = basePrice + (pricePerPerson * guestCount);
-        experience_id = menu.experience_id;
-    } else if (meal_id) {
-        const { data: meal, error: mealError } = await supabase
-          .from('meals')
-          .select('id, price, name')
-          .eq('id', meal_id)
-          .single();
-
-        if (mealError || !meal) {
-          return NextResponse.json({ error: 'Meal not found' }, { status: 404 });
-        }
-
-        const guestCount = Number(guests_count);
-        const mealPrice = Number(meal.price ?? 0);
-        total_price = mealPrice * guestCount;
+    if (!menu_id) {
+      return NextResponse.json({ error: 'Missing required field: menu_id' }, { status: 400 });
     }
 
-    const dateTime = new Date(date_time);
-    if (isNaN(dateTime.getTime())) {
-      return NextResponse.json({ error: 'Invalid date or time' }, { status: 400 });
-    }
-    if (dateTime < new Date()) {
-      return NextResponse.json({ error: 'Booking date and time must be in the future' }, { status: 400 });
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !serviceRoleKey) {
+      return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
     }
 
-    const { data: booking, error: bookingError } = await supabase
-      .from('bookings')
-      .insert([
-        {
-          client_id: user.id,
-          menu_id: menu_id || null,
-          meal_id: meal_id || null,
-          experience_id: experience_id ?? null,
-          date_time: date_time,
-          address,
-          guests_count: Number(guests_count),
-          total_price,
-          special_requests: special_requests ?? null,
-          status: 'pending',
+    // CRITICAL: Ensure we use a valid token for the Edge function. 
+    // If we only have the service role key, the Edge function's getUser() will fail.
+    const edgeToken = authToken ?? serviceRoleKey;
+    
+    console.error('[BOOKING_DEBUG_V5] Calling Edge Function...', { 
+      action: 'create',
+      usingServiceKey: edgeToken === serviceRoleKey 
+    });
+
+    const edgeRes = await fetch(
+      `${supabaseUrl}/functions/v1/booking-manager?action=create`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${edgeToken}`,
+          'Content-Type': 'application/json',
+          apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '',
         },
-      ])
-      .select()
-      .single();
-
-    if (bookingError) {
-      console.error('Booking Insert Error:', bookingError);
-      return NextResponse.json({ error: 'Failed to create booking' }, { status: 500 });
-    }
-
-    // Increment meal bookings for popularity tracking
-    try {
-      const { data: menuMeals } = await supabase
-        .from('menu_meals')
-        .select('meal_id')
-        .eq('menu_id', menu_id);
-
-      if (menuMeals && menuMeals.length > 0) {
-        const mealIds = menuMeals.map(mm => mm.meal_id);
-        const incrementPromises = mealIds.map(id => 
-          supabase.rpc('increment_meal_bookings', { meal_id_input: id })
-        );
-        await Promise.allSettled(incrementPromises);
+        body: JSON.stringify({
+          menu_id,
+          date_time,
+          guests_count: Number(guests_count),
+          address,
+          special_requests,
+          payment_model: payment_model ?? 'full_digital',
+        }),
       }
-    } catch (mealError) {
-      // Don't fail the booking if tracking fails
-      console.error('Failed to increment meal bookings:', mealError);
+    );
+
+    const result = await edgeRes.json();
+
+    if (!edgeRes.ok) {
+      console.error('[BOOKING_DEBUG_V5] Edge Function Error:', edgeRes.status, result);
+      return NextResponse.json(
+        { error: result.error || 'Failed to create booking', edge_status: edgeRes.status },
+        { status: edgeRes.status }
+      );
     }
 
-    return NextResponse.json({ success: true, booking }, { status: 201 });
+    return NextResponse.json(
+      {
+        success: true,
+        booking: { id: result.booking_id },
+        payment_url: result.payment_url,
+        deposit_amount: result.deposit_amount,
+        chef_queue_count: result.chef_queue_count,
+        sla_expires_at: result.sla_expires_at,
+      },
+      { status: 201 }
+    );
 
   } catch (error: any) {
-    console.error('API Error:', error);
+    console.error('[api/bookings POST]', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
+}
+
+// ── Legacy meal-only booking path ────────────────────────────────────────────
+async function handleMealBooking(supabase: any, user: any, body: any) {
+  const { meal_id, date_time, guests_count, address, special_requests } = body;
+
+  if (!date_time || !guests_count || !address) {
+    return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+  }
+
+  const { data: meal, error: mealError } = await supabase
+    .from('meals').select('id, price, name').eq('id', meal_id).single();
+
+  if (mealError || !meal) {
+    return NextResponse.json({ error: 'Meal not found' }, { status: 404 });
+  }
+
+  const guestCount = Number(guests_count);
+  const total_price = Number(meal.price || 0) * guestCount;
+
+  const dateTime = new Date(date_time);
+  if (isNaN(dateTime.getTime()) || dateTime < new Date()) {
+    return NextResponse.json({ error: 'Invalid or past date/time' }, { status: 400 });
+  }
+
+  // Find a chef who owns this meal (if any) or any available chef
+  // For V3, we want to assign a chef so it's visible.
+  // We'll try to find the first available chef as a fallback.
+  const { data: firstChef } = await supabase
+    .from('chefs')
+    .select('id')
+    .in('onboarding_status', ['approved', 'pending_verification'])
+    .limit(1)
+    .single();
+
+  const { data: booking, error: bookingError } = await supabase
+    .from('bookings')
+    .insert({
+      client_id: user.id,
+      meal_id,
+      chef_id: firstChef?.id || null, // ASSIGN A CHEF
+      date_time,
+      address,
+      guests_count: guestCount,
+      total_price,
+      special_requests: special_requests ?? null,
+      status: 'rotating',
+    })
+    .select()
+    .single();
+
+  if (bookingError) {
+    console.error('[handleMealBooking] insert error', bookingError);
+    return NextResponse.json({ error: 'Failed to create booking' }, { status: 500 });
+  }
+
+  return NextResponse.json({ success: true, booking }, { status: 201 });
 }

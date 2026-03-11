@@ -1,6 +1,17 @@
 export type ExperienceStatus = 'draft' | 'published' | 'archived';
 export type MenuStatus = 'active' | 'inactive';
-export type BookingStatus = 'pending' | 'confirmed' | 'in_progress' | 'completed' | 'canceled';
+export type BookingStatus = 
+  | 'pending' 
+  | 'confirmed' 
+  | 'in_progress' 
+  | 'completed' 
+  | 'canceled' 
+  | 'rotating' 
+  | 'assigned' 
+  | 'awaiting_client_confirmation' 
+  | 'payout_processing' 
+  | 'paid_out' 
+  | 'disputed';
 
 export interface Experience {
   id: string;

@@ -257,7 +257,7 @@ export function MealForm({ mealId }: MealFormProps) {
                 <Switch 
                    id="is_active" 
                    checked={formData.is_active} 
-                   onCheckedChange={(checked) => setFormData(prev => ({ ...prev, is_active: checked }))}
+                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData(prev => ({ ...prev, is_active: e.target.checked }))}
                  />
             </div>
 

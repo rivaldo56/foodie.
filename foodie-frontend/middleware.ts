@@ -81,5 +81,7 @@ export const config = {
     '/client/:path*',
     '/chef/:path*',
     '/profile/:path*',
+    '/api/:path*',
+    '/book/:path*',
   ],
 };

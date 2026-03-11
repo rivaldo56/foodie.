@@ -3,7 +3,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- Create Enum Types
 CREATE TYPE booking_status AS ENUM ('pending', 'confirmed', 'in_progress', 'completed', 'canceled');
-CREATE TYPE experience_category AS ENUM ('private_dinner', 'meal_prep', 'event_catering', 'cooking_class', 'other');
+CREATE TYPE experience_category AS ENUM ('private_dinner', 'meal_prep', 'event_catering','chama_party','anniversary','baby_shower','corporate_event', 'cooking_class', 'other');
 CREATE TYPE chef_experience_level AS ENUM ('beginner', 'intermediate', 'experienced', 'expert');
 
 -- 1. Create experiences table

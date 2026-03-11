@@ -1,15 +1,44 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, Calendar, Users, MapPin, Clock, DollarSign, MessageCircle, CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import type { Booking } from '@/services/booking.service';
+import { supabase } from '@/lib/supabase';
 
 interface BookingDetailModalProps {
     booking: Booking | null;
     isOpen: boolean;
     onClose: () => void;
     onStatusUpdate: () => void;
+}
+
+function SlaCountdown({ expiresAt }: { expiresAt: string }) {
+    const [secondsLeft, setSecondsLeft] = useState<number>(0);
+
+    useEffect(() => {
+        const update = () => {
+            const diff = Math.max(0, Math.floor((new Date(expiresAt).getTime() - Date.now()) / 1000));
+            setSecondsLeft(diff);
+        };
+        update();
+        const interval = setInterval(update, 1000);
+        return () => clearInterval(interval);
+    }, [expiresAt]);
+
+    const mins = Math.floor(secondsLeft / 60);
+    const secs = secondsLeft % 60;
+    const isUrgent = secondsLeft < 120;
+
+    if (secondsLeft === 0) return null;
+
+    return (
+        <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full border text-xs font-bold tabular-nums backdrop-blur-sm
+            ${isUrgent ? 'border-red-500/50 bg-red-500/10 text-red-400 animate-pulse' : 'border-amber-500/50 bg-amber-500/10 text-amber-400'}`}>
+            <Clock className="h-3.5 w-3.5" />
+            {mins}:{secs.toString().padStart(2, '0')}
+        </div>
+    );
 }
 
 export default function BookingDetailModal({ booking, isOpen, onClose, onStatusUpdate }: BookingDetailModalProps) {
@@ -23,22 +52,58 @@ export default function BookingDetailModal({ booking, isOpen, onClose, onStatusU
         setLoading(true);
         setActionType('accept');
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/bookings/${booking.id}/status/`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Token ${localStorage.getItem('token')}`,
-                },
-                body: JSON.stringify({ status: 'confirmed' }),
+            // Force refresh session to ensure token is valid
+            const { data: { session }, error: sessionErr } = await supabase.auth.refreshSession();
+            
+            if (sessionErr || !session?.access_token) {
+                console.error('Session refresh failed:', sessionErr);
+                throw new Error('Auth session expired - Please log in again');
+            }
+
+            const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+            const url = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/booking-manager?action=accept`;
+
+            // Diagnostic logging
+            console.log('Accepting booking (Diagnostic):', {
+                url,
+                token_len: session.access_token.length,
+                token_start: session.access_token.slice(0, 10),
+                anon_key_tail: anonKey.slice(-4),
+                user_id: session.user.id
             });
 
-            if (!response.ok) throw new Error('Failed to accept booking');
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${session.access_token}`,
+                    'apikey': anonKey,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ 
+                    booking_id: booking.id,
+                    chef_user_id: session.user.id
+                }),
+            });
+
+            if (!response.ok) {
+                const status = response.status;
+                const bodyText = await response.text();
+                console.error('Edge Function Error:', { status, bodyText });
+                
+                let message = bodyText;
+                try {
+                    const json = JSON.parse(bodyText);
+                    message = json.error || json.message || bodyText;
+                } catch (e) { /* use raw bodyText */ }
+
+                throw new Error(`Server error (${status}): ${message.slice(0, 150)}`);
+            }
 
             onStatusUpdate();
             onClose();
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error accepting booking:', error);
-            alert('Failed to accept booking');
+            alert(`Failed to accept booking: ${error.message}`);
         } finally {
             setLoading(false);
             setActionType(null);
@@ -51,22 +116,54 @@ export default function BookingDetailModal({ booking, isOpen, onClose, onStatusU
         setLoading(true);
         setActionType('reject');
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/bookings/${booking.id}/status/`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Token ${localStorage.getItem('token')}`,
-                },
-                body: JSON.stringify({ status: 'cancelled' }),
+            const { data: { session }, error: sessionErr } = await supabase.auth.refreshSession();
+            if (sessionErr || !session?.access_token) {
+                console.error('Session refresh failed:', sessionErr);
+                throw new Error('Auth session expired - Please log in again');
+            }
+
+            const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+            const url = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/booking-manager?action=decline`;
+            
+            console.log('Rejecting booking (Diagnostic):', {
+                url,
+                token_len: session.access_token.length,
+                anon_key_tail: anonKey.slice(-4)
             });
 
-            if (!response.ok) throw new Error('Failed to reject booking');
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${session.access_token}`,
+                    'apikey': anonKey,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ 
+                    booking_id: booking.id,
+                    chef_user_id: session.user.id,
+                    reason: 'Declined via dashboard'
+                }),
+            });
+
+            if (!response.ok) {
+                const status = response.status;
+                const bodyText = await response.text();
+                console.error('Edge Function Error:', { status, bodyText });
+
+                let message = bodyText;
+                try {
+                    const json = JSON.parse(bodyText);
+                    message = json.error || json.message || bodyText;
+                } catch (e) { /* use raw bodyText */ }
+
+                throw new Error(`Server error (${status}): ${message.slice(0, 150)}`);
+            }
 
             onStatusUpdate();
             onClose();
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error rejecting booking:', error);
-            alert('Failed to reject booking');
+            alert(`Failed to reject booking: ${error.message}`);
         } finally {
             setLoading(false);
             setActionType(null);
@@ -74,14 +171,13 @@ export default function BookingDetailModal({ booking, isOpen, onClose, onStatusU
     };
 
     const handleMessage = () => {
-        // Navigate to messages - the messages page will handle finding/creating conversation
-        const clientId = typeof booking.client === 'object' ? booking.client.id : booking.client;
+        const clientId = typeof booking.client === 'object' ? booking.client.id : (booking as any).client_id || booking.client;
         router.push(`/chef/messages?user=${clientId}`);
         onClose();
     };
 
-    const bookingDate = new Date(booking.booking_date);
-    const isPending = booking.status === 'pending';
+    const bookingDate = new Date(booking.booking_date || (booking as any).date_time);
+    const isPending = ['pending', 'rotating', 'assigned'].includes(booking.status);
 
     // Handle both analytics data (client_name string) and full booking data (client object)
     const clientName = (booking as any).client_name ||
@@ -95,11 +191,16 @@ export default function BookingDetailModal({ booking, isOpen, onClose, onStatusU
             <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl border border-white/10 bg-gradient-to-br from-[#1a1a1a] via-[#1a1a1a] to-[#0a0a0a] shadow-2xl shadow-black/50 backdrop-blur-xl">
                 {/* Header with gradient */}
                 <div className="sticky top-0 z-10 flex items-center justify-between border-b border-white/10 bg-gradient-to-r from-orange-500/10 via-transparent to-transparent backdrop-blur-md p-6">
-                    <div>
-                        <h2 className="text-2xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
-                            Booking Details
-                        </h2>
-                        <p className="text-sm text-white/50">Confirmation Code: <span className="text-orange-400 font-mono">#{booking.confirmation_code || booking.id}</span></p>
+                    <div className="flex items-center gap-4">
+                        <div>
+                            <h2 className="text-2xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
+                                Booking Details
+                            </h2>
+                            <p className="text-sm text-white/50">Confirmation Code: <span className="text-orange-400 font-mono">#{booking.confirmation_code || booking.id}</span></p>
+                        </div>
+                        {(booking as any).sla_expires_at && ['rotating', 'assigned'].includes(booking.status) && (
+                            <SlaCountdown expiresAt={(booking as any).sla_expires_at} />
+                        )}
                     </div>
                     <button
                         onClick={onClose}
@@ -209,9 +310,11 @@ export default function BookingDetailModal({ booking, isOpen, onClose, onStatusU
                             </div>
                             <span className="text-xs font-medium text-white/50 uppercase tracking-wide">Service Location</span>
                         </div>
-                        <p className="text-white font-medium">{booking.service_address}</p>
+                        <p className="text-white font-medium">{(booking as any).service_address || booking.service_address || (booking as any).address || 'Address not provided'}</p>
                         <p className="text-sm text-white/60 mt-1">
-                            {booking.service_city}, {booking.service_state} {booking.service_zip_code}
+                            {[(booking as any).service_city || booking.service_city || (booking as any).city, 
+                              (booking as any).service_state || booking.service_state || (booking as any).state, 
+                              (booking as any).service_zip_code || booking.service_zip_code || (booking as any).zip_code].filter(Boolean).join(', ')}
                         </p>
                     </div>
 

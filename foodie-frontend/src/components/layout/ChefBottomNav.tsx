@@ -2,11 +2,11 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Compass, Plus, MessageCircle, UserRound } from 'lucide-react';
+import { LayoutDashboard, CalendarCheck, Plus, MessageCircle, UserRound } from 'lucide-react';
 
 const CHEF_LINKS = [
   { href: '/chef/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/chef/discover', label: 'Discover', icon: Compass },
+  { href: '/chef/bookings', label: 'Bookings', icon: CalendarCheck },
   { href: '/chef/create', label: 'New Post', icon: Plus },
   { href: '/chef/messages', label: 'Messages', icon: MessageCircle },
   { href: '/chef/profile', label: 'Profile', icon: UserRound },

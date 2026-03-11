@@ -36,6 +36,25 @@ export default function ApplyStep() {
       <form onSubmit={handleSubmit} className="space-y-10">
         <div className="space-y-10">
           <div className="space-y-6">
+            <div className="flex justify-between items-center px-1">
+              <label className="text-[10px] uppercase tracking-[0.2em] font-black text-white/30 flex items-center gap-2">
+                Culinary Experience
+              </label>
+              <span className="text-accent font-black text-sm">{data.yearsOfExperience} <span className="text-[10px] text-white/20 uppercase ml-1">Years</span></span>
+            </div>
+            <div className="relative h-2 bg-white/5 rounded-full px-1">
+              <input
+                type="range"
+                min="0"
+                max="40"
+                value={data.yearsOfExperience}
+                onChange={(e) => updateData({ yearsOfExperience: parseInt(e.target.value) })}
+                className="absolute inset-0 w-full h-full bg-transparent appearance-none cursor-pointer accent-accent transition-all hover:accent-accent-strong"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-6">
             <label className="text-[10px] uppercase tracking-[0.2em] font-black text-white/30 ml-1">Select your specialties</label>
             <div className="flex flex-wrap gap-3">
               {CUISINES.map((cuisine) => (

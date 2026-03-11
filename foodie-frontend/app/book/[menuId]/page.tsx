@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -9,7 +9,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Loader2, ArrowLeft, Calendar, MapPin, Users, Navigation } from 'lucide-react';
+import {
+  Loader2, ArrowLeft, Calendar, MapPin, Users, Navigation,
+  ChefHat, CreditCard, Banknote, Clock, CheckCircle2, ShieldCheck, AlertCircle
+} from 'lucide-react';
 import { mealService } from '@/services/meal.service';
 
 type Menu = {
@@ -20,355 +23,367 @@ type Menu = {
   guest_min: number;
   guest_max: number;
   image_url: string | null;
-  experience: {
-    name: string;
-    image_url: string | null;
-  };
+  experience: { name: string; image_url: string | null };
+  total_kcal?: number;
 };
+
+type BookingState = 'idle' | 'submitting' | 'failed';
 
 export default function BookingPage() {
   const params = useParams();
   const router = useRouter();
   const menuId = params.menuId as string;
-  
+
   const [menu, setMenu] = useState<Menu | null>(null);
   const [meals, setMeals] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
   const [user, setUser] = useState<any>(null);
-  
+  const [bookingState, setBookingState] = useState<BookingState>('idle');
+  const [errorMsg, setErrorMsg] = useState('');
+  const [locating, setLocating] = useState(false);
+
   const [formData, setFormData] = useState({
     date_time: '',
     address: '',
     guests_count: 2,
     special_requests: '',
+    payment_model: 'full_digital' as 'full_digital' | 'cash_balance',
   });
-  const [locating, setLocating] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
-       const { data: { user: authUser } } = await supabase.auth.getUser();
-       setUser(authUser);
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      setUser(authUser);
 
       try {
+        console.log('[BOOKING_PAGE] Fetching data for menu:', menuId);
         const [menuRes, mealsRes] = await Promise.all([
-          supabase
-            .from('menus')
-            .select(`
-                *,
-                experience:experiences (
-                    name,
-                    image_url
-                )
-            `)
-            .eq('id', menuId)
-            .single(),
-          mealService.getMenuMeals(menuId)
+          supabase.from('menus').select(`
+            *,
+            experience:experiences ( name, image_url )
+          `).eq('id', menuId).single(),
+          mealService.getMenuMeals(menuId),
         ]);
-
-        if (menuRes.error) throw menuRes.error;
         
+        if (menuRes.error) throw menuRes.error;
+        if (!menuRes.data) throw new Error('Menu not found');
+
         setMenu(menuRes.data as any);
         setMeals(mealsRes.data || []);
         
         if (menuRes.data) {
-          setFormData(prev => ({ ...prev, guests_count: menuRes.data.guest_min || 2 }));
+          const minGuests = menuRes.data.guest_min || 2;
+          setFormData(prev => ({ ...prev, guests_count: minGuests }));
         }
-      } catch (err) {
-        console.error('Error fetching booking data:', err);
+      } catch (err: any) {
+        console.error('[BOOKING_PAGE] Fetch error:', err);
+        setErrorMsg('Could not load menu details. Please try again.');
       } finally {
         setLoading(false);
       }
     }
-
     if (menuId) fetchData();
   }, [menuId]);
 
-  const calculateTotal = () => {
-    if (!menu) return 0;
-    return menu.price_per_person * formData.guests_count;
-  };
+  const calculateTotal = () => (!menu ? 0 : menu.price_per_person * (formData.guests_count || 0));
+  const calculateDeposit = () => Math.round(calculateTotal() * 0.30 * 100) / 100;
 
   const handleShareLocation = () => {
-    if (!navigator.geolocation) {
-      alert("Geolocation is not supported by your browser");
+    if (!navigator.geolocation) { alert('Geolocation not supported'); return; }
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(async (pos) => {
+      try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`);
+        const data = await res.json();
+        setFormData(prev => ({ ...prev, address: data.display_name || `${pos.coords.latitude}, ${pos.coords.longitude}` }));
+      } catch { setFormData(prev => ({ ...prev, address: `${pos.coords.latitude}, ${pos.coords.longitude}` })); }
+      finally { setLocating(false); }
+    }, () => { alert('Unable to retrieve your location'); setLocating(false); });
+  };
+
+  const handleBookingFlow = async (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log('[BOOKING] Initiating booking flow...');
+    
+    if (!user) { 
+      router.push('/login?next=/book/' + menuId); 
+      return; 
+    }
+
+    if (!menu) {
+      setErrorMsg('Menu data is still loading. Please wait.');
       return;
     }
 
-    setLocating(true);
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const { latitude, longitude } = position.coords;
-        try {
-          // Use Nominatim (OSM) for free reverse geocoding
-          const res = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
-          );
-          const data = await res.json();
-          if (data.display_name) {
-            setFormData(prev => ({ ...prev, address: data.display_name }));
-          } else {
-            setFormData(prev => ({ ...prev, address: `${latitude}, ${longitude}` }));
-          }
-        } catch (error) {
-          console.error("Reverse geocoding failed:", error);
-          setFormData(prev => ({ ...prev, address: `${latitude}, ${longitude}` }));
-        } finally {
-          setLocating(false);
-        }
-      },
-      (error) => {
-        console.error("Geolocation error:", error);
-        alert("Unable to retrieve your location");
-        setLocating(false);
-      }
-    );
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!user) {
-        alert("Please sign in to book.");
-        router.push('/login?next=/book/' + menuId);
-        return;
+    // --- ROBUST VALIDATION ---
+    if (!formData.date_time) {
+      setErrorMsg('Please select a preferred date and time.');
+      return;
     }
-    
-    setSubmitting(true);
+
+    const bookingDate = new Date(formData.date_time);
+    if (isNaN(bookingDate.getTime())) {
+      setErrorMsg('The selected date is invalid. Please pick another one.');
+      return;
+    }
+
+    if (isNaN(formData.guests_count) || formData.guests_count < 1) {
+      setErrorMsg('Please enter a valid number of guests.');
+      return;
+    }
+
+    if (!formData.address || formData.address.length < 5) {
+      setErrorMsg('Please enter a more specific location address.');
+      return;
+    }
+
+    setBookingState('submitting');
+    setErrorMsg('');
 
     try {
-        const response = await fetch('/api/bookings', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                menu_id: menuId,
-                date_time: new Date(formData.date_time).toISOString(),
-                address: formData.address,
-                guests_count: formData.guests_count,
-                special_requests: formData.special_requests
-            }),
-        });
+      console.log('[BOOKING_SUBMIT] Calling API...');
+      const response = await fetch('/api/bookings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          menu_id: menuId,
+          date_time: bookingDate.toISOString(),
+          address: formData.address,
+          guests_count: Number(formData.guests_count),
+          special_requests: formData.special_requests,
+          payment_model: formData.payment_model,
+        }),
+      });
 
-        const result = await response.json();
+      const result = await response.json();
+      console.log('[BOOKING_SUBMIT] API Response:', result);
 
-        if (!response.ok) {
-            throw new Error(result.error || 'Failed to create booking');
-        }
+      if (!response.ok) {
+        throw new Error(result.error || 'The server encountered an issue creating your booking.');
+      }
 
-        const bookingId = result.booking?.id;
-        router.push(bookingId ? `/bookings/confirmation?booking_id=${bookingId}` : '/bookings');
+      const bId = result.booking?.id;
+      const depositAmount = result.deposit_amount ?? calculateDeposit();
+
+      if (bId) {
+        console.log('[BOOKING_SUBMIT] Success, redirecting to payment:', bId);
+        router.push(`/book/${menuId}/payment?booking_id=${bId}&amount=${depositAmount}`);
+      } else {
+        throw new Error('No booking ID was returned from the server.');
+      }
+
     } catch (error: any) {
-        console.error("Booking failed:", error);
-        alert("Booking failed: " + error.message);
-    } finally {
-        setSubmitting(false);
+      console.error('[BOOKING_SUBMIT_CRASH]', error);
+      setErrorMsg(error.message || 'Something went wrong while processing your request.');
+      setBookingState('failed');
     }
   };
 
   if (loading) {
-     return (
-        <div className="flex h-screen items-center justify-center bg-[#0f0c0a] text-white">
-          <Loader2 className="h-10 w-10 animate-spin text-accent" />
-        </div>
-      );
+    return (
+      <div className="flex h-screen items-center justify-center bg-[#0f0c0a]">
+        <Loader2 className="h-10 w-10 animate-spin text-accent" />
+      </div>
+    );
   }
 
   if (!menu) {
     return (
-        <div className="flex h-screen flex-col items-center justify-center bg-[#0f0c0a] text-white space-y-4">
-          <h1 className="text-2xl font-bold">Menu Not Found</h1>
-          <Button asChild variant="outline" className="border-white/20 text-white hover:bg-white/10">
-             <Link href="/">Back to Home</Link>
-          </Button>
-        </div>
+      <div className="flex h-screen flex-col items-center justify-center bg-[#0f0c0a] text-white space-y-4">
+        <h1 className="text-2xl font-bold">Experience Unavailable</h1>
+        <p className="text-white/60">This menu could not be loaded at this time.</p>
+        <Button asChild variant="outline" className="border-white/20 text-white hover:bg-white/10">
+          <Link href="/">Back to Home</Link>
+        </Button>
+      </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-[#0f0c0a] text-white pb-20 pt-24 px-4">
-      <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 animate-in fade-in duration-700">
+        
+        {/* Left Side: Summary */}
         <div className="space-y-8">
-            <Link href={`/menus/${menuId}`} className="inline-flex items-center text-white/60 hover:text-white transition-colors mb-4">
-                <ArrowLeft className="mr-2 h-4 w-4" /> Cancel Booking
-            </Link>
-            
-            <div className="rounded-3xl overflow-hidden border border-white/10 bg-white/5">
-                <div className="relative h-64 w-full">
-                    <Image
-                        src={menu.image_url || menu.experience.image_url || 'https://images.unsplash.com/photo-1546069901-eacef0df6022?auto=format&fit=crop&w=800&q=80'}
-                        alt={menu.name}
-                        fill
-                        className="object-cover"
-                    />
-                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
-                     <div className="absolute bottom-6 left-6">
-                         <p className="text-white/80 text-sm mb-1">{menu.experience.name}</p>
-                         <h1 className="text-3xl font-bold">{menu.name}</h1>
-                     </div>
-                </div>
-                <div className="p-8 space-y-8">
-                    <div>
-                        <h3 className="text-lg font-semibold mb-2">Menu Description</h3>
-                        <p className="text-white/70 leading-relaxed italic">"{menu.description}"</p>
-                    </div>
+          <Link href={`/menus/${menuId}`} className="inline-flex items-center text-white/40 hover:text-white transition-colors mb-4 group">
+            <ArrowLeft className="mr-2 h-4 w-4 group-hover:-translate-x-1 transition-transform" /> 
+            Back to menu
+          </Link>
 
-                    {meals.length > 0 && (
-                        <div className="space-y-6 pt-4">
-                            <h3 className="text-xl font-bold text-white flex items-center">
-                                <span className="w-8 h-[2px] bg-accent mr-3"></span>
-                                What You'll Enjoy
-                            </h3>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                {meals.map((m) => (
-                                    <div key={m.id} className="group relative overflow-hidden rounded-2xl bg-white/5 border border-white/10 aspect-[4/5] transition-all hover:scale-[1.02] shadow-lg">
-                                        <Image 
-                                            src={m.meal?.image_url || 'https://images.unsplash.com/photo-1546069901-eacef0df6022?auto=format&fit=crop&w=400&q=80'} 
-                                            alt={m.meal?.name || m.course_type} 
-                                            fill 
-                                            className="object-cover transition-transform duration-500 group-hover:scale-110"
-                                            unoptimized
-                                        />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60" />
-                                        <div className="absolute top-3 left-3">
-                                            <span className="bg-accent/90 text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider backdrop-blur-sm">
-                                                {m.course_type}
-                                            </span>
-                                        </div>
-                                        <div className="absolute bottom-3 left-3 right-3">
-                                            <p className="text-white font-semibold text-sm drop-shadow-md">
-                                                {m.meal?.name}
-                                            </p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-                    
-                    <div className="flex items-center justify-between pt-6 border-t border-white/10">
-                         <div>
-                            <p className="text-sm text-white/50">Price per Guest</p>
-                            <p className="text-xl font-bold">KES {menu.price_per_person.toLocaleString()}</p>
-                         </div>
-                         <div className="text-right">
-                             <p className="text-sm text-white/50">Nutrition (Est.)</p>
-                             <p className="text-white font-medium">{(menu as any).total_kcal || 0} kcal</p>
-                         </div>
-                    </div>
-                </div>
+          <div className="rounded-3xl overflow-hidden border border-white/10 bg-white/5 shadow-2xl">
+            <div className="relative h-64 w-full">
+              <Image
+                src={menu.image_url || menu.experience?.image_url || 'https://images.unsplash.com/photo-1546069901-eacef0df6022?auto=format&fit=crop&w=800&q=80'}
+                alt={menu.name} fill className="object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+              <div className="absolute bottom-6 left-6">
+                <p className="text-accent text-xs font-bold uppercase tracking-widest mb-1">{menu.experience?.name}</p>
+                <h1 className="text-3xl font-bold">{menu.name}</h1>
+              </div>
             </div>
+            <div className="p-8 space-y-6">
+              <p className="text-white/70 leading-relaxed italic">"{menu.description}"</p>
+
+              {meals.length > 0 && (
+                <div className="grid grid-cols-3 gap-3 pt-2">
+                  {meals.slice(0, 3).map((m: any) => (
+                    <div key={m.id} className="relative rounded-xl overflow-hidden aspect-square bg-white/5 border border-white/10">
+                      <Image
+                        src={m.meal?.image_url || 'https://images.unsplash.com/photo-1546069901-eacef0df6022?auto=format&fit=crop&w=400&q=80'}
+                        alt={m.meal?.name || m.course_type} fill className="object-cover" unoptimized />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                      <div className="absolute bottom-2 left-2 right-2">
+                        <p className="text-white text-[10px] font-bold truncate uppercase">{m.meal?.name}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div className="flex items-center justify-between pt-6 border-t border-white/5">
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-1">Price per Guest</p>
+                  <p className="text-2xl font-black">KES {menu.price_per_person.toLocaleString()}</p>
+                </div>
+                {menu.total_kcal ? (
+                  <div className="text-right">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-1">Calories (Est.)</p>
+                    <p className="text-white font-bold">{menu.total_kcal} kcal</p>
+                  </div>
+                ) : null}
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-white/5 bg-white/2 p-6 space-y-4">
+            <h3 className="text-xs font-bold text-white/30 uppercase tracking-[0.2em]">The Foodie Experience</h3>
+            {[
+              { icon: <Users className="h-4 w-4" />, text: 'Matching you with expert local chefs' },
+              { icon: <ShieldCheck className="h-4 w-4" />, text: 'Secure payments & escrow protection' },
+              { icon: <Clock className="h-4 w-4" />, text: 'Prompt arrival & professional cleanup' },
+            ].map(({ icon, text }, i) => (
+              <div key={i} className="flex items-center gap-4 text-sm text-white/50">
+                <span className="text-accent">{icon}</span>
+                {text}
+              </div>
+            ))}
+          </div>
         </div>
 
-        <div className="bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-sm h-fit">
-            <h2 className="text-2xl font-bold mb-6">Confirm Details</h2>
-            <form onSubmit={handleSubmit} className="space-y-6">
-                
-                <div className="space-y-2">
-                    <Label htmlFor="date_time" className="text-white">Date & Time</Label>
-                    <div className="relative">
-                        <Calendar className="absolute left-3 top-3 h-5 w-5 text-white/40" />
-                        <Input
-                            id="date_time"
-                            type="datetime-local"
-                            className="pl-10 bg-white/5 border-white/10 text-white focus:border-accent min-h-[50px] date-input-white"
-                            value={formData.date_time}
-                            onChange={(e) => setFormData(prev => ({ ...prev, date_time: e.target.value }))}
-                            required
-                        />
-                    </div>
-                </div>
+        {/* Right Side: Form */}
+        <div className="bg-white/5 border border-white/10 rounded-[2.5rem] p-8 backdrop-blur-xl shadow-2xl h-fit">
+          <h2 className="text-2xl font-bold mb-8">Booking Details</h2>
 
-                <div className="space-y-2">
-                     <div className="flex justify-between">
-                        <Label htmlFor="guests_count" className="text-white">Number of Guests</Label>
-                        <span className="text-xs text-white/50">Min: {menu.guest_min}, Max: {menu.guest_max}</span>
-                     </div>
-                    <div className="relative">
-                        <Users className="absolute left-3 top-3 h-5 w-5 text-white/40" />
-                        <Input
-                            id="guests_count"
-                            type="number"
-                            min={menu.guest_min}
-                            max={menu.guest_max}
-                            className="pl-10 bg-white/5 border-white/10 text-white focus:border-accent min-h-[50px]"
-                            value={formData.guests_count}
-                            onChange={(e) => setFormData(prev => ({ ...prev, guests_count: parseInt(e.target.value) }))}
-                            required
-                        />
-                    </div>
-                </div>
+          {errorMsg && (
+            <div className="mb-6 p-4 rounded-2xl border border-red-500/20 bg-red-500/10 text-sm text-red-400 flex items-center gap-3 animate-in slide-in-from-top-2">
+              <AlertCircle className="h-5 w-5 flex-shrink-0" />
+              {errorMsg}
+            </div>
+          )}
 
-                 <div className="space-y-2">
-                    <div className="flex justify-between items-center">
-                        <Label htmlFor="address" className="text-white">Location Address</Label>
-                        <button
-                            type="button"
-                            onClick={handleShareLocation}
-                            disabled={locating}
-                            className="text-xs text-accent hover:text-accent-strong flex items-center gap-1 transition-colors disabled:opacity-50"
-                        >
-                            {locating ? (
-                                <Loader2 className="h-3 w-3 animate-spin" />
-                            ) : (
-                                <Navigation className="h-3 w-3" />
-                            )}
-                            Share my location
-                        </button>
-                    </div>
-                    <div className="relative">
-                        <MapPin className="absolute left-3 top-3 h-5 w-5 text-white/40" />
-                        <Textarea
-                            id="address"
-                            className="pl-10 bg-white/5 border-white/10 text-white focus:border-accent min-h-[80px]"
-                            placeholder="Enter full address for the chef..."
-                            value={formData.address}
-                            onChange={(e) => setFormData(prev => ({ ...prev, address: e.target.value }))}
-                            required
-                        />
-                    </div>
-                </div>
+          <form onSubmit={handleBookingFlow} className="space-y-6">
+            <div className="space-y-2">
+              <Label htmlFor="date_time" className="text-xs font-bold uppercase tracking-widest text-white/40 ml-1">Event Date & Time</Label>
+              <div className="relative group">
+                <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-white/20 group-focus-within:text-accent transition-colors" />
+                <Input
+                  id="date_time" type="datetime-local"
+                  className="pl-12 bg-white/5 border-white/10 h-14 rounded-2xl focus:ring-accent focus:border-accent"
+                  value={formData.date_time}
+                  onChange={(e) => setFormData(prev => ({ ...prev, date_time: e.target.value }))}
+                  required />
+              </div>
+            </div>
 
-                 <div className="space-y-2">
-                    <Label htmlFor="special_requests" className="text-white">Special Requests (Optional)</Label>
-                    <Textarea
-                        id="special_requests"
-                        className="bg-white/5 border-white/10 text-white focus:border-accent"
-                        placeholder="Allergies, dietary restrictions, gate codes..."
-                        value={formData.special_requests}
-                        onChange={(e) => setFormData(prev => ({ ...prev, special_requests: e.target.value }))}
-                    />
-                </div>
+            <div className="space-y-2">
+              <div className="flex justify-between items-center px-1">
+                <Label htmlFor="guests_count" className="text-xs font-bold uppercase tracking-widest text-white/40">Number of Guests</Label>
+                <span className="text-[10px] font-bold text-white/20">Ideal: {menu.guest_min}-{menu.guest_max}</span>
+              </div>
+              <div className="relative group">
+                <Users className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-white/20 group-focus-within:text-accent transition-colors" />
+                <Input
+                  id="guests_count" type="number"
+                  min={1} max={menu.guest_max + 10}
+                  className="pl-12 bg-white/5 border-white/10 h-14 rounded-2xl focus:ring-accent focus:border-accent"
+                  value={formData.guests_count}
+                  onChange={(e) => setFormData(prev => ({ ...prev, guests_count: parseInt(e.target.value) || 0 }))}
+                  required />
+              </div>
+            </div>
 
-                <div className="pt-6 border-t border-white/10 mt-6">
-                    <div className="flex justify-between items-center mb-6">
-                        <span className="text-lg font-medium">Total Price</span>
-                        <span className="text-3xl font-bold text-accent">KES {calculateTotal().toLocaleString()}</span>
+            <div className="space-y-2">
+              <div className="flex justify-between items-center px-1">
+                <Label htmlFor="address" className="text-xs font-bold uppercase tracking-widest text-white/40">Event Location</Label>
+                <button type="button" onClick={handleShareLocation} disabled={locating}
+                  className="text-[10px] font-bold text-accent hover:opacity-80 flex items-center gap-1 transition-opacity disabled:opacity-30 uppercase tracking-widest">
+                  {locating ? <Loader2 className="h-3 w-3 animate-spin" /> : <Navigation className="h-3 w-3" />}
+                  Locate Me
+                </button>
+              </div>
+              <div className="relative group">
+                <MapPin className="absolute left-4 top-5 h-5 w-5 text-white/20 group-focus-within:text-accent transition-colors" />
+                <Textarea
+                  id="address"
+                  className="pl-12 pt-4 bg-white/5 border-white/10 rounded-2xl focus:ring-accent focus:border-accent min-h-[100px]"
+                  placeholder="Street name, floor, specific instructions..."
+                  value={formData.address}
+                  onChange={(e) => setFormData(prev => ({ ...prev, address: e.target.value }))}
+                  required />
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <Label className="text-xs font-bold uppercase tracking-widest text-white/40 ml-1">Payment Plan</Label>
+              <div className="grid grid-cols-1 gap-3">
+                {[
+                  { value: 'full_digital', label: 'Full Digital', sub: '30% deposit now • 70% automatically charged 48h before' },
+                  { value: 'cash_balance', label: 'Cash on Day', sub: '30% deposit now • 70% paid in cash to chef at event' },
+                ].map(({ value, label, sub }) => (
+                  <button
+                    key={value} type="button"
+                    onClick={() => setFormData(prev => ({ ...prev, payment_model: value as any }))}
+                    className={`text-left rounded-2xl border p-5 transition-all
+                      ${formData.payment_model === value
+                        ? 'border-accent bg-accent/10'
+                        : 'border-white/10 hover:border-white/20 bg-white/5'}`}>
+                    <div className="flex justify-between items-center mb-1">
+                      <p className="text-sm font-bold text-white">{label}</p>
+                      {formData.payment_model === value && <CheckCircle2 className="h-4 w-4 text-accent" />}
                     </div>
-                    
-                    <Button 
-                        type="submit" 
-                        disabled={submitting || !user} 
-                        className="w-full h-14 text-lg font-bold bg-accent hover:bg-accent-strong text-white rounded-xl shadow-glow"
-                    >
-                        {submitting ? (
-                            <>
-                                <Loader2 className="mr-2 h-5 w-5 animate-spin" /> Processing...
-                            </>
-                        ) : !user ? (
-                            "Sign In to Book"
-                        ) : (
-                            "Request Booking"
-                        )}
-                    </Button>
-                    {!user && (
-                         <p className="text-center text-xs text-white/40 mt-2">You will be redirected to login.</p>
-                    )}
-                </div>
-            </form>
+                    <p className="text-[10px] text-white/40 leading-snug">{sub}</p>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-white/5 bg-white/3 p-6 space-y-4">
+              <div className="flex justify-between items-center">
+                <span className="text-xs font-bold uppercase tracking-widest text-white/40">Total Event Price</span>
+                <span className="text-lg font-bold text-white">KES {calculateTotal().toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between items-center pt-4 border-t border-white/5">
+                <span className="text-xs font-bold uppercase tracking-widest text-accent">Deposit Due Now (30%)</span>
+                <span className="text-xl font-black text-accent">KES {calculateDeposit().toLocaleString()}</span>
+              </div>
+            </div>
+
+            <Button
+              type="submit"
+              disabled={bookingState === 'submitting' || !user}
+              className="w-full h-16 rounded-2xl bg-accent hover:bg-accent/90 text-white font-bold text-lg shadow-glow transition-all">
+              {bookingState === 'submitting'
+                ? <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Processing...</>
+                : !user ? 'Sign In to Book' : 'Request & Pay Deposit'}
+            </Button>
+            
+            <p className="text-[10px] text-center text-white/20 px-4">
+              By clicking the button above, you agree to our terms of service and the chef selection SLA.
+            </p>
+          </form>
         </div>
-
       </div>
     </div>
   );
 }
+

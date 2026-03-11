@@ -13,6 +13,7 @@ export type OnboardingData = {
   guestCapacity: number
   priceTier: string
   travelRadius: number
+  yearsOfExperience: number
   availabilityType: 'always' | 'fixed'
   weeklySchedule: string[]
   slaAccepted: boolean
@@ -33,6 +34,7 @@ const initialData: OnboardingData = {
   guestCapacity: 10,
   priceTier: '$$',
   travelRadius: 10,
+  yearsOfExperience: 5,
   availabilityType: 'always',
   weeklySchedule: [],
   slaAccepted: false,

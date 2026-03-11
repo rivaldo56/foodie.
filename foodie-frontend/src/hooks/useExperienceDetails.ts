@@ -32,6 +32,7 @@ function mapMenuRow(r: Record<string, unknown>): Menu {
     dietary_tags: Array.isArray(r.dietary_tags) ? (r.dietary_tags as string[]) : [],
     image_url: r.image_url != null ? String(r.image_url) : null,
     status: (r.status as Menu['status']) ?? 'active',
+    featured: Boolean(r.featured),
     created_at: String(r.created_at),
     updated_at: String(r.updated_at),
   };
