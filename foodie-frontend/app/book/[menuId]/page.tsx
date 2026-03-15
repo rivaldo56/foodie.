@@ -153,21 +153,24 @@ export default function BookingPage() {
       });
 
       if (invokeError) {
-        // Most Edge Function errors are returned in the body as JSON
-        // The 'invoke' helper might wrap them. Let's try to extract the message.
         console.error('[BOOKING_SUBMIT_INVOKE_ERROR]', invokeError);
         let msg = invokeError.message;
         
         try {
-          if (invokeError instanceof Error && 'context' in invokeError) {
-             const context = (invokeError as any).context;
-             if (context && typeof context === 'object') {
-               const body = await context.text?.() || await context.json?.();
-               if (body) msg = typeof body === 'string' ? body : (body.error || JSON.stringify(body));
-             }
+          // FunctionsHttpError in @supabase/supabase-js v2 has a .context that is the Response
+          const context = (invokeError as any).context;
+          if (context && context instanceof Response) {
+            const bodyText = await context.text();
+            console.log('[BOOKING_SUBMIT_ERROR_BODY]', bodyText);
+            try {
+              const bodyJson = JSON.parse(bodyText);
+              msg = bodyJson.error || bodyJson.message || bodyText;
+            } catch {
+              msg = bodyText;
+            }
           }
         } catch (e) {
-          console.error('Error parsing invoke error body:', e);
+          console.error('[BOOKING_SUBMIT_BODY_PARSE_FAILED]', e);
         }
 
         throw new Error(msg || 'Failed to process booking request.');
