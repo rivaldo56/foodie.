@@ -1,8 +1,9 @@
 'use client';
+import { Suspense } from 'react';
 
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect} from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 
 function RegisterForm() {
@@ -146,7 +147,7 @@ function RegisterForm() {
   );
 }
 
-export default function RegisterPage() {
+function RegisterPageContent() {
   return (
     <Suspense fallback={
       <div className="flex min-h-screen items-center justify-center bg-background">
@@ -158,3 +159,14 @@ export default function RegisterPage() {
   );
 }
 
+
+
+
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div></div>}>
+      <RegisterPageContent />
+    </Suspense>
+  );
+}

@@ -37,7 +37,7 @@ export default function RevenueChart({ data }: RevenueChartProps) {
                                 borderRadius: '12px',
                                 color: '#fff'
                             }}
-                            formatter={(value: number) => [`KSh ${value.toLocaleString()}`, 'Revenue']}
+                            formatter={(value: any) => [`KSh ${Number(value || 0).toLocaleString()}`, 'Revenue']}
                         />
                         <Line
                             type="monotone"

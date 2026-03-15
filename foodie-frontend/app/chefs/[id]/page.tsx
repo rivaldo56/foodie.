@@ -17,7 +17,7 @@ import BackButton from '@/components/BackButton';
 export default function ChefDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const chefId = parseInt(params.id as string);
+  const chefId = params.id as string;
 
   const [chef, setChef] = useState<Chef | null>(null);
   const [meals, setMeals] = useState<Meal[]>([]);
@@ -34,15 +34,15 @@ export default function ChefDetailPage() {
       if (chefResponse.data) {
         setChef(chefResponse.data);
       } else {
-        const mockChef = mockChefs.find(c => c.id === chefId);
-        if (mockChef) setChef(mockChef);
+        const mockChef = mockChefs.find(c => String(c.id) === String(chefId));
+        if (mockChef) setChef(mockChef as any);
       }
 
       const mealsResponse = await getChefMeals(chefId);
       if (mealsResponse.data) {
         setMeals(mealsResponse.data);
       } else {
-        setMeals(mockMeals.filter(m => m.chef === chefId));
+        setMeals(mockMeals.filter(m => String(m.chef) === String(chefId)) as any);
       }
 
       const reviewsResponse = await getChefReviews(chefId);

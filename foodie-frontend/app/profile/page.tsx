@@ -64,8 +64,8 @@ function ProfilePageContent() {
         <header className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
           <div className="flex flex-col md:flex-row md:items-center gap-6">
             <div className="relative h-24 w-24 rounded-3xl bg-gradient-to-br from-accent to-accent-strong flex items-center justify-center text-white text-3xl font-semibold shadow-glow">
-              {user.profile_image ? (
-                <Image src={user.profile_image} alt={user.full_name} fill className="object-cover rounded-3xl" />
+              {(user as any).profile_image || (user as any).avatar_url ? (
+                <Image src={(user as any).profile_image || (user as any).avatar_url} alt={user.full_name} fill className="object-cover rounded-3xl" />
               ) : (
                 <span>{initials}</span>
               )}

@@ -1,11 +1,12 @@
 'use client';
+import { Suspense } from 'react';
 
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { CheckCircle, Home, Plus, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
-export default function ChefCreateSuccessPage() {
+function ChefCreateSuccessContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const dishId = searchParams.get('id');
@@ -79,5 +80,19 @@ export default function ChefCreateSuccessPage() {
                 </p>
             </div>
         </div>
+    );
+}
+
+
+
+export default function ChefCreateSuccessPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#1a0f0f] via-[#1b1814] to-[#0f0c0a]">
+                <div className="text-white/50">Loading...</div>
+            </div>
+        }>
+            <ChefCreateSuccessContent />
+        </Suspense>
     );
 }

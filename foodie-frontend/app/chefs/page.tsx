@@ -41,7 +41,7 @@ export default function ChefsPage() {
       if (response.data) {
         setChefs(response.data);
       } else {
-        setChefs(mockChefs);
+        setChefs(mockChefs as unknown as Chef[]);
         setError('Using mock data while the kitchen warms up.');
       }
 

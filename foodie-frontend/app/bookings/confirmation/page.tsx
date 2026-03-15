@@ -1,4 +1,5 @@
 'use client';
+import { Suspense } from 'react';
 
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
@@ -22,7 +23,7 @@ type ConfirmationData = {
   escrow: { deposit_amount: number; remaining_amount: number; escrow_status: string } | null;
 };
 
-export default function BookingConfirmationPage() {
+function BookingConfirmationPageContent() {
   const searchParams = useSearchParams();
   const bookingId = searchParams.get('booking_id');
   const [data, setData] = useState<ConfirmationData | null>(null);
@@ -162,5 +163,16 @@ export default function BookingConfirmationPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+
+
+
+export default function BookingConfirmationPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div></div>}>
+      <BookingConfirmationPageContent />
+    </Suspense>
   );
 }

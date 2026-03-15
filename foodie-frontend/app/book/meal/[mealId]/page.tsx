@@ -67,6 +67,7 @@ export default function MealBookingPage() {
     if (!meal) return 0;
     return (meal.price || 0) * formData.guests_count;
   };
+  const calculatePrepAdvance = () => Math.round(calculateTotal() * 0.25 * 100) / 100;
 
   const handleShareLocation = () => {
     if (!navigator.geolocation) {
@@ -114,34 +115,26 @@ export default function MealBookingPage() {
     setSubmitting(true);
 
     try {
-        const response = await fetch('/api/bookings', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                meal_id: mealId,
-                date_time: new Date(formData.date_time).toISOString(),
-                address: formData.address,
-                guests_count: formData.guests_count,
-                special_requests: formData.special_requests
-            }),
-        });
-
-        const result = await response.json();
-
-        if (!response.ok) {
-            throw new Error(result.error || 'Failed to create booking');
+      console.log('[BOOKING_SUBMIT] Invoking create-booking edge function...');
+      
+      const { data: result, error: invokeError } = await supabase.functions.invoke('create-booking', {
+        body: {
+          meal_id: mealId,
+          date_time: new Date(formData.date_time).toISOString(),
+          address: formData.address,
+          guests_count: Number(formData.guests_count),
+          special_requests: formData.special_requests
         }
+      });
 
-        const bookingId = result.booking?.id;
-        const depositAmount = result.deposit_amount || (meal ? meal.price * formData.guests_count * 0.3 : 0);
-        
-        if (bookingId) {
-            router.push(`/book/meal/${mealId}/payment?booking_id=${bookingId}&amount=${depositAmount}`);
-        } else {
-            router.push('/bookings');
-        }
+      if (invokeError) throw invokeError;
+      if (!result?.authorization_url) {
+        throw new Error('Failed to get payment authorization from Paystack.');
+      }
+
+      console.log('[BOOKING_SUBMIT] Success, redirecting to Paystack:', result.authorization_url);
+      window.location.href = result.authorization_url;
+
     } catch (error: any) {
         console.error("Booking failed:", error);
         alert("Booking failed: " + error.message);
@@ -293,11 +286,19 @@ export default function MealBookingPage() {
                     />
                 </div>
 
-                <div className="pt-6 border-t border-white/10 mt-6">
-                    <div className="flex justify-between items-center mb-6">
+                <div className="pt-6 border-t border-white/10 mt-6 space-y-4">
+                    <div className="flex justify-between items-center">
                         <span className="text-lg font-medium">Total Price</span>
-                        <span className="text-3xl font-bold text-accent">KES {calculateTotal().toLocaleString()}</span>
+                        <span className="text-2xl font-bold text-white">KES {calculateTotal().toLocaleString()}</span>
                     </div>
+
+                    <div className="flex justify-between items-center pt-4 border-t border-white/5">
+                        <span className="text-sm font-bold uppercase tracking-widest text-accent">Prep Advance (25%)</span>
+                        <span className="text-3xl font-black text-accent">KES {calculatePrepAdvance().toLocaleString()}</span>
+                    </div>
+                    <p className="text-[10px] text-white/40 leading-snug">
+                        The remaining balance (60%) will be paid after successful event completion.
+                    </p>
                     
                     <Button 
                         type="submit" 

@@ -1,4 +1,5 @@
 'use client';
+import { Suspense } from 'react';
 
 import { useEffect, useState, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -31,7 +32,7 @@ const DISH_CATEGORIES = [
 
 type TabType = 'chefs' | 'dishes';
 
-export default function ClientDiscoverPage() {
+function ClientDiscoverContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { isAuthenticated, loading } = useAuth();
@@ -510,5 +511,19 @@ export default function ClientDiscoverPage() {
         />
       )}
     </div>
+  );
+}
+
+
+
+export default function ClientDiscoverPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 text-orange-500 animate-spin" />
+      </div>
+    }>
+      <ClientDiscoverContent />
+    </Suspense>
   );
 }

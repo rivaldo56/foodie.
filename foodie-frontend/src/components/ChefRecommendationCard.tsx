@@ -40,7 +40,7 @@ export default function ChefRecommendationCard({ chef, matchScore }: ChefRecomme
         setIsFavorited(newState);
 
         try {
-            const response = await chefService.toggleFavorite(chef.id);
+            const response = await chefService.toggleFavorite(chef.id.toString());
             if (response.error) {
                 setIsFavorited(!newState);
                 console.error('Failed to toggle favorite:', response.error);

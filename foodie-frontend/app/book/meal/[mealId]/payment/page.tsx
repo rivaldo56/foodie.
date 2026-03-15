@@ -1,4 +1,5 @@
 'use client';
+import { Suspense } from 'react';
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
@@ -22,7 +23,7 @@ type Meal = {
   category: string;
 };
 
-export default function MealPaymentPage() {
+function MealPaymentPageContent() {
   const params = useParams();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -300,5 +301,16 @@ export default function MealPaymentPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+
+
+
+export default function MealPaymentPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div></div>}>
+      <MealPaymentPageContent />
+    </Suspense>
   );
 }

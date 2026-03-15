@@ -64,7 +64,7 @@ export async function POST(request: Request) {
     });
 
     const edgeRes = await fetch(
-      `${supabaseUrl}/functions/v1/booking-manager?action=create`,
+      `${supabaseUrl}/functions/v1/create-booking`,
       {
         method: 'POST',
         headers: {

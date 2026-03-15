@@ -24,6 +24,7 @@ export interface Recipe {
   servings?: number;
   chef_name?: string;
   chef_image?: string;
+  video_url?: string;
 }
 
 export interface RecipeFeedSection {

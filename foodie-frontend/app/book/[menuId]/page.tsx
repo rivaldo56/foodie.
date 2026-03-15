@@ -1,4 +1,5 @@
 'use client';
+// Force reload: 2026-03-14 20:10
 
 import { useEffect, useState, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
@@ -47,7 +48,6 @@ export default function BookingPage() {
     address: '',
     guests_count: 2,
     special_requests: '',
-    payment_model: 'full_digital' as 'full_digital' | 'cash_balance',
   });
 
   useEffect(() => {
@@ -86,7 +86,7 @@ export default function BookingPage() {
   }, [menuId]);
 
   const calculateTotal = () => (!menu ? 0 : menu.price_per_person * (formData.guests_count || 0));
-  const calculateDeposit = () => Math.round(calculateTotal() * 0.30 * 100) / 100;
+  const calculatePrepAdvance = () => Math.round(calculateTotal() * 0.25 * 100) / 100;
 
   const handleShareLocation = () => {
     if (!navigator.geolocation) { alert('Geolocation not supported'); return; }
@@ -103,7 +103,7 @@ export default function BookingPage() {
 
   const handleBookingFlow = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('[BOOKING] Initiating booking flow...');
+    console.log('[BOOKING] Initiating new Paystack booking flow...');
     
     if (!user) { 
       router.push('/login?next=/book/' + menuId); 
@@ -115,7 +115,6 @@ export default function BookingPage() {
       return;
     }
 
-    // --- ROBUST VALIDATION ---
     if (!formData.date_time) {
       setErrorMsg('Please select a preferred date and time.');
       return;
@@ -141,36 +140,25 @@ export default function BookingPage() {
     setErrorMsg('');
 
     try {
-      console.log('[BOOKING_SUBMIT] Calling API...');
-      const response = await fetch('/api/bookings', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+      console.log('[BOOKING_SUBMIT] Invoking create-booking edge function...');
+      
+      const { data: result, error: invokeError } = await supabase.functions.invoke('create-booking', {
+        body: {
           menu_id: menuId,
           date_time: bookingDate.toISOString(),
           address: formData.address,
           guests_count: Number(formData.guests_count),
-          special_requests: formData.special_requests,
-          payment_model: formData.payment_model,
-        }),
+          special_requests: formData.special_requests
+        }
       });
 
-      const result = await response.json();
-      console.log('[BOOKING_SUBMIT] API Response:', result);
-
-      if (!response.ok) {
-        throw new Error(result.error || 'The server encountered an issue creating your booking.');
+      if (invokeError) throw invokeError;
+      if (!result?.authorization_url) {
+        throw new Error('Failed to get payment authorization from Paystack.');
       }
 
-      const bId = result.booking?.id;
-      const depositAmount = result.deposit_amount ?? calculateDeposit();
-
-      if (bId) {
-        console.log('[BOOKING_SUBMIT] Success, redirecting to payment:', bId);
-        router.push(`/book/${menuId}/payment?booking_id=${bId}&amount=${depositAmount}`);
-      } else {
-        throw new Error('No booking ID was returned from the server.');
-      }
+      console.log('[BOOKING_SUBMIT] Success, redirecting to Paystack:', result.authorization_url);
+      window.location.href = result.authorization_url;
 
     } catch (error: any) {
       console.error('[BOOKING_SUBMIT_CRASH]', error);
@@ -333,28 +321,14 @@ export default function BookingPage() {
               </div>
             </div>
 
-            <div className="space-y-3">
-              <Label className="text-xs font-bold uppercase tracking-widest text-white/40 ml-1">Payment Plan</Label>
-              <div className="grid grid-cols-1 gap-3">
-                {[
-                  { value: 'full_digital', label: 'Full Digital', sub: '30% deposit now • 70% automatically charged 48h before' },
-                  { value: 'cash_balance', label: 'Cash on Day', sub: '30% deposit now • 70% paid in cash to chef at event' },
-                ].map(({ value, label, sub }) => (
-                  <button
-                    key={value} type="button"
-                    onClick={() => setFormData(prev => ({ ...prev, payment_model: value as any }))}
-                    className={`text-left rounded-2xl border p-5 transition-all
-                      ${formData.payment_model === value
-                        ? 'border-accent bg-accent/10'
-                        : 'border-white/10 hover:border-white/20 bg-white/5'}`}>
-                    <div className="flex justify-between items-center mb-1">
-                      <p className="text-sm font-bold text-white">{label}</p>
-                      {formData.payment_model === value && <CheckCircle2 className="h-4 w-4 text-accent" />}
-                    </div>
-                    <p className="text-[10px] text-white/40 leading-snug">{sub}</p>
-                  </button>
-                ))}
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="special_requests" className="text-xs font-bold uppercase tracking-widest text-white/40 ml-1">Special Requests</Label>
+              <Textarea
+                id="special_requests"
+                className="bg-white/5 border-white/10 rounded-2xl focus:ring-accent focus:border-accent min-h-[80px]"
+                placeholder="Allergies, kitchen setup info, etc."
+                value={formData.special_requests}
+                onChange={(e) => setFormData(prev => ({ ...prev, special_requests: e.target.value }))} />
             </div>
 
             <div className="rounded-2xl border border-white/5 bg-white/3 p-6 space-y-4">
@@ -363,9 +337,12 @@ export default function BookingPage() {
                 <span className="text-lg font-bold text-white">KES {calculateTotal().toLocaleString()}</span>
               </div>
               <div className="flex justify-between items-center pt-4 border-t border-white/5">
-                <span className="text-xs font-bold uppercase tracking-widest text-accent">Deposit Due Now (30%)</span>
-                <span className="text-xl font-black text-accent">KES {calculateDeposit().toLocaleString()}</span>
+                <span className="text-xs font-bold uppercase tracking-widest text-accent">Prep Advance Due Now (25%)</span>
+                <span className="text-xl font-black text-accent">KES {calculatePrepAdvance().toLocaleString()}</span>
               </div>
+              <p className="text-[10px] text-white/30 leading-snug">
+                The remaining balance (60%) will be paid after successful event completion.
+              </p>
             </div>
 
             <Button

@@ -1,6 +1,7 @@
 'use client';
+import { Suspense } from 'react';
 
-import { useEffect, useState, Suspense } from 'react';
+import { useEffect, useState} from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -324,7 +325,7 @@ function UtensilsIcon({ className }: { className?: string }) {
     )
 }
 
-export default function BookingPage() {
+function BookingPageContent() {
     return (
         <Suspense fallback={
             <div className="flex h-screen items-center justify-center bg-[#0f0c0a] text-white">
@@ -334,4 +335,15 @@ export default function BookingPage() {
             <BookingFormInner />
         </Suspense>
     );
+}
+
+
+
+
+export default function BookingPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div></div>}>
+      <BookingPageContent />
+    </Suspense>
+  );
 }

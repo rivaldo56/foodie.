@@ -1,4 +1,5 @@
 'use client';
+import { Suspense } from 'react';
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -13,7 +14,7 @@ import {
 import MessageList from '@/components/chat/MessageList';
 import { MessageCircle, Send, Search, ArrowLeft, MoreVertical, Phone, Video } from 'lucide-react';
 
-export default function ClientMessagesPage() {
+function ClientMessagesContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, isAuthenticated, loading: authLoading } = useAuth();
@@ -287,5 +288,19 @@ export default function ClientMessagesPage() {
         )}
       </div>
     </div>
+  );
+}
+
+
+
+export default function ClientMessagesPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-[#0f0c0a]">
+        <div className="text-white/50">Loading messages...</div>
+      </div>
+    }>
+      <ClientMessagesContent />
+    </Suspense>
   );
 }

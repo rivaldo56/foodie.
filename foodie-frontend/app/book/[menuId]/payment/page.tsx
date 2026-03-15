@@ -1,4 +1,5 @@
 'use client';
+import { Suspense } from 'react';
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
@@ -22,7 +23,7 @@ type Menu = {
   experience: { name: string; image_url: string | null };
 };
 
-export default function PaymentPage() {
+function PaymentPageContent() {
   const params = useParams();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -307,5 +308,16 @@ export default function PaymentPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+
+
+
+export default function PaymentPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div></div>}>
+      <PaymentPageContent />
+    </Suspense>
   );
 }

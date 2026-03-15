@@ -19,7 +19,11 @@ export interface Chef {
     average_rating?: number;
     total_bookings?: number;
     total_reviews?: number;
-    verified: boolean;
+    verified: boolean; // Legacy V3 field
+    is_verified?: boolean; // New Paystack payment system field
+    is_active?: boolean; // New Paystack payment system field
+    paystack_subaccount_code?: string;
+    paystack_recipient_code?: string;
     onboarding_status: 'pending_verification' | 'approved' | 'suspended';
     profile_picture: string | null;
     cover_photo?: string | null;
@@ -66,6 +70,8 @@ export interface ChefEvent {
 export interface MenuItem {
     id: string;
     chef_id: string;
+    chef?: number | string;
+    chef_name?: string;
     name: string;
     description: string;
     category: string;
@@ -170,7 +176,8 @@ export const chefService = {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return { error: 'Not authenticated', status: 401 };
 
-        const { data, error } = await supabase
+        // 1. Initial profile upsert to register core chef details
+        const { data: chef, error: upsertErr } = await supabase
             .from('chefs')
             .upsert({
                 user_id: user.id,
@@ -188,13 +195,35 @@ export const chefService = {
             .select()
             .single();
 
-        if (error) return { error: error.message, status: 400 };
+        if (upsertErr) return { error: upsertErr.message, status: 400 };
 
+        // 2. Invoke chef-onboarding Edge Function to handle Paystack subaccount creation
+        // This function will update the chef record with paystack codes and set verified status
+        try {
+            const { data: edgeData, error: edgeErr } = await supabase.functions.invoke('chef-onboarding', {
+                body: {
+                    chef_id: chef.id,
+                    name: chef.name,
+                    phone: onboardingData.phone || user.user_metadata?.phone || '',
+                    // Bank details could be added here if collected in UI
+                }
+            });
+
+            if (edgeErr) {
+                console.warn("[Onboarding] Paystack setup error:", edgeErr);
+                // We don't throw here to allow the chef to still access the dashboard,
+                // but we might want to flag it to the user.
+            }
+        } catch (err) {
+            console.error("[Onboarding] Edge function invocation failed:", err);
+        }
+
+        // 3. Update auth metadata role
         await supabase.auth.updateUser({
             data: { role: 'chef' }
         });
 
-        return { data, status: 200 };
+        return { data: chef, status: 200 };
     },
 
     async getAnalytics(): Promise<ApiResponse<any>> {

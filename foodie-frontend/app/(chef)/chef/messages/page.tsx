@@ -1,4 +1,5 @@
 'use client';
+import { Suspense } from 'react';
 
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -13,7 +14,7 @@ import {
 import MessageList from '@/components/chat/MessageList';
 import { MessageCircle, Send, Search, ArrowLeft, MoreVertical, Phone, Video, Inbox, MessageSquare } from 'lucide-react';
 
-export default function ChefMessagesPage() {
+function ChefMessagesPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, isAuthenticated, loading: authLoading } = useAuth();
@@ -377,5 +378,16 @@ export default function ChefMessagesPage() {
         )}
       </div>
     </div>
+  );
+}
+
+
+
+
+export default function ChefMessagesPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div></div>}>
+      <ChefMessagesPageContent />
+    </Suspense>
   );
 }
