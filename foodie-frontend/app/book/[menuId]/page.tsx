@@ -152,7 +152,27 @@ export default function BookingPage() {
         }
       });
 
-      if (invokeError) throw invokeError;
+      if (invokeError) {
+        // Most Edge Function errors are returned in the body as JSON
+        // The 'invoke' helper might wrap them. Let's try to extract the message.
+        console.error('[BOOKING_SUBMIT_INVOKE_ERROR]', invokeError);
+        let msg = invokeError.message;
+        
+        try {
+          if (invokeError instanceof Error && 'context' in invokeError) {
+             const context = (invokeError as any).context;
+             if (context && typeof context === 'object') {
+               const body = await context.text?.() || await context.json?.();
+               if (body) msg = typeof body === 'string' ? body : (body.error || JSON.stringify(body));
+             }
+          }
+        } catch (e) {
+          console.error('Error parsing invoke error body:', e);
+        }
+
+        throw new Error(msg || 'Failed to process booking request.');
+      }
+
       if (!result?.authorization_url) {
         throw new Error('Failed to get payment authorization from Paystack.');
       }

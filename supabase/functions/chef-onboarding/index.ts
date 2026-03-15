@@ -25,27 +25,27 @@ serve(async (req: Request) => {
 
   if (req.method !== 'POST') return jsonError('Method not allowed', 405);
 
-  const authHeader = req.headers.get('Authorization');
-  if (!authHeader) {
-    return jsonError('Unauthorized: Missing token', 401);
-  }
-
-  // Use the user's own token to initialize the client for verification
-  const userClient = createClient(SUPABASE_URL, Deno.env.get('SUPABASE_ANON_KEY')!, {
-    global: { headers: { Authorization: authHeader } },
-  });
-
-  const { data: { user }, error: authErr } = await userClient.auth.getUser();
-  
-  if (authErr || !user) {
-    console.error('[chef-onboarding] Auth verification failed:', authErr);
-    return jsonError(`Unauthorized: ${authErr?.message || 'Invalid token'}`, 401);
-  }
-
-  // For DB updates, use service-role
-  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
-
   try {
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      console.error('[chef-onboarding] Missing Authorization header');
+      return jsonError('Unauthorized: Missing token', 401);
+    }
+
+    // Initialize client with service role for administrative tasks
+    const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+
+    // Verify user JWT directly
+    const token = authHeader.replace('Bearer ', '');
+    const { data: { user }, error: authErr } = await supabase.auth.getUser(token);
+    
+    if (authErr || !user) {
+      console.error('[chef-onboarding] Auth verification failed:', authErr);
+      return jsonError(`Unauthorized: ${authErr?.message || 'Invalid token'}`, 401);
+    }
+
+    console.log('[chef-onboarding] User verified:', user.email);
+
     const body = await req.json();
     const { chef_id, name, phone, account_number, bank_code } = body;
 
@@ -59,6 +59,11 @@ serve(async (req: Request) => {
     let subaccountCode: string | null = null;
     let recipientCode: string | null = null;
     let onboardingError: string | null = null;
+
+    if (!PAYSTACK_SECRET_KEY) {
+       console.error('[chef-onboarding] PAYSTACK_SECRET_KEY is not set');
+       onboardingError = 'Payment configuration error: PAYSTACK_SECRET_KEY missing';
+    }
 
     if (PAYSTACK_SECRET_KEY) {
       // ── Step 1: Create Paystack Sub-account ──────────────────────────────
@@ -85,9 +90,9 @@ serve(async (req: Request) => {
         } else {
           throw new Error(`Paystack subaccount failed: ${subData.message}`);
         }
-      } catch (err) {
+      } catch (err: any) {
         console.error('[chef-onboarding] Subaccount error:', err);
-        onboardingError = String(err);
+        onboardingError = String(err.message || err);
       }
 
       // ── Step 2: Create Paystack Transfer Recipient ────────────────────────
@@ -115,9 +120,9 @@ serve(async (req: Request) => {
           } else {
             throw new Error(`Paystack recipient failed: ${recData.message}`);
           }
-        } catch (err) {
+        } catch (err: any) {
           console.error('[chef-onboarding] Recipient error:', err);
-          onboardingError = String(err);
+          onboardingError = String(err.message || err);
         }
       }
     }
@@ -140,7 +145,7 @@ serve(async (req: Request) => {
 
     if (updateErr) {
       console.error('[chef-onboarding] Chef update error:', updateErr);
-      return jsonError('Failed to update chef profile', 500);
+      return jsonError(`Failed to update chef profile: ${updateErr.message}`, 500);
     }
 
     if (onboardingError) {
@@ -148,7 +153,7 @@ serve(async (req: Request) => {
         success: false,
         chef_id,
         error:   onboardingError,
-        message: 'Paystack onboarding failed. Chef marked inactive for review.',
+        message: 'Paystack onboarding failed. Chef profile updated but marked for review.',
       }, 422);
     }
 
@@ -160,9 +165,9 @@ serve(async (req: Request) => {
       message:            'Chef onboarded successfully. Paystack accounts created.',
     });
 
-  } catch (err) {
-    console.error('[chef-onboarding] Error:', err);
-    return jsonError('Internal server error', 500);
+  } catch (err: any) {
+    console.error('[chef-onboarding] GLOBAL ERROR:', err);
+    return jsonError(`Internal server error: ${err.message}`, 500);
   }
 });
 

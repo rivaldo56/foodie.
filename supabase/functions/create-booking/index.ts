@@ -1,29 +1,25 @@
 import { serve } from 'https://deno.land/std@0.177.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-
 // ──────────────────────────────────────────────────────────────────────────────
 // Environment
 // ──────────────────────────────────────────────────────────────────────────────
-const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
-const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
+const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
 const PAYSTACK_SECRET_KEY = Deno.env.get('PAYSTACK_SECRET_KEY') ?? '';
 const APP_URL = Deno.env.get('APP_URL') ?? 'https://your-app.vercel.app';
-
-const PREP_ADVANCE_RATE = 0.25;   // 25% of total
-const FINAL_PAYOUT_RATE = 0.60;   // 60% of total
-const COMMISSION_RATE    = 0.15;   // 15% stays with Foodie
-
+const PREP_ADVANCE_RATE = 0.25; // 25% of total
+const FINAL_PAYOUT_RATE = 0.60; // 60% of total
+const COMMISSION_RATE = 0.15; // 15% stays with Foodie
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type'
 };
-
 // ──────────────────────────────────────────────────────────────────────────────
 // Main handler
 // POST /create-booking
 // Body: { menu_id, date_time, guests_count, address, special_requests?, chef_id? }
 // ──────────────────────────────────────────────────────────────────────────────
-serve(async (req: Request) => {
+serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
   }
@@ -32,31 +28,27 @@ serve(async (req: Request) => {
     return jsonError('Method not allowed', 405);
   }
 
-  const authHeader = req.headers.get('Authorization');
-  if (!authHeader) {
-    return jsonError('Unauthorized: Missing token', 401);
-  }
-
-  // Use the user's own token to initialize the client for verification
-  // This is more robust in Edge Functions than using service-role for getUser
-  const userClient = createClient(SUPABASE_URL, Deno.env.get('SUPABASE_ANON_KEY')!, {
-    global: { headers: { Authorization: authHeader } },
-  });
-
-  const { data: { user }, error: authErr } = await userClient.auth.getUser();
-  
-  if (authErr || !user) {
-    console.error('[create-booking] Auth verification failed:', authErr);
-    return jsonError(`Unauthorized: ${authErr?.message || 'Invalid token'}`, 401);
-  }
-
-  // For DB operations that require bypass (like updating bookings status), 
-  // we'll use a separate service-role client.
-  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
-
-  console.log('[create-booking] User verified:', user.email);
-
   try {
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      console.error('[create-booking] Missing Authorization header');
+      return jsonError('Unauthorized: Missing token', 401);
+    }
+
+    // Initialize client with service role for administrative tasks
+    const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+
+    // Verify user JWT directly
+    const token = authHeader.replace('Bearer ', '');
+    const { data: { user }, error: authErr } = await supabase.auth.getUser(token);
+    
+    if (authErr || !user) {
+      console.error('[create-booking] Auth verification failed:', authErr);
+      return jsonError(`Unauthorized: ${authErr?.message || 'Invalid token'}`, 401);
+    }
+
+    console.log('[create-booking] User verified:', user.email);
+
     const body = await req.json();
     const {
       menu_id,
@@ -87,7 +79,10 @@ serve(async (req: Request) => {
       .eq('id', menu_id)
       .single();
 
-    if (menuErr || !menu) return jsonError('Menu not found', 404);
+    if (menuErr || !menu) {
+      console.error('[create-booking] Menu fetch error:', menuErr);
+      return jsonError('Menu not found', 404);
+    }
 
     const basePrice = Number(menu.base_price ?? 0);
     const pricePerPerson = Number(menu.price_per_person ?? 0);
@@ -112,9 +107,7 @@ serve(async (req: Request) => {
         guests_count:         guestCount,
         special_requests:     special_requests ?? null,
         status:               'pending',
-        // Legacy price columns (keep existing system happy)
         total_price:          totalAmount,
-        // New payment system columns
         total_amount:         totalAmount,
         prep_advance_amount:  prepAdvanceAmount,
         final_payout_amount:  finalPayoutAmount,
@@ -128,11 +121,11 @@ serve(async (req: Request) => {
 
     if (bookingErr || !booking) {
       console.error('[create-booking] booking insert error:', bookingErr);
-      return jsonError('Failed to create booking', 500);
+      return jsonError(`Failed to create booking: ${bookingErr?.message || 'Unknown error'}`, 500);
     }
 
     // ── Insert client_charge payment record (pending) ────────────────────────
-    await supabase.from('payments').insert({
+    const { error: payErr } = await supabase.from('payments').insert({
       booking_id:   booking.id,
       payment_type: 'client_charge',
       amount:       totalAmount,
@@ -140,8 +133,12 @@ serve(async (req: Request) => {
       status:       'pending',
     });
 
+    if (payErr) {
+      console.error('[create-booking] Payment record error:', payErr);
+    }
+
     // ── Determine subaccount for Paystack split payment ──────────────────────
-    let subaccountCode: string | null = null;
+    let subaccountCode = null;
     if (preferredChefId) {
       const { data: chef } = await supabase
         .from('chefs')
@@ -152,52 +149,53 @@ serve(async (req: Request) => {
     }
 
     // ── Initialize Paystack payment ──────────────────────────────────────────
-    let authorizationUrl: string | null = null;
+    let authorizationUrl = null;
 
-    if (PAYSTACK_SECRET_KEY) {
-      const paystackPayload: Record<string, unknown> = {
-        email:        user.email,
-        amount:       Math.round(totalAmount * 100), // minor units (kobo)
-        currency:     'KES',
-        reference:    booking.id,  // Use booking UUID as idempotency key
-        callback_url: `${APP_URL}/booking/success?id=${booking.id}`,
-        metadata: {
-          booking_id:    booking.id,
-          payment_type:  'client_charge',
-          cancel_action: `${APP_URL}/booking/cancel?id=${booking.id}`,
-          client_id:     user.id,
-        },
-      };
+    if (!PAYSTACK_SECRET_KEY) {
+      console.error('[create-booking] PAYSTACK_SECRET_KEY is not set');
+      return jsonError('Payment configuration error: PAYSTACK_SECRET_KEY missing', 500);
+    }
 
-      // If a preferred chef has a sub-account, use Paystack split
-      if (subaccountCode) {
-        paystackPayload.subaccount = subaccountCode;
-        paystackPayload.transaction_charge = Math.round(commissionAmount * 100);
-        paystackPayload.bearer = 'subaccount';
-      }
+    const paystackPayload: Record<string, unknown> = {
+      email:        user.email,
+      amount:       Math.round(totalAmount * 100), 
+      currency:     'KES',
+      reference:    booking.id, 
+      callback_url: `${APP_URL}/booking/success?id=${booking.id}`,
+      metadata: {
+        booking_id:    booking.id,
+        payment_type:  'client_charge',
+        cancel_action: `${APP_URL}/booking/cancel?id=${booking.id}`,
+        client_id:     user.id,
+      },
+    };
 
-      const paystackRes = await fetch('https://api.paystack.co/transaction/initialize', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${PAYSTACK_SECRET_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(paystackPayload),
-      });
+    if (subaccountCode) {
+      paystackPayload.subaccount = subaccountCode;
+      paystackPayload.transaction_charge = Math.round(commissionAmount * 100);
+      paystackPayload.bearer = 'subaccount';
+    }
 
-      const paystackData = await paystackRes.json();
+    const paystackRes = await fetch('https://api.paystack.co/transaction/initialize', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${PAYSTACK_SECRET_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(paystackPayload),
+    });
 
-      if (paystackData.status && paystackData.data?.authorization_url) {
-        authorizationUrl = paystackData.data.authorization_url;
+    const paystackData = await paystackRes.json();
 
-        // Store Paystack reference on booking
-        await supabase
-          .from('bookings')
-          .update({ paystack_ref: booking.id })
-          .eq('id', booking.id);
-      } else {
-        console.error('[create-booking] Paystack init failed:', paystackData.message);
-      }
+    if (paystackData.status && paystackData.data?.authorization_url) {
+      authorizationUrl = paystackData.data.authorization_url;
+      await supabase
+        .from('bookings')
+        .update({ paystack_ref: booking.id })
+        .eq('id', booking.id);
+    } else {
+      console.error('[create-booking] Paystack init failed:', paystackData.message);
+      return jsonError(`Payment initialization failed: ${paystackData.message}`, 502);
     }
 
     return json({
@@ -212,20 +210,23 @@ serve(async (req: Request) => {
       },
     }, 201);
 
-  } catch (err) {
-    console.error('[create-booking] Error:', err);
-    return jsonError('Internal server error', 500);
+  } catch (err: any) {
+    console.error('[create-booking] GLOBAL ERROR:', err);
+    return jsonError(`Internal server error: ${err.message}`, 500);
   }
 });
-
 // ── Response helpers ───────────────────────────────────────────────────────────
-function json(data: unknown, status = 200) {
+function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    headers: {
+      ...corsHeaders,
+      'Content-Type': 'application/json'
+    }
   });
 }
-
-function jsonError(message: string, status: number) {
-  return json({ error: message }, status);
+function jsonError(message, status) {
+  return json({
+    error: message
+  }, status);
 }
