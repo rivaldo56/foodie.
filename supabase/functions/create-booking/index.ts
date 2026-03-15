@@ -19,7 +19,7 @@ const corsHeaders = {
 // POST /create-booking
 // Body: { menu_id, date_time, guests_count, address, special_requests?, chef_id? }
 // ──────────────────────────────────────────────────────────────────────────────
-serve(async (req) => {
+serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
   }
@@ -29,10 +29,21 @@ serve(async (req) => {
   }
 
   try {
+    // ── Check Secrets ────────────────────────────────────────────────────────
+    if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+      console.error('[create-booking] MISSING_SUPABASE_CONFIG');
+      return jsonError('Internal configuration error: Supabase URL or Service Key missing', 500);
+    }
+
+    if (!PAYSTACK_SECRET_KEY) {
+      console.error('[create-booking] MISSING_PAYSTACK_SECRET_KEY');
+      return jsonError('Internal configuration error: PAYSTACK_SECRET_KEY missing', 500);
+    }
+
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
       console.error('[create-booking] Missing Authorization header');
-      return jsonError('Unauthorized: Missing token', 401);
+      return jsonError('Unauthorized: Missing Authorization header', 401);
     }
 
     // Initialize client with service role for administrative tasks
@@ -41,7 +52,7 @@ serve(async (req) => {
     // Verify user JWT directly - handle both 'Bearer ' and 'bearer '
     const token = authHeader.split(' ').pop();
     if (!token) {
-      return jsonError('Unauthorized: Invalid Authorization header format', 401);
+      return jsonError('Unauthorized: Token missing in Authorization header', 401);
     }
 
     console.log(`[create-booking] Verifying token (prefix: ${token.substring(0, 10)}...)`);
@@ -50,7 +61,8 @@ serve(async (req) => {
     
     if (authErr || !user) {
       console.error('[create-booking] Auth verification failed:', authErr);
-      return jsonError(`Unauthorized: ${authErr?.message || 'Invalid token'}`, 401);
+      const prefix = token.substring(0, 10);
+      return jsonError(`Unauthorized: ${authErr?.message || 'Invalid token'} (Token prefix: ${prefix}...)`, 401);
     }
 
     console.log('[create-booking] User verified:', user.email);
