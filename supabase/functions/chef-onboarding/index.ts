@@ -35,8 +35,14 @@ serve(async (req: Request) => {
     // Initialize client with service role for administrative tasks
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-    // Verify user JWT directly
-    const token = authHeader.replace('Bearer ', '');
+    // Verify user JWT directly - handle both 'Bearer ' and 'bearer '
+    const token = authHeader.split(' ').pop();
+    if (!token) {
+      return jsonError('Unauthorized: Invalid Authorization header format', 401);
+    }
+
+    console.log(`[chef-onboarding] Verifying token (prefix: ${token.substring(0, 10)}...)`);
+
     const { data: { user }, error: authErr } = await supabase.auth.getUser(token);
     
     if (authErr || !user) {
